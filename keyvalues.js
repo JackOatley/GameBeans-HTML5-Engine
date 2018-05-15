@@ -1,0 +1,48 @@
+/**
+ * @module keyvalues
+ */
+ 
+let values = [
+	"ArrowUp",
+	"ArrowDown",
+	"ArrowLeft",
+	"ArrowRight",
+	"Enter",
+	"Space",
+	"Backspace",
+	"Escape",
+	"ShiftLeft",
+	"ShiftRight",
+	"ControlLeft",
+	"ControlRight",
+	"AltLeft",
+	"AltRight",
+	"KeyA",
+	"KeyB",
+	"KeyC",
+	"KeyD",
+	"KeyE",
+	"KeyF",
+	"KeyG",
+	"KeyH",
+	"KeyI",
+	"KeyJ",
+	"KeyK",
+	"KeyL",
+	"KeyM",
+	"KeyN",
+	"KeyO",
+	"KeyP",
+	"KeyQ",
+	"KeyR",
+	"KeyS",
+	"KeyT",
+	"KeyU",
+	"KeyV",
+	"KeyW",
+	"KeyZ",
+	"KeyY",
+	"KeyZ",
+];
+
+export default values;
