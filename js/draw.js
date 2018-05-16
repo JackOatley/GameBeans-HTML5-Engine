@@ -111,7 +111,7 @@ let draw = {
 	},
 
 	/**
-	 * @param {color} c Can be a number or a hex-value.
+	 * @param {color} c Can be a number, a hex-value or an object containing R, G, B and optionally A properties or H, S, L and optionally A properties.
 	 */
 	setColor: function( c ) {
 		
@@ -137,21 +137,6 @@ let draw = {
 					: "hsl("+c.h+","+c.s+"%,"+c.l+"%)";
 			}
 		}
-		
-	},
-
-	/**
-	 * @param {string} font
-	 * @param {number} size
-	 * @param {string} align Horizontal alignment.
-	 * @param {string} baseline Vertical alignment.
-	 */
-	setFont: function( font, size, align, baseline ) {
-		
-		draw.font = font;
-		draw.fontSize = size;
-		draw.textAlign = align;
-		draw.textBaseline = baseline;
 		
 	},
 
@@ -212,11 +197,30 @@ let draw = {
 	},
 
 	/**
-	 *
+	 * Draws a canvas at the given position.
+	 * @param {CANVAS} canvas The canvas to draw.
+	 * @param {Number} x The X position to draw at.
+	 * @param {Number} y The Y position to draw at.
 	 */
 	canvas: function( canvas, x, y ) {
-		console.log( draw.context.imageSmoothingEnabled );
+		
 		draw.context.drawImage( canvas, x, y );
+		
+	},
+	
+	/**
+	 * @param {string} font
+	 * @param {number} size
+	 * @param {string} align Horizontal alignment.
+	 * @param {string} baseline Vertical alignment.
+	 */
+	setFont: function( font, size, align, baseline ) {
+		
+		draw.font = font;
+		draw.fontSize = size;
+		draw.textAlign = align;
+		draw.textBaseline = baseline;
+		
 	},
 
 	/**
@@ -224,7 +228,9 @@ let draw = {
 	 * @param {number} x
 	 * @param {number} y
 	 */
-	text: function( text, x, y, options ) {
+	text: function( text, x, y, opts={} ) {
+		
+		let drawMethod = "fillText";
 		
 		let ctx = draw.context;
 		ctx.font = draw.fontSize + "px " + draw.font;
@@ -232,15 +238,22 @@ let draw = {
 		ctx.textAlign = draw.textAlign;
 		ctx.textBaseline = draw.textBaseline;
 		
-		if ( options ) {
-			if ( options.stroke ) {
-				ctx.strokeStyle = options.strokeColor || draw.color;
-				ctx.lineWidth = options.width || 2;
-				ctx.strokeText( text, x, y );
-			}
+		//
+		if ( opts.stroke ) {
+			ctx.strokeStyle = opts.strokeColor || draw.color;
+			ctx.lineWidth = opts.width || 2;
+			drawMethod = "strokeText";
 		}
 		
-		ctx.fillText( text, x, y );
+		//
+		let lineHeight = ctx.measureText("M").width * 1.2;
+		let lines = text.split( "#" );
+		for (var i=0; i<lines.length; i++) {
+			ctx[drawMethod]( lines[i], x, y );
+			y += lineHeight;
+		}
+		
+		
 		
 	},
 	
