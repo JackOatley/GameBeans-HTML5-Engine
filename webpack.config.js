@@ -3,7 +3,7 @@ var webpack = require('webpack');
 
 module.exports = [{
 	entry: {
-		"GameBeans": './core.js'
+		"GameBeans": './js/core.js'
 	},
 	output: {
 		path: path.resolve(__dirname, 'bin'),

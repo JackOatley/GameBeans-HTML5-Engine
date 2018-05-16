@@ -1,7 +1,7 @@
 {
   "name": "gamebeans_html5_engine",
   "version": "1.0.0",
-  "main": "core.js",
+  "main": "js/core.js",
   "scripts": {
     "build": "webpack -p",
     "document": "jsdoc -c conf.json"

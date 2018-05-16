@@ -91,6 +91,7 @@ let input = {
 			let rect = canv.getBoundingClientRect();
 			__mouse.x = e.clientX - rect.left;
 			__mouse.y = e.clientY - rect.top;
+			console.log(e.clientX);
 		}
 		
 		//
