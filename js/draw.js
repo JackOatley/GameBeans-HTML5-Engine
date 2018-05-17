@@ -221,6 +221,11 @@ let draw = {
 		draw.textAlign = align;
 		draw.textBaseline = baseline;
 		
+		let ctx = draw.context;
+		ctx.font = draw.fontSize + "px " + draw.font;
+		ctx.textAlign = draw.textAlign;
+		ctx.textBaseline = draw.textBaseline;
+		
 	},
 
 	/**
@@ -231,23 +236,20 @@ let draw = {
 	text: function( text, x, y, opts={} ) {
 		
 		let drawMethod = "fillText";
-		
 		let ctx = draw.context;
-		ctx.font = draw.fontSize + "px " + draw.font;
-		ctx.fillStyle = draw.color;
-		ctx.textAlign = draw.textAlign;
-		ctx.textBaseline = draw.textBaseline;
 		
 		//
 		if ( opts.stroke ) {
 			ctx.strokeStyle = opts.strokeColor || draw.color;
 			ctx.lineWidth = opts.width || 2;
 			drawMethod = "strokeText";
+		} else {
+			ctx.fillStyle = draw.color;
 		}
 		
 		//
 		let lineHeight = ctx.measureText("M").width * 1.2;
-		let lines = text.split( "#" );
+		let lines = text.toString().split( "#" );
 		for (var i=0; i<lines.length; i++) {
 			ctx[drawMethod]( lines[i], x, y );
 			y += lineHeight;
