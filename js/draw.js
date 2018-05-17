@@ -241,7 +241,7 @@ let draw = {
 		//
 		if ( opts.stroke ) {
 			ctx.strokeStyle = opts.strokeColor || draw.color;
-			ctx.lineWidth = opts.width || 2;
+			ctx.lineWidth = opts.lineWidth || 2;
 			drawMethod = "strokeText";
 		} else {
 			ctx.fillStyle = draw.color;
@@ -251,8 +251,34 @@ let draw = {
 		let lineHeight = ctx.measureText("M").width * 1.2;
 		let lines = text.toString().split( "#" );
 		for (var i=0; i<lines.length; i++) {
-			ctx[drawMethod]( lines[i], x, y );
-			y += lineHeight;
+			
+			if ( opts.maxWidth ) {
+				var words = lines[i].split(' ');
+				var line = '';
+				
+				for(var n = 0; n < words.length; n++) {
+					var testLine = line + words[n] + ' ';
+					var metrics = ctx.measureText(testLine);
+					var testWidth = metrics.width;
+					if (testWidth > opts.maxWidth && n > 0) {
+						ctx[drawMethod]( line, x, y );
+						line = words[n] + ' ';
+						y += lineHeight;
+					} else {
+						line = testLine;
+					}
+				}
+				
+				ctx[drawMethod]( line, x, y );
+				y += lineHeight;
+				
+			} else {
+			
+				ctx[drawMethod]( lines[i], x, y );
+				y += lineHeight;
+				
+			}
+			
 		}
 		
 		
