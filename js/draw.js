@@ -248,36 +248,79 @@ let draw = {
 		}
 		
 		//
+		let drawX = x;
+		let currentN = 0;
+		let startN = 0;
+		let endN = text.toString().length;
+		if ( opts.pattern ) {
+			startN = opts.pattern.start;
+			endN = opts.pattern.end;
+		}
+		
+		//
 		let lineHeight = ctx.measureText("M").width * 1.2;
 		let lines = text.toString().split( "#" );
 		for (var i=0; i<lines.length; i++) {
+			
+			var lineLength = lines[i].length;
+			if ( lineLength < startN ) {
+				startN -= lineLength;
+				endN -= lineLength;
+				continue;
+			}
 			
 			if ( opts.maxWidth ) {
 				var words = lines[i].split(' ');
 				var line = '';
 				
 				for(var n = 0; n < words.length; n++) {
+					
 					var testLine = line + words[n] + ' ';
 					var metrics = ctx.measureText(testLine);
 					var testWidth = metrics.width;
 					if (testWidth > opts.maxWidth && n > 0) {
-						ctx[drawMethod]( line, x, y );
+						
+						
+						let a = line.slice(0, startN);
+						let b = line.slice(startN, endN);
+						drawX += ctx.measureText(a).width;
+						ctx[drawMethod]( b, drawX, y );
+						
+						startN -= lineLength;
+						endN -= lineLength;
+						
+						
 						line = words[n] + ' ';
 						y += lineHeight;
+						drawX = x;
 					} else {
 						line = testLine;
 					}
+					
 				}
 				
-				ctx[drawMethod]( line, x, y );
-				y += lineHeight;
+				let a = line.slice(0, startN);
+				let b = line.slice(startN, endN);
+				drawX += ctx.measureText(a).width;
+				ctx[drawMethod]( b, drawX, y );
+				
+				startN -= lineLength;
+				endN -= lineLength;
 				
 			} else {
 			
-				ctx[drawMethod]( lines[i], x, y );
-				y += lineHeight;
+				let a = lines[i].slice(0, startN);
+				let b = lines[i].slice(startN, endN);
+				drawX += ctx.measureText(a).width;
+				ctx[drawMethod]( b, drawX, y );
+				
+				startN -= lineLength;
+				endN -= lineLength;
 				
 			}
+			
+			drawX = x;
+			y += lineHeight;
 			
 		}
 		
