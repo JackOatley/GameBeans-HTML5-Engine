@@ -248,8 +248,8 @@ let draw = {
 		}
 		
 		//
+		let lineLength;
 		let drawX = x;
-		let currentN = 0;
 		let startN = 0;
 		let endN = text.toString().length;
 		if ( opts.pattern ) {
@@ -261,13 +261,6 @@ let draw = {
 		let lineHeight = ctx.measureText("M").width * 1.2;
 		let lines = text.toString().split( "#" );
 		for (var i=0; i<lines.length; i++) {
-			
-			var lineLength = lines[i].length;
-			if ( lineLength < startN ) {
-				startN -= lineLength;
-				endN -= lineLength;
-				continue;
-			}
 			
 			if ( opts.maxWidth ) {
 				var words = lines[i].split(' ');
@@ -284,8 +277,9 @@ let draw = {
 						let a = line.slice(0, startN);
 						let b = line.slice(startN, endN);
 						drawX += ctx.measureText(a).width;
-						ctx[drawMethod]( b, drawX, y );
-						
+						if ( 0 < endN )
+							ctx[drawMethod]( b, drawX, y );
+						lineLength = testLine.length;
 						startN -= lineLength;
 						endN -= lineLength;
 						
@@ -302,10 +296,9 @@ let draw = {
 				let a = line.slice(0, startN);
 				let b = line.slice(startN, endN);
 				drawX += ctx.measureText(a).width;
-				ctx[drawMethod]( b, drawX, y );
-				
-				startN -= lineLength;
-				endN -= lineLength;
+				if ( 0 < endN )
+					ctx[drawMethod]( b, drawX, y );
+				lineLength = line.length;
 				
 			} else {
 			
@@ -313,14 +306,14 @@ let draw = {
 				let b = lines[i].slice(startN, endN);
 				drawX += ctx.measureText(a).width;
 				ctx[drawMethod]( b, drawX, y );
-				
-				startN -= lineLength;
-				endN -= lineLength;
+				lineLength = lines[i].length;
 				
 			}
 			
 			drawX = x;
 			y += lineHeight;
+			startN -= lineLength;
+			endN -= lineLength;
 			
 		}
 		
