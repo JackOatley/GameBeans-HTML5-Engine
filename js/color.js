@@ -27,9 +27,8 @@ let color = {
 	 * @param {number} b The blue component.
 	 */
 	rgbToHex: function(r, g, b) {
-		return "#" + color.componentToHex(r)
-				   + color.componentToHex(g)
-				   + color.componentToHex(b);
+		let c = color.componentToHex;
+		return "#" + c(r) + c(g) + c(b);
 	}
 	
 }

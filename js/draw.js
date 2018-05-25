@@ -66,7 +66,8 @@ let draw = {
 	 */
 	reset: function() {
 		draw.context.imageSmoothingEnabled = draw.imageSmoothing;
-		draw.context.setTransform( ...draw.defaultTransform );
+		draw.context.setTransform(...draw.defaultTransform);
+		draw.context.globalAlpha = 1;
 	},
 	
 	/**
@@ -233,13 +234,13 @@ let draw = {
 	 * @param {number} x
 	 * @param {number} y
 	 */
-	text: function( text, x, y, opts={} ) {
+	text: function(text, x, y, opts = {}) {
 		
 		let drawMethod = "fillText";
 		let ctx = draw.context;
 		
 		//
-		if ( opts.stroke ) {
+		if (opts.stroke) {
 			ctx.strokeStyle = opts.strokeColor || draw.color;
 			ctx.lineWidth = opts.lineWidth || 2;
 			drawMethod = "strokeText";
@@ -252,7 +253,7 @@ let draw = {
 		let drawX = x;
 		let startN = 0;
 		let endN = text.toString().length;
-		if ( opts.pattern ) {
+		if (opts.pattern) {
 			startN = opts.pattern.start;
 			endN = opts.pattern.end;
 		}

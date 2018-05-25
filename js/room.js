@@ -3,6 +3,7 @@
  */
 
 //
+import Transition from "./transition.js";
 import instance from "./instance.js";
 import sprite from "./sprite.js";
 import draw from "./draw.js";
@@ -18,22 +19,22 @@ let room = {
 	 * @param {int} width
 	 * @param {int} height
 	 */
-	create: function( name, width, height ) {
+	create: function(name, width, height) {
 		
 		let newRoom = {
 			name: name,
 			assetType: "room",
-			width: Number( width ),
-			height: Number( height ),
+			width: Number(width),
+			height: Number(height),
 			background: null,
 			backgroundMethod: "no-repeat",
 			instances: []
 		};
 		
-		if ( room.current === null )
+		if (room.current === null)
 			room.current = newRoom;
 		
-		room.array.push( newRoom );
+		room.array.push(newRoom);
 		return newRoom;
 		
 	},
@@ -41,56 +42,60 @@ let room = {
 	/**
 	 *
 	 */
-	setBackground: function( rm, spr ) {
-		
-		rm = room.get( rm );
+	setBackground: function(rm, spr) {
+		rm = room.get(rm);
 		rm.background = spr;
-		
 	},
 
 	/**
 	 *
 	 */
-	addInstance: function( rm, inst, x, y ) {
-		
-		rm = room.get( rm );
-		rm.instances.push( { name: inst, x: x, y: y } );
-		
+	addInstance: function(rm, inst, x, y) {
+		rm = room.get(rm);
+		rm.instances.push({ name: inst, x: x, y: y });
 	},
 
 	/**
 	 *
 	 */
-	enter: function( rm ) {
+	enter: function(rm, opts = {}) {
+		
+		if (opts.transition) {
+			new Transition({
+				prefab: opts.transition,
+				callback: room.enter.bind(null, rm)
+			});
+			return;
+		}
 		
 		// leave room event
-		instance.executeEventAll( "roomleave" );
+		instance.executeEventAll("roomleave");
 		
 		// clear current instances
-		instance.instanceArray.forEach( function( i ) {
-			instance.destroy( i, false );
-		} );
+		instance.instanceArray.forEach(function(i) {
+			instance.destroy(i, false);
+		});
 
 		// goto new room and create new instances
-		rm = room.get( rm );
+		rm = room.get(rm);
 		room.current = rm;
-		rm.instances.forEach( function ( inst ) {
-			instance.create( inst.name, inst.x, inst.y );
-		} );
+		rm.instances.forEach(function(inst) {
+			instance.create(inst.name, inst.x, inst.y);
+		});
 		
 		// enter room event
-		instance.executeEventAll( "roomenter" );
+		instance.executeEventAll("roomenter");
 
 	},
 
 	/**
 	 *
 	 */
-	draw: function( rm ) {
+	draw: function(rm) {
 
 		// draw background
-		rm = room.get( rm );
-		let spr = sprite.get( rm.background );
+		rm = room.get(rm);
+		let spr = sprite.get(rm.background);
 		if ( spr !== null ) {
 			
 			var canvas = draw.getTarget();
@@ -111,7 +116,7 @@ let room = {
 	/**
 	 *
 	 */
-	get: function( name ) {
+	get: function(name) {
 		
 		if ( typeof name === "object" )
 			return name;

@@ -9,6 +9,7 @@ import instance from "./instance.js";
 import global from "./global.js";
 import draw from "./draw.js";
 import camera from "./camera.js";
+import Transition from "./transition.js";
 
 let lastTick = performance.now(),
 	tickLength = 1000 / 60,
@@ -28,13 +29,13 @@ let main = {
 	/**
 	 *
 	 */
-	start: function( opts = {} ) {
+	start: function(opts = {}) {
 		
 		// Basic site-locking
-		if ( opts.host !== undefined && opts.host !== "" ) {
-			let loc = ( window.parent ) ? window.parent.location : window.location;
+		if (opts.host !== undefined && opts.host !== "") {
+			let loc = (window.parent) ? window.parent.location : window.location;
 			let host = loc.hostname;
-			let arr = opts.host.split( " " ).join( "" ).split( "," );
+			let arr = opts.host.split(" ").join("").split(",");
 			if ( !opts.host.includes( host ) )
 				return;
 		}
@@ -48,16 +49,14 @@ let main = {
 		});
 		
 		// selectively enable input methods
-		( opts.enableMouse ) && input.initMouse();
-		( opts.enableKeyboard ) && input.initKeyboard();
-		( opts.enableTouch ) && input.initTouch();
+		if (opts.enableMouse) input.initMouse();
+		if (opts.enableKeyboard) input.initKeyboard();
+		if (opts.enableTouch) input.initTouch();
+		if (opts.hideCursor) canv.style.cursor = "none";
 		
 		//
-		( opts.hideCursor ) && ( canv.style.cursor = "none" );
-		
-		//
-		room.enter( room.current );
-		tick( performance.now() );
+		room.enter(room.current);
+		tick(performance.now());
 		
 	},
 	
@@ -107,20 +106,21 @@ function tick( timestamp ) {
 /**
  *
  */
-function queueUpdates( numTicks ) {
-	for( var i = 0; i < numTicks; i++ ) {
+function queueUpdates(numTicks) {
+	for(var i = 0; i < numTicks; i++) {
 		lastTick = lastTick + tickLength;
 		dt = 1;
-		gameUpdate( 1 );
+		gameUpdate(1);
 	}
 }
 
 /**
  * @param {number} dt Delta Time.
  */
-function gameUpdate( dt ) {
-	instance.stepAll( dt );
+function gameUpdate(dt) {
+	instance.stepAll(dt);
 	instance.clearDestroyed();
+	Transition.updateAll();
 }
 
 /**
@@ -128,10 +128,11 @@ function gameUpdate( dt ) {
  */
 function gameDraw() {
 	draw.reset();
-	canvas.clear( canvas.main, "#000000" );
-	room.draw( room.current );
+	canvas.clear(canvas.main, "#000000");
+	room.draw(room.current);
 	camera.update();
 	instance.drawAll();
+	Transition.drawAll();
 }
 
 /**
