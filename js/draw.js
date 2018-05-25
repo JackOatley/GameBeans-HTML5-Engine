@@ -199,14 +199,12 @@ let draw = {
 
 	/**
 	 * Draws a canvas at the given position.
-	 * @param {CANVAS} canvas The canvas to draw.
-	 * @param {Number} x The X position to draw at.
-	 * @param {Number} y The Y position to draw at.
+	 * @param {canvas} canvas The canvas to draw.
+	 * @param {number} x The X position to draw at.
+	 * @param {number} y The Y position to draw at.
 	 */
-	canvas: function( canvas, x, y ) {
-		
-		draw.context.drawImage( canvas, x, y );
-		
+	canvas: function(canvas, x, y) {
+		draw.context.drawImage(canvas, x, y);
 	},
 	
 	/**

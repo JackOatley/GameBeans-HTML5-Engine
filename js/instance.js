@@ -26,12 +26,12 @@ let instance = {
 	 * @param {number} x
 	 * @param {number} y
 	 */
-	create: function( obj, x, y ) {
+	create: function(obj, x, y) {
 		
 		//
-		let o = object.get( obj );
+		let o = object.get(obj);
 		if ( o === null ) {
-			window.addConsoleText( "#F00", "No such object as " + obj );
+			window.addConsoleText("#F00", "No such object as " + obj);
 			window._GB_stop();
 			return null;
 		}

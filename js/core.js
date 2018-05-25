@@ -15,6 +15,7 @@ import instance from "./instance.js";
 import draw from "./draw.js";
 import math from "./math.js";
 import tween from "./tween.js";
+import Transition from "./transition.js";
 
 export {
 	main,
@@ -29,5 +30,6 @@ export {
 	instance,
 	draw,
 	math,
-	tween
+	tween,
+	Transition
 }

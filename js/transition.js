@@ -6,43 +6,40 @@ const noop = () => {};
 export default class Transition {
 	
 	/**
-	* @param {object} opts
+	* @param {object} opts Options.
+	* @param {string} opts.type
+	* @param {string} opts.time Time in steps the tranistion will last per stage (in/out).
+	* @param {string} opts.color Color of the transition.
+	* @param {string} opts.callback Function to execute mid-transition.
 	*/
 	constructor(opts = {}) {
-		console.log("transition created!");
 		this.type = opts.type || "fade";
-		this.time = opts.time || 1000;
+		this.time = opts.time || 60;
 		this.color = opts.color || "#000000";
 		this.callback = opts.callback || noop;
+		if (opts.prefab) Object.assign(this, opts.prefab);
 		this.direction = 1;
 		this.alpha = 0;
-		this.delta = 1/60;
+		this.delta = 1/this.time;
 		Transition.allInstances.push(this);
-	}
-	
-	/** */
-	update() {
-		if (this.direction) {
-			this.alpha += this.delta;
-			if (this.alpha >= 1) {
-				this.callback();
-				this.direction = 0;
-			}
-		} else {
-			this.alpha -= this.delta;
-			if (this.alpha <= 0) {
-				this.destroy();
-			}
+		
+		// Check transition type exists and log warning otherwise
+		if (!Transition.prefabs.hasOwnProperty(this.type)) {
+			window.addConsoleText("#F00", "Unknown transition type: " + this.type);
+			this.type = "fade";
 		}
 	}
 	
 	/** */
+	update() {
+		if (Transition.prefabs.hasOwnProperty(this.type))
+			Transition.prefabs[this.type].update.call(this);
+	}
+	
+	/** */
 	draw() {
-		var canvas = draw.getTarget();
-		var ctx = canvas.getContext("2d");
-		ctx.globalAlpha = this.alpha;
-		ctx.fillStyle = this.color;
-		ctx.fillRect(0, 0, canvas.width, canvas.height);
+		if (Transition.prefabs.hasOwnProperty(this.type))
+			Transition.prefabs[this.type].draw.call(this);
 	}
 	
 	/** */
@@ -69,3 +66,27 @@ export default class Transition {
 
 //
 Transition.allInstances = [];
+
+Transition.prefabs = {
+
+	"fade": {
+		update: function() {
+			this.alpha += this.direction ? this.delta : -this.delta;
+			if (this.alpha >= 1) {
+				this.callback();
+				this.direction = 0;
+			} else if (this.alpha <= 0) {
+				this.destroy();
+				console.log("destroy");
+			}
+		},
+		draw: function() {
+			var canvas = draw.getTarget();
+			var ctx = canvas.getContext("2d");
+			ctx.globalAlpha = this.alpha;
+			ctx.fillStyle = this.color;
+			ctx.fillRect(0, 0, 9999999, 9999999);
+		}
+	}
+
+}
