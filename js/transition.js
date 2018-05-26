@@ -49,6 +49,11 @@ export default class Transition {
 	}
 	
 	/** */
+	static create(opts) {
+		return new Transition(opts);
+	}
+	
+	/** */
 	static updateAll() {
 		Transition.allInstances.forEach((t) => {
 			t.update();
@@ -67,6 +72,9 @@ export default class Transition {
 //
 Transition.allInstances = [];
 
+/**
+ * @namespace
+ */
 Transition.prefabs = {
 
 	"fade": {
