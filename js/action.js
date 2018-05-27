@@ -18,6 +18,7 @@ import data from "./data.js";
 import Tilemap from "./tilemap.js";
 import tween from "./tween.js";
 import Transition from "./transition.js";
+import Primitive from "./drawing/primitive.js";
  
 /**
  * @param {string} varName
@@ -229,7 +230,8 @@ let GAME = {
 	data: data,
 	Tilemap: Tilemap,
 	tween: tween,
-	Transition: Transition
+	Transition: Transition,
+	Primitive: Primitive
 }
 
 //

@@ -186,9 +186,9 @@ let draw = {
 	 * @param {number} w
 	 * @param {number} h
 	 */
-	spriteTiled: function( spr, index, x, y, w, h ) {
+	spriteTiled: function(spr, index, x, y, w, h) {
 
-		spr = sprite.get( spr );
+		spr = sprite.get(spr);
 		
 		let dx, dy, rx, ry;
 		for ( rx=0, dx=x; rx<w; rx++, dx+=spr.width )
