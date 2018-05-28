@@ -1,33 +1,50 @@
 import draw from "./../draw.js";
 import sprite from "./../sprite.js";
 
+const noop = () => {};
+
 /** */
 export default class Primitive {
 
 	/**
-	 *
+	 * @param {object} opts Options object.
+	 * @param {array} opts.points Array of Point objects.
+	 * @param {*} opts.texture Sprite object or name of sprite resource.
+	 * @param {*} opts.color Color of the primitive.
+	 * @param {string} opts.format Format of the points array.
+	 * @param {function} opts.modifier Point modifier function.
+	 * @param {number} opts.x X position to draw the primitive.
+	 * @param {number} opts.y Y position to draw the primitive.
 	 */
 	constructor(opts = {}) {
 		this.points = opts.points || [];
 		this.texture = opts.texture || null;
-		this.format = "quads";
+		this.color = opts.color || "#000000";
+		this.format = opts.format || "quads";
+		this.modifier = opts.modifier || noop;
+		this.x = opts.x || 0;
+		this.y = opts.y || 0;
 	}
 	
-	/**
-	 *
-	 */
+	/** Method for drawing instantiated Primitive. */
 	draw() {
-		Primitive.draw({
-			texture: this.texture, 
-			points: this.points
-		});
+		Primitive.draw(this);
 	}
 	
 	/**
-	 *
+	 * Alternate way to create a new Primitive instance.
+	 * @param {object} opts See constructor.opts parameter.
 	 */
-	static draw(texture, pts) {
-		if (texture) drawTextured(texture, pts);
+	static create(opts = {}) {
+		return new Primitive(opts);
+	}
+	
+	/**
+	 * @param {object} opts See constructor.opts parameter.
+	 */
+	static draw(opts = {}) {
+		if (opts.texture) drawTextured(opts);
+		else drawBasic(opts);
 	}
 
 }
@@ -49,28 +66,20 @@ function drawTextured(opts = {}) {
 	let img = frame.img;
 	let w = spr.width;
 	let h = spr.height;
-	let pts = opts.points;
-	
-	// Convert from current format into a triangle list format
-	let length = 0;
-	let tris = [];
-	if (opts.format === "quads") {
-		length = Math.floor(pts.length / 4);
-		let n, o = 0;
-		for (n=0; n<length; n++) {
-			tris.push([o+0, o+1, o+2], [o+2, o+3, o+0]);
-			o += 4;
-		}
-	}
+	let tris = orderTriangleList(opts);
 	
 	//
-	for (var t=0; t<tris.length; t++) {
+	let t;
+	let pts = applyModifier(opts.points, opts.modifier);
+	let len = tris.length;
+	for (t=0; t<len; t++) {
+		
 		var pp = tris[t];
 		var x0 = pts[pp[0]].x, x1 = pts[pp[1]].x, x2 = pts[pp[2]].x;
 		var y0 = pts[pp[0]].y, y1 = pts[pp[1]].y, y2 = pts[pp[2]].y;
 		var u0 = pts[pp[0]].u*w, u1 = pts[pp[1]].u*w, u2 = pts[pp[2]].u*w;
 		var v0 = pts[pp[0]].v*h, v1 = pts[pp[1]].v*h, v2 = pts[pp[2]].v*h;
-
+		
 		// Set clipping area so that only pixels inside the triangle will
 		// be affected by the image drawing operation
 		ctx.save();
@@ -99,4 +108,70 @@ function drawTextured(opts = {}) {
 		ctx.drawImage(img, 0, 0);
 		ctx.restore();
 	}
+}
+
+/**
+ *
+ */
+function drawBasic(opts = {}) {
+	let points = applyModifier(opts.points, opts.modifier);
+	let length = points.length;
+	if (length > 0) {
+		let tris = orderQuadList(opts);
+		let i, ctx = draw.context;
+		ctx.fillStyle = opts.color || draw.color;
+		for (i=0; i<tris.length; i++) {
+			let tri = tris[i];
+			let n, p = points[tri[0]];
+			ctx.beginPath();
+			ctx.moveTo(p.x, p.y);
+			for (n=1; n<tri.length; n++) {
+				p = points[tri[n]];
+				ctx.lineTo(p.x, p.y);
+			}
+			ctx.closePath();
+			ctx.fill();
+		}
+	}
+}
+
+/**
+ *
+ */
+function applyModifier(points, modifier) {
+	let newPoints = [];
+	points.forEach(function(p) {
+		let newP = Object.assign({}, p, modifier.call(p));
+		newPoints.push(newP);
+	});
+	return newPoints;
+}
+
+/**
+ * @param {object} opts
+ */
+function orderTriangleList(opts = {}) {
+	let tris = [];
+	if (opts.format === "quads") {
+		let length = Math.floor(opts.points.length / 4);
+		let n, o = 0;
+		for (n=0; n<length; n++) {
+			tris.push([o+0, o+1, o+2], [o+2, o+3, o+0]);
+			o += 4;
+		}
+	}
+	return tris;
+}
+
+/**
+ * @param {object} opts
+ */
+function orderQuadList(opts = {}) {
+	let tris = [];
+	let length = Math.floor(opts.points.length / 4);
+	let n, o = 0;
+	for (n=0; n<length; n++, o+=4) {
+		tris.push([o+0, o+1, o+2, o+3]);
+	}
+	return tris;
 }
