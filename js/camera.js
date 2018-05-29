@@ -6,96 +6,88 @@
 import room from "./room.js";
 import draw from "./draw.js";
 
-//
-let camera = {
-	
-	//
-	array: [],
-	
-	/**
-	 *
-	 */
-	create: function( options = {} ) {
-	
-		// create new camera
-		let cam = {
-			x: 0,
-			y: 0,
-			angle: 0,
-			width: room.current.width,
-			height: room.current.height,
-			follow: null,
-			gridLocked: false,
-			left: 0,
-			right: 0,
-			top: 0,
-			bottom: 0
-		}
-		
-		// assign options to new camera
-		Object.assign( cam, options );
-		
-		// add to camera list
-		camera.array.push( cam );
-		return cam;
-	
-	},
+/**
+ *
+ */
+export default class Camera {
 	
 	/**
 	 *
 	 */
-	update: function() {
+	constructor(opts = {}) {
+		this.x = 0,
+		this.y = 0,
+		this.angle = 0,
+		this.width = room.current.width,
+		this.height = room.current.height,
+		this.follow = null,
+		this.gridLocked = false,
+		this.left = 0,
+		this.right = 0,
+		this.top = 0,
+		this.bottom = 0
+		Object.assign(this, opts);
+		Camera.array.push(this);
+	}
 	
-		camera.array.forEach( function( cam ) {
+	/**
+	 *
+	 */
+	update() {
+		
+		if (this.follow) {
 			
-			// camera is following an instance
-			if ( cam.follow !== null ) {
+			// if single instance, put into array
+			if (!Array.isArray(this.follow))
+				this.follow = [this.follow];
+			
+			//
+			let x = 0, y = 0, count = 0, weight = 1;
+			this.follow.forEach(function(inst) {
 				
-				// if single instance, put into array
-				if ( !Array.isArray( cam.follow ) ) {
-					cam.follow = [cam.follow];
+				if (Array.isArray(inst)) {
+					weight = inst[1] || 1;
+					inst = inst[0];
+				} else {
+					weight = 1;
 				}
 				
-				//
-				let x = 0,
-					y = 0,
-					count = 0,
-					weight = 1;
+				x += inst.x * weight;
+				y += inst.y * weight;
+				count += weight;
 				
-				cam.follow.forEach( function( inst ) {
-					
-					if ( Array.isArray( inst ) ) {
-						weight = inst[1] || 1;
-						inst = inst[0];
-					} else {
-						weight = 1;
-					}
-					
-					x += inst.x * weight;
-					y += inst.y * weight;
-					count += weight;
-					
-				} );
-				
-				cam.x = x / count;
-				cam.y = y / count;
-				
-			}
+			} );
 			
-			// update bounds
-			cam.left   = cam.x - cam.width  * 0.5;
-			cam.right  = cam.x + cam.width  * 0.5;
-			cam.top    = cam.y - cam.height * 0.5;
-			cam.bottom = cam.y + cam.height * 0.5;
-			
-			// apply camera
-			draw.transform.translate( -cam.left, -cam.top );
-			
-		} );
+			this.x = x / count;
+			this.y = y / count;
+		}
+		
+		// update bounds
+		this.left   = this.x - this.width  * 0.5;
+		this.right  = this.x + this.width  * 0.5;
+		this.top    = this.y - this.height * 0.5;
+		this.bottom = this.y + this.height * 0.5;
+		
+		// apply camera
+		draw.transform.translate(-this.left, -this.top);
+	}
 	
+	/**
+	 *
+	 */
+	static create(opts = {}) {
+		return new Camera(opts);
+	}
+	
+	/**
+	 *
+	 */
+	static update() {
+		Camera.array.forEach(function(cam) {
+			cam.update();
+		});
 	}
 	
 }
 
-//
-export default camera;
+Camera.array = [];

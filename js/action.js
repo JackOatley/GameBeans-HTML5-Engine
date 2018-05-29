@@ -12,7 +12,7 @@ import sprite from "./sprite.js";
 import canvas from "./canvas.js";
 import color from "./color.js";
 import main from "./main.js";
-import camera from "./camera.js";
+import Camera from "./camera.js";
 import app from "./app.js";
 import data from "./data.js";
 import Tilemap from "./tilemap.js";
@@ -225,7 +225,7 @@ let GAME = {
 		touch: input.touch
 	},
 	math: math,
-	camera: camera,
+	Camera: Camera,
 	app: app,
 	data: data,
 	Tilemap: Tilemap,

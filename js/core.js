@@ -4,6 +4,7 @@
 
 import main from "./main.js";
 import canvas from "./canvas.js";
+import Camera from "./camera.js";
 import room from "./room.js";
 import input from "./input.js";
 import sprite from "./sprite.js";
@@ -21,6 +22,7 @@ import Primitive from "./drawing/primitive.js";
 export {
 	main,
 	canvas,
+	Camera,
 	room,
 	input,
 	sprite,
