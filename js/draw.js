@@ -404,39 +404,45 @@ let draw = {
 		 * @param {number} y2
 		 * @param {object} options
 		 */
-		ellipse: function( x, y, xr, yr, options = {} ) {
+		ellipse: function(x, y, xr, yr, opts = {}) {
 		
 			//
 			let ctx = draw.context;
 			ctx.save();
 			ctx.beginPath();
-			ctx.translate( x-xr, y-yr );
-			ctx.scale( xr, yr );
-			ctx.arc( 1, 1, 1, 0, 2 * Math.PI, false );
+			ctx.translate(x-xr, y-yr);
+			ctx.scale(xr, yr);
+			ctx.arc(1, 1, 1, 0, 2 * Math.PI, false);
 			ctx.restore();
 			
 			//
 			let style;
-			if ( options.healthbar ) {
-				let amount = options.healthbar.amount || 1;
-				let color = options.healthbar.color || "#0F0";
-				let background = options.healthbar.background || "#F00";
+			if (opts.healthbar) {
+				let amount = opts.healthbar.amount || 1;
+				let color = opts.healthbar.color || "#0F0";
+				let background = opts.healthbar.background || "#F00";
 				style = ctx.createLinearGradient( x-xr, 0, x+xr, 0 );
 				style.addColorStop( 0, color );
 				style.addColorStop( amount, color );
 				style.addColorStop( amount, background );
 				style.addColorStop( 1, background );
 			} else {
-				style = options.color || draw.color;
+				style = opts.color || draw.color;
 			}
 			
 			//
-			if ( !options.fill ) {
+			if (!opts.fill && !opts.stroke)
+				opts.fill = true;
+			
+			//
+			if (opts.fill) {
 				ctx.fillStyle = style;
 				ctx.fill();
-			} else {
+			}
+			
+			if (opts.stroke) {
 				ctx.strokeStyle = style
-				ctx.lineWidth = options.lineWidth || 1;
+				ctx.lineWidth = opts.lineWidth || 1;
 				ctx.stroke();
 			}
 			
@@ -472,10 +478,16 @@ let draw = {
 			}
 			
 			//
-			if ( !options.fill ) {
+			if (!opts.fill && !opts.stroke)
+				opts.fill = true;
+			
+			//
+			if (options.fill) {
 				ctx.fillStyle = style;
 				ctx.fill();
-			} else {
+			}
+			
+			if (opts.stroke) {
 				ctx.strokeStyle = style;
 				ctx.lineWidth = options.lineWidth || 1;
 				ctx.stroke();
