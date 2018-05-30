@@ -43,7 +43,7 @@ export default class Camera {
 			
 			//
 			let x = 0, y = 0, count = 0, weight = 1;
-			this.follow.forEach(function(inst) {
+			this.follow.forEach((inst) => {
 				
 				if (Array.isArray(inst)) {
 					weight = inst[1] || 1;
@@ -63,9 +63,9 @@ export default class Camera {
 		}
 		
 		// update bounds
-		this.left   = this.x - this.width  * 0.5;
-		this.right  = this.x + this.width  * 0.5;
-		this.top    = this.y - this.height * 0.5;
+		this.left = this.x - this.width * 0.5;
+		this.right = this.x + this.width * 0.5;
+		this.top = this.y - this.height * 0.5;
 		this.bottom = this.y + this.height * 0.5;
 		
 		// apply camera
@@ -83,7 +83,7 @@ export default class Camera {
 	 *
 	 */
 	static update() {
-		Camera.array.forEach(function(cam) {
+		Camera.array.forEach((cam) => {
 			cam.update();
 		});
 	}

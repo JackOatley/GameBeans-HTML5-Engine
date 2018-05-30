@@ -3,23 +3,20 @@
  */
 
 //
-let generator = {
+export default {
 	
 	/**
-	 * @param {function} constructor
+	 * @param {function} constructor Constructor function.
 	 */
-	functionFromConstructor: function( constructor ) {
-		return function( ...a ) { return new constructor( ...a ) }
+	functionFromConstructor: (constructor) => {
+		return function(...a) { return new constructor(...a); }
 	},
 
 	/**
 	 * @param {function} method
 	 */
-	functionFromMethod: function( method ) {
-		return function( ...a ) { return method.call( ...a ) }
+	functionFromMethod: (method) => {
+		return function(...a) { return method.call(...a); }
 	}
 	
 }
-
-//
-export default generator;
