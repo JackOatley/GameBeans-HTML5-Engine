@@ -234,6 +234,9 @@ let draw = {
 	 */
 	text: function(text, x, y, opts = {}) {
 		
+		x = Number(x);
+		y = Number(y);
+		
 		let drawMethod = "fillText";
 		let ctx = draw.context;
 		

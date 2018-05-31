@@ -23,6 +23,7 @@ export default class object {
 		obj.objectName = name || "object_" + obj.id;
 		obj.prototype.sprite = sprite || null;
 		obj.pool = new Pool(obj);
+		object.names.push(obj.objectName);
 		object.array.push(obj);
 		return obj;
 	}
@@ -136,4 +137,5 @@ export default class object {
 
 }
 
+object.names = [];
 object.array = [];

@@ -24,8 +24,8 @@ import Primitive from "./drawing/primitive.js";
  * @param {string} varName
  * @param {value} value
  */
-function actionSet( varName, value, relative ) {
-	( relative )
+function actionSet(varName, value, relative) {
+	(relative)
 		? this[varName] += value
 		: this[varName] = value;
 }

@@ -15,6 +15,7 @@ let aSprites = [],
 let sprite = {
 	
 	//
+	names: [],
 	array: aSprites,
 
 	/**
@@ -50,6 +51,7 @@ let sprite = {
 		}
 		
 		//
+		sprite.names[aLength] = newSprite.name;
 		aSprites[aLength++] = newSprite;
 		return newSprite;
 

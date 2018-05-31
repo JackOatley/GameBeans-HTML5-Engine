@@ -9,6 +9,8 @@ let soundResources = [];
 let soundModule = {
 	
 	//
+	names: [],
+	array: soundResources,
 	isEnabled: true,
 	
 	/**
@@ -41,7 +43,8 @@ let soundModule = {
 		test.oncanplaythrough = callback;
 		
 		//
-		soundResources.push( sound );
+		soundModule.names.push(sound.name);
+		soundResources.push(sound);
 		return sound;
 
 	},

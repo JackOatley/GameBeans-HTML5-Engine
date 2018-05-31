@@ -67,7 +67,7 @@ let instance = {
 	/**
 	 *
 	 */
-	addToArray: function( inst ) {
+	addToArray: function(inst) {
 		
 		for ( var i=0; i<aInstances.length; i++ ) {
 			if ( inst.depth <= aInstances[i].depth ) {
@@ -76,7 +76,7 @@ let instance = {
 			}
 		}
 		
-		aInstances.push( inst );
+		aInstances.push(inst);
 
 	},
 
@@ -94,7 +94,7 @@ let instance = {
 			return;
 		}
 
-		let newInst = instance.create( obj, x, y );
+		let newInst = instance.create(obj, x, y);
 		newInst.speed = speed;
 		newInst.direction = direction;
 		return newInst;
@@ -152,27 +152,27 @@ let instance = {
 	 * @param {number} rotation
 	 * @param {boolean} relative
 	 */
-	setRotation: function( rotation, relative ) {
-		this.rotation = ( relative ) ? this.rotation + rotation : rotation;
+	setRotation: function(rotation, relative) {
+		this.rotation = (relative) ? this.rotation + rotation : rotation;
 	},
 
 	/**
 	 * @param {number} rotation
 	 * @param {boolean} relative
 	 */
-	setDirection: function( direction, relative ) {
-		this.direction = ( relative ) ? this.direction + direction : direction;
+	setDirection: function(direction, relative) {
+		this.direction = (relative) ? this.direction + direction : direction;
 	},
 
 	/**
 	 * @param {object} inst
 	 */
-	mouseOn: function( inst ) {
+	mouseOn: function(inst) {
 		
-		return !( inst.boxTop > input.mouse.y/2 - draw.offsetY
+		return !(inst.boxTop > input.mouse.y/2 - draw.offsetY
 		|| inst.boxBottom < input.mouse.y/2 - draw.offsetY
 		|| inst.boxLeft > input.mouse.x/2 - draw.offsetX
-		|| inst.boxRight < input.mouse.x/2 - draw.offsetX );
+		|| inst.boxRight < input.mouse.x/2 - draw.offsetX);
 		
 	},
 
@@ -305,21 +305,17 @@ let instance = {
 	/**
 	 *
 	 */
-	draw: function( inst ) {
-		
-		// execute draw event if it exists, else draw default
-		( inst.events["draw"] !== undefined )
-			? instance.executeEvent( inst, "draw" )
-			: instance.drawSelf( inst );
-		
+	draw: function(inst) {
+		(inst.events["draw"] !== undefined)
+			? instance.executeEvent(inst, "draw")
+			: instance.drawSelf(inst);
 	},
 
 	/**
 	 *
 	 */
-	drawSelf: function( inst ) {
-		
-		if ( inst.sprite !== null )
+	drawSelf: function(inst) {
+		if (inst.sprite !== null)
 			draw.sprite(
 				inst.sprite,
 				inst.index,
@@ -327,14 +323,12 @@ let instance = {
 				inst.scaleX, inst.scaleY,
 				inst.rotation
 			);
-			
 	},
 
 	/**
 	 *
 	 */
-	drawDebug: function( inst ) {
-		
+	drawDebug: function(inst) {
 		let box = inst.boxCollision;
 		draw.shape.rectangle(
 			box.left,
@@ -344,13 +338,12 @@ let instance = {
 				color: "#FF000055"
 			}
 		);
-			
 	},
 
 	/**
 	 * @param {object} sprite
 	 */
-	changeSprite: function( sprite ) {
+	changeSprite: function(sprite) {
 		this.sprite = sprite;
 	},
 
@@ -438,17 +431,15 @@ let instance = {
 	/**
 	 *
 	 */
-	executeEventAll: function( event, otherInst ) {
-		
-		for ( var n = 0; n < aInstances.length; n++ )
-			instance.executeEvent( aInstances[n], event, otherInst );
-		
+	executeEventAll: function(event, otherInst) {
+		for (var n = 0; n < aInstances.length; n++)
+			instance.executeEvent(aInstances[n], event, otherInst);
 	},
 
 	/**
 	 *
 	 */
-	executeActions: function( inst, actions, otherInst ) {
+	executeActions: function(inst, actions, otherInst) {
 		
 		let condition = true,
 			steps = [],
@@ -468,16 +459,17 @@ let instance = {
 							args = action.args,
 							n, newArgs = [];
 						
+						//console.log(args);
 						for ( n = 0; n < args.length; n++ ) {
 							switch ( args[n] ) {
 								case ( "self" ): newArgs[n] = inst; break;
 								case ( "other" ): newArgs[n] = otherInst; break;
-								default: newArgs[n] = compile.actionExpression.call( inst, args[n] ); break
+								default: newArgs[n] = compile.actionExpression.call(inst, args[n]); break
 							}
 							
 						}
 							
-						condition = func.apply( inst, newArgs );
+						condition = func.apply(inst, newArgs);
 						( condition === undefined )
 							? condition = true
 							: steps[scope] = 0;
