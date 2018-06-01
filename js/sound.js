@@ -77,8 +77,8 @@ export default class Sound {
 			return playSound;
 		}
 		
-		// sound is disabled, just return base audio node
-		return this.instances[0];
+		// sound is disabled
+		return null;
 	}
 	
 	/**
@@ -116,6 +116,8 @@ export default class Sound {
 				return Sound.array[i];
 			}
 		}
+		window.addConsoleText("#F00", "Unknown sound: "+ name);
+		return null;
 	}
 	
 	/**

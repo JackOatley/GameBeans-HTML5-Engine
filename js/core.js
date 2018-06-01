@@ -8,7 +8,7 @@ import Camera from "./camera.js";
 import room from "./room.js";
 import input from "./input.js";
 import sprite from "./sprite.js";
-import sound from "./sound.js";
+import Sound from "./sound.js";
 import object from "./object.js";
 import event from "./event.js";
 import * as action from "./action.js";
@@ -26,7 +26,7 @@ export {
 	room,
 	input,
 	sprite,
-	sound,
+	Sound,
 	object,
 	event,
 	action,

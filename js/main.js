@@ -8,7 +8,7 @@ import input from "./input.js";
 import instance from "./instance.js";
 import global from "./global.js";
 import draw from "./draw.js";
-import camera from "./camera.js";
+import Camera from "./camera.js";
 import Transition from "./transition.js";
 
 let lastTick = performance.now(),
@@ -36,7 +36,7 @@ let main = {
 			let loc = (window.parent) ? window.parent.location : window.location;
 			let host = loc.hostname;
 			let arr = opts.host.split(" ").join("").split(",");
-			if ( !opts.host.includes( host ) )
+			if (!opts.host.includes(host))
 				return;
 		}
 		
@@ -130,7 +130,7 @@ function gameDraw() {
 	draw.reset();
 	canvas.clear(canvas.main, "#000000");
 	room.draw(room.current);
-	camera.update();
+	Camera.update();
 	instance.drawAll();
 	Transition.drawAll();
 }

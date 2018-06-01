@@ -484,7 +484,7 @@ let instance = {
 			}
 			
 			// exit from a single statement after an expression not contained in a block
-			if ( steps[scope]++ === 1 )
+			if (steps[scope]++ === 1)
 				condition = true;
 			
 		}
@@ -494,41 +494,33 @@ let instance = {
 	/**
 	 * @param {number} dt Delta time.
 	 */
-	stepAll: function( dt ) {
-		
-		aInstances.forEach( function( i ) {
-			instance.step( i, dt );
-		} );
-		
+	stepAll: (dt) => {
+		aInstances.forEach((i) => {
+			instance.step(i, dt);
+		});
 	},
 
-	/**
-	 *
-	 */
-	drawAll: function() {
-		
-		aInstances.forEach( function( inst ) {
-			( inst.visible ) && instance.draw( inst );
+	/** */
+	drawAll: () => {
+		aInstances.forEach((i) => {
+			if (i) instance.draw(i);
 		});
-		
 	},
 	
 	/**
 	 *
 	 */
 	clearDestroyed: function() {
-		
-		for ( var n=aInstances.length-1; n>=0; n-- ) {
+		for (var n=aInstances.length-1; n>=0; n--) {
 			let i = aInstances[n];
-			if( !i.exists ) {
+			if (!i.exists) {
 				i.exists = true;
 				i.speedX = 0;
 				i.speedY = 0;
-				i.object.pool.release( i );
-				aInstances.splice( n, 1 );
+				i.object.pool.release(i);
+				aInstances.splice(n, 1);
 			}
 		}
-	
 	}
 
 }

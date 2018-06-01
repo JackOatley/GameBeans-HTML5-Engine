@@ -3,7 +3,7 @@
  */
 
 import room from "./room.js";
-import sound from "./sound.js";
+import Sound from "./sound.js";
 import draw from "./draw.js";
 import instance from "./instance.js";
 import input from "./input.js";
@@ -35,13 +35,13 @@ function actionSet(varName, value, relative) {
  * @param {string} op Operation.
  * @param {value} value Value to check against.
  */
-function actionTest( varName, op, value ) {
-	switch ( op ) {
-		case( "==" ): return this[varName] == value;
-		case( "<" ):  return this[varName] <  value;
-		case( ">" ):  return this[varName] >  value;
-		case( "<=" ): return this[varName] <= value;
-		case( ">=" ): return this[varName] >= value;
+function actionTest(varName, op, value) {
+	switch (op) {
+		case("=="): return this[varName] == value;
+		case("<"): return this[varName] < value;
+		case(">"): return this[varName] > value;
+		case("<="): return this[varName] <= value;
+		case(">="): return this[varName] >= value;
 		default: return false;
 	}
 }
@@ -50,7 +50,7 @@ function actionTest( varName, op, value ) {
  * Sets the instance's gravity to the given value.
  * @param {number} value The gravity strength.
  */
-function actionSetGravity( value ) {
+function setGravity(value) {
 	this.gravity = value;
 }
 
@@ -61,14 +61,13 @@ function actionSetGravity( value ) {
  * @param {number} y
  * @param {boolean} relative
  */
-function actionJump( x, y, relative ) {
-	
-	if ( relative ) {
-		this.x += Number( x );
-		this.y += Number( y );
+function actionJump(x, y, relative) {
+	if (relative) {
+		this.x += Number(x);
+		this.y += Number(y);
 	} else {
-		this.x = Number( x );
-		this.y = Number( y );
+		this.x = Number(x);
+		this.y = Number(y);
 	}
 }
 
@@ -78,14 +77,14 @@ function actionJump( x, y, relative ) {
  */
 function actionJumpRandom() {
 	let x1 = 0, y1 = 0, x2 = 640, y2 = 480;
-	this.x = Math.floor( Math.random() * ( x2 - x1 + 1 ) ) + x1;
-	this.y = Math.floor( Math.random() * ( y2 - y1 + 1 ) ) + y1;
+	this.x = Math.floor(Math.random() * (x2 - x1 + 1)) + x1;
+	this.y = Math.floor(Math.random() * (y2 - y1 + 1)) + y1;
 }
 
 /**
  *
  */
-function moveFree( speed, direction ) {
+function moveFree(speed, direction) {
 	this.speed = speed;
 	this.direction = direction;
 }
@@ -96,7 +95,7 @@ function moveFree( speed, direction ) {
  * @param {number} x
  * @param {number} y
  */
-function moveDirect( x, y ) {
+function moveDirect(x, y) {
 	this.x += x * main.dt;
 	this.y += y * main.dt;
 }
@@ -104,8 +103,8 @@ function moveDirect( x, y ) {
 /**
  *
  */
-function moveSpeedX( speed ) { this.speedX = Number( speed ); }
-function moveSpeedY( speed ) { this.speedY = Number( speed ); }
+function moveSpeedX(speed) { this.speedX = Number(speed); }
+function moveSpeedY(speed) { this.speedY = Number(speed); }
 function moveReverseX() { this.speedX = -this.speedX; }
 function moveReverseY() { this.speedY = -this.speedY; }
 
@@ -113,36 +112,30 @@ function moveReverseY() { this.speedY = -this.speedY; }
  * Wraps the instance back into the room when it leaves.
  */
 function actionWrap() {
-	
-	let width = this.boxRight - this.boxLeft,
-		height = this.boxBottom - this.boxTop,
-		thisRoom = room.current,
-		roomW = thisRoom.width,
-		roomH = thisRoom.height;
-		
-	if ( this.boxRight  < 0 )     this.x += roomW + width;
-	if ( this.boxBottom < 0 )     this.y += roomH + height;
-	if ( this.boxLeft   > roomW ) this.x -= roomW + width;
-	if ( this.boxTop    > roomH ) this.y -= roomH + height;
-	
+	let width = this.boxRight - this.boxLeft;
+	let height = this.boxBottom - this.boxTop;
+	let thisRoom = room.current;
+	let roomW = thisRoom.width;
+	let roomH = thisRoom.height;
+	if (this.boxRight < 0) this.x += roomW + width;
+	if (this.boxBottom < 0) this.y += roomH + height;
+	if (this.boxLeft > roomW) this.x -= roomW + width;
+	if (this.boxTop > roomH) this.y -= roomH + height;
 }
 
 /**
  * Wraps the instance back into the room when it leaves.
  */
 function actionConfine() {
-	
-	let width = this.boxRight - this.boxLeft,
-		height = this.boxBottom - this.boxTop,
-		thisRoom = room.current,
-		roomW = thisRoom.width,
-		roomH = thisRoom.height;
-		
-	if ( this.boxLeft   < 0 )     this.x = 0;
-	if ( this.boxTop    < 0 )     this.y = 0;
-	if ( this.boxRight  > roomW ) this.x = roomW - width;
-	if ( this.boxBottom > roomH ) this.y = roomH - height;
-	
+	let width = this.boxRight - this.boxLeft;
+	let height = this.boxBottom - this.boxTop;
+	let thisRoom = room.current;
+	let roomW = thisRoom.width;
+	let roomH = thisRoom.height;
+	if (this.boxLeft < 0) this.x = 0;
+	if (this.boxTop < 0) this.y = 0;
+	if (this.boxRight > roomW) this.x = roomW - width;
+	if (this.boxBottom > roomH) this.y = roomH - height;
 }
 
 /**
@@ -150,37 +143,33 @@ function actionConfine() {
  * @param {function} func
  * @param {...*} args
  */
-function actionFunc( func, ...args ) {
-	func.apply( this, args );
+function actionFunc(func, ...args) {
+	func.apply(this, args);
 }
 
 /**
  * Executes the given function with variable arguments on the instance.
  * @param {string} code
  */
-function runCode( code ) {
-	
-	if ( typeof code === "string" ) {
+function runCode(code) {
+	if (typeof code === "string") {
 		try {
-			eval( code );
+			eval(code);
 		}
-		catch( err ) {
-			console.error( err.message );
+		catch(err) {
+			console.error(err.message);
 		}
+	} else {
+		console.error("runCode(code); code must be a string!");
 	}
-	
-	else {
-		console.error( "runCode( code ); code must be a string!" );
-	}
-	
 }
 
 /**
  * Shows the value of the given variable of the instance, in the console.
  * @param {...*} args
  */
-function actionGet( ...args ) {
-	console.log( this[args].toFixed( 2 ) );
+function actionGet(...args) {
+	console.log(this[args].toFixed(2));
 }
 
 // Fucntions for use in code.
@@ -213,10 +202,10 @@ let GAME = {
 		get: sprite.get,
 		cache: sprite.cache
 	},
-	sound: {
-		play: sound.play,
-		stop: sound.stop,
-		get: sound.get
+	Sound: {
+		play: Sound.play,
+		stop: Sound.stop,
+		get: Sound.get
 	},
 	room: room,
 	input: {
@@ -245,15 +234,15 @@ let blockBegin            = "blockBegin",
 	instanceSetRotation   = instance.setRotation,
 	instanceSetDirection  = instance.setDirection,
 	message               = console.log,
-	alert                 = function( m ) { window.alert( m ) },
-	confirm               = function( m ) { return window.confirm( m ) },
+	alert                 = function(m) { window.alert(m) },
+	confirm               = function(m) { return window.confirm(m) },
 	drawSetColor          = draw.setColor,
 	drawSetFont           = draw.setFont,
 	drawSetFontSize       = draw.setFontSize,
 	drawText              = draw.text,
 	drawSelf              = instance.drawSelf,
 	drawSprite            = draw.sprite,
-	soundPlay = function( snd, loop ) { sound.play( snd, { loop: loop } ) };
+	soundPlay = function(snd, loop) {Sound.play(snd, {loop: loop})};
 
 //
 export {
@@ -279,7 +268,7 @@ export {
 	actionGet        as get,
 	actionTest       as test,
 	actionTest,
-	actionSetGravity as setGravity,
+	setGravity,
 	actionJump       as jump,
 	actionJumpRandom as jumpRandom,
 	moveFree,
