@@ -1,14 +1,11 @@
-/**
- * @module Compiler
- */
-
-//
 import global from "./global.js";
 import object from "./object.js";
 import sprite from "./sprite.js";
 import sound from "./sound.js";
  
-//
+/**
+ * @author Jack Oatley
+ */
 export default class Compiler {
 	
 	/**

@@ -1,7 +1,3 @@
-/**
- * @module objects
- */
-
 import event from "./event.js";
 import instance from "./instance.js";
 import objectVars from "./objectVars.js";
@@ -10,7 +6,7 @@ import Pool from "./utils/pool.js";
 /**
  *
  */
-export default class object {
+export default class GameObject {
 
 	/**
 	 * @param {string} name
@@ -23,8 +19,8 @@ export default class object {
 		obj.objectName = name || "object_" + obj.id;
 		obj.prototype.sprite = sprite || null;
 		obj.pool = new Pool(obj);
-		object.names.push(obj.objectName);
-		object.array.push(obj);
+		GameObject.names.push(obj.objectName);
+		GameObject.array.push(obj);
 		return obj;
 	}
 	
@@ -32,14 +28,14 @@ export default class object {
 	 *
 	 */
 	static create(...args) {
-		return new object(...args);
+		return new GameObject(...args);
 	}
 	
 	/**
 	 *
 		*/
 	static set(obj, property, value) {
-		obj = object.get(obj);
+		obj = GameObject.get(obj);
 		obj.prototype[property] = value;
 	}
 	
@@ -52,12 +48,12 @@ export default class object {
 	 */
 	static eventAddAction(obj, event, action, ...args) {
 		
-		obj = object.get(obj);
+		obj = GameObject.get(obj);
 		
-		if ( typeof event === "object" ) {
-			object.keys(event).forEach((key) => {
+		if (typeof event === "object") {
+			Object.keys(event).forEach((key) => {
 				event[key].forEach((params) => {
-					object.eventAddAction(obj, key, ...params);
+					GameObject.eventAddAction(obj, key, ...params);
 				});
 			});
 			return;
@@ -78,7 +74,7 @@ export default class object {
 				if ( event.includes( "collision_" ) ) {
 					let index = event.indexOf("_") + 1;
 					let name = event.slice(index, 200);
-					object.addCollisionListener(obj, name);
+					GameObject.addCollisionListener(obj, name);
 				}
 			}
 			
@@ -126,9 +122,9 @@ export default class object {
 		if (typeof value === "object" || typeof value === "function")
 			return value;
 		
-		for (var n = 0; n < object.array.length; n++)
-			if (object.array[n].objectName === value)
-				return object.array[n];
+		for (var n = 0; n < GameObject.array.length; n++)
+			if (GameObject.array[n].objectName === value)
+				return GameObject.array[n];
 			
 		console.warn("FAIL: ", typeof value, value);
 		return null;
@@ -137,5 +133,5 @@ export default class object {
 
 }
 
-object.names = [];
-object.array = [];
+GameObject.names = [];
+GameObject.array = [];

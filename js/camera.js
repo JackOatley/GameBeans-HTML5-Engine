@@ -1,8 +1,3 @@
-/**
- * @module camera
- */
-
-//
 import room from "./room.js";
 import draw from "./draw.js";
 
@@ -34,7 +29,6 @@ export default class Camera {
 	 *
 	 */
 	update() {
-		
 		if (this.follow) {
 			
 			// if single instance, put into array
@@ -56,7 +50,7 @@ export default class Camera {
 				y += inst.y * weight;
 				count += weight;
 				
-			} );
+			});
 			
 			this.x = x / count;
 			this.y = y / count;
@@ -82,7 +76,7 @@ export default class Camera {
 	/**
 	 *
 	 */
-	static update() {
+	static updateAll() {
 		Camera.array.forEach((cam) => {
 			cam.update();
 		});

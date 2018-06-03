@@ -1,28 +1,23 @@
-/**
- * @module Tilemap
- */
-
-//
 import Generator from "./generator.js";
 import Grid from "./data/dataGrid.js";
 import draw from "./draw.js";
 import Sprite from "./sprite.js";
 
 /**
- *
+ * @author Jack Oatley
  */
 export default class Tilemap {
 	
 	/**
-	 * @param {object} opts
-	 * @param {sprite} opts.atlas
-	 * @param {number} opts.tileWidth
-	 * @param {number} opts.tileHeight
-	 * @param {number} opts.tileSpacing
-	 * @param {number} opts.tileOverlay
-	 * @param {number} opts.tilesWide
-	 * @param {number} opts.mapWidth
-	 * @param {number} opts.mapHeight
+	 * @param {object} [opts={}] Options object to define the Tilemap.
+	 * @param {sprite} [opts.atlas]
+	 * @param {number} [opts.tileWidth]
+	 * @param {number} [opts.tileHeight]
+	 * @param {number} [opts.tileSpacing]
+	 * @param {number} [opts.tileOverlay]
+	 * @param {number} [opts.tilesWide]
+	 * @param {number} [opts.mapWidth]
+	 * @param {number} [opts.mapHeight]
 	 */
 	constructor(opts = {}) {
 		this.textureAtlas = opts.atlas || null;
@@ -41,7 +36,10 @@ export default class Tilemap {
 	}
 	
 	/**
-	 *
+	 * @param {string} layer Name of the player in which to place this tile.
+	 * @param {number} x The X grid position to place this tile.
+	 * @param {number} y The Y grid position to place this tile.
+	 * @param {number} index The tile index.
 	 */
 	set(layer, x, y, index) {
 		if (!this.layers[layer]) {
@@ -51,9 +49,15 @@ export default class Tilemap {
 	}
 	
 	/**
-	 *
+	 * @param {object} [opts={}]
+	 * @param {array} [opts.order]
+	 * @param {number} [opts.left]
+	 * @param {number} [opts.top]
+	 * @param {number} [opts.right]
+	 * @param {number} [opts.bottom]
 	 */
 	draw(opts) {
+		const atlas = this.__atlas;
 		const tw = this.tileWidth;
 		const th = this.tileHeight;
 		const tsw = this.tilesWide;
@@ -62,10 +66,10 @@ export default class Tilemap {
 		const renderWidth = tw + overlay * 2;
 		const renderHeight = th + overlay * 2;
 		const order = opts.order || Object.keys(this.layers);
-		let startX = ~~(Math.max(0, (opts.left || 0) / tw));
-		let startY = ~~(Math.max(0, (opts.top || 0) / th));
-		let endX = Math.ceil(Math.min(this.mapWidth, (opts.right || 0) / tw));
-		let endY = Math.ceil(Math.min(this.mapHeight, (opts.bottom || 0) / th));
+		const startX = ~~(Math.max(0, (opts.left || 0) / tw));
+		const startY = ~~(Math.max(0, (opts.top || 0) / th));
+		const endX = Math.ceil(Math.min(this.mapWidth, (opts.right || 0) / tw));
+		const endY = Math.ceil(Math.min(this.mapHeight, (opts.bottom || 0) / th));
 		let x, y, n, layer, tile, iX, iY;
 		for (n=0; n<order.length; n++) {
 			layer = this.layers[order[n]];
@@ -76,7 +80,7 @@ export default class Tilemap {
 					iX = (tile % tsw) * (tw + gap*2) + gap;;
 					iY = ~~(tile / tsw) * (th + gap*2) + gap;
 					draw.context.drawImage(
-						this.__atlas,
+						atlas,
 						iX - overlay, iY - overlay,
 						renderWidth, renderHeight,
 						x * tw - overlay, // target x
@@ -91,6 +95,4 @@ export default class Tilemap {
 }
 
 // Static methods, created via the Generator class
-Tilemap.create = Generator.functionFromConstructor(Tilemap);
-Tilemap.set = Generator.functionFromMethod(Tilemap.prototype.set);
-Tilemap.draw = Generator.functionFromMethod(Tilemap.prototype.draw);
+Generator.classStaticMatch(Tilemap);

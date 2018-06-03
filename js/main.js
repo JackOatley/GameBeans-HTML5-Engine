@@ -104,10 +104,11 @@ function tick( timestamp ) {
 }
 
 /**
- *
+ * @param {number} ticks
  */
-function queueUpdates(numTicks) {
-	for(var i = 0; i < numTicks; i++) {
+function queueUpdates(ticks) {
+	let i;
+	for(i=0; i<ticks; i++) {
 		lastTick = lastTick + tickLength;
 		dt = 1;
 		gameUpdate(1);
@@ -130,7 +131,7 @@ function gameDraw() {
 	draw.reset();
 	canvas.clear(canvas.main, "#000000");
 	room.draw(room.current);
-	Camera.update();
+	Camera.updateAll();
 	instance.drawAll();
 	Transition.drawAll();
 }
@@ -139,11 +140,11 @@ function gameDraw() {
  *
  */
 function handleResizeEvent() {
-	instance.executeEventAll( "resize" );
+	instance.executeEventAll("resize");
 }
 
 // attach event listerners
-window.addEventListener( "resize", handleResizeEvent );
+window.addEventListener("resize", handleResizeEvent);
 
 //
 export default main;

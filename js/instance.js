@@ -1,13 +1,9 @@
-/**
- * @module instances
- */
-
 import math from "./math.js";
 import input from "./input.js";
 import object from "./object.js";
 import sprite from "./sprite.js";
 import draw from "./draw.js";
-import compile from "./compile.js";
+import Compiler from "./compile.js";
 
 //
 window.global = {};
@@ -30,7 +26,7 @@ let instance = {
 		
 		//
 		let o = object.get(obj);
-		if ( o === null ) {
+		if (o === null) {
 			window.addConsoleText("#F00", "No such object as " + obj);
 			window._GB_stop();
 			return null;
@@ -40,13 +36,13 @@ let instance = {
 		inst.object = o;
 		inst.objectName = o.objectName;
 		inst.assetType = "instance";
-		inst.x = Number( x );
-		inst.y = Number( y );
-		inst.boxCollision = Object.assign( {}, inst.boxCollision );
+		inst.x = Number(x);
+		inst.y = Number(y);
+		inst.boxCollision = Object.assign({}, inst.boxCollision);
 		
 		//
-		let spr = sprite.get( inst.sprite );
-		if ( spr ) {
+		let spr = sprite.get(inst.sprite);
+		if (spr) {
 			inst.boxCollision.x = spr.originX;
 			inst.boxCollision.y = spr.originY;
 			inst.boxCollision.width = spr.width;
@@ -54,10 +50,10 @@ let instance = {
 		}
 		
 		//
-		instance.addToArray( inst );
-		instance.updateBoundingBox( inst );
-		instance.updateCollisionBox( inst );
-		instance.executeEvent( inst, "create" );
+		instance.addToArray(inst);
+		instance.updateBoundingBox(inst);
+		instance.updateCollisionBox(inst);
+		instance.executeEvent(inst, "create");
 		
 		//
 		return inst;
@@ -68,16 +64,14 @@ let instance = {
 	 *
 	 */
 	addToArray: function(inst) {
-		
-		for ( var i=0; i<aInstances.length; i++ ) {
-			if ( inst.depth <= aInstances[i].depth ) {
-				aInstances.splice( i, 0, inst );
+		let i;
+		for (i=0; i<aInstances.length; i++) {
+			if (inst.depth <= aInstances[i].depth) {
+				aInstances.splice(i, 0, inst);
 				return;
 			}
 		}
-		
 		aInstances.push(inst);
-
 	},
 
 	/**
@@ -87,7 +81,7 @@ let instance = {
 	 * @param {number} speed
 	 * @param {number} direction
 	 */
-	createMoving: function( obj, x, y, speed, direction ) {
+	createMoving: function(obj, x, y, speed, direction) {
 
 		if ( aInstances.length >= instance.instanceHardLimit ) {
 			console.warn( "instance number hard limit reached:", instance.instanceHardLimit );
@@ -104,18 +98,16 @@ let instance = {
 	/**
 	 *
 	 */
-	find: function( objectName, instNumber ) {
-		
-		let n, c=0;
-		for ( n=0; n<aInstances.length; n++ ) {
-			let inst = instance.instanceArray[n];
-			if ( inst.objectName === objectName ) {
-				if ( c++ === instNumber )
+	find: function(objectName, instNumber) {
+		let n, c=0, inst;
+		for (n=0; n<aInstances.length; n++) {
+			inst = instance.instanceArray[n];
+			if (inst.objectName === objectName) {
+				if (c++ === instNumber)
 					return inst;
 			}
 		}
 		return null;
-		
 	},
 
 	/**
@@ -138,14 +130,12 @@ let instance = {
 	/**
 	 *
 	 */
-	count: function( objectName ) {
-		
-		let n, c=0;
-		instance.instanceArray.forEach( function( inst ) {
+	count: function(objectName) {
+		let c=0;
+		instance.instanceArray.forEach((inst) => {
 			c += (inst.objectName === objectName);
-		} );
+		});
 		return c;
-		
 	},
 
 	/**
@@ -165,43 +155,42 @@ let instance = {
 	},
 
 	/**
-	 * @param {object} inst
+	 * @param {object} inst Check the mouse is over this instance.
 	 */
 	mouseOn: function(inst) {
-		
 		return !(inst.boxTop > input.mouse.y/2 - draw.offsetY
 		|| inst.boxBottom < input.mouse.y/2 - draw.offsetY
 		|| inst.boxLeft > input.mouse.x/2 - draw.offsetX
 		|| inst.boxRight < input.mouse.x/2 - draw.offsetX);
-		
 	},
 
 	/**
-	 * @param {instance} inst
+	 * @param {instance} inst Instance to excute step event of.
+	 * @param {time} dt Delta time.
 	 */
-	step: function( inst, dt ) {
+	step: function(inst, dt) {
 		
 		// step events
-		instance.executeEvent( inst, "step" );
-		instance.updateAnimation( inst, dt );
-		instance.updatePosition( inst, dt );
-		instance.updateBoundingBox( inst );
-		instance.updateCollisionBox( inst );
+		instance.executeEvent(inst, "step");
+		instance.updateAnimation(inst, dt);
+		instance.updatePosition(inst, dt);
+		instance.updateBoundingBox(inst);
+		instance.updateCollisionBox(inst);
 		
 		// collision events
-		instance.instanceExecuteListeners( inst );
+		instance.instanceExecuteListeners(inst);
 		
 		// input events
-		input.triggerEvents.forEach( function( event ) {
-			instance.executeEvent( inst, event );
-		} );
+		input.triggerEvents.forEach((event) => {
+			instance.executeEvent(inst, event);
+		});
 		
 	},
 
 	/**
 	 *
 	 */
-	updateAnimation: function( inst, dt ) {
+	updateAnimation: function(inst, dt) {
 		
 		inst.index += inst.imageSpeed;
 		let spr = sprite.get( inst.sprite );
@@ -241,7 +230,7 @@ let instance = {
 	/**
 	 *
 	 */
-	updatePosition: function( inst, dt ) {
+	updatePosition: function(inst, dt) {
 		
 		// if the instance is already falling at terminal velocity then we no longer apply gravity
 		let gravVector = {
@@ -266,31 +255,27 @@ let instance = {
 	},
 
 	/**
-	 * @param {object} inst
+	 * @param {object} i Instance whos bounding box to update.
 	 */
-	updateBoundingBox: function( inst ) {
-
-		let spr = sprite.get( inst.sprite );
-		if ( spr !== null ) {
-			inst.boxTop    = inst.y - spr.originY * inst.scaleY;
-			inst.boxLeft   = inst.x - spr.originX * inst.scaleX;
-			inst.boxBottom = inst.boxTop + spr.height * inst.scaleY;
-			inst.boxRight  = inst.boxLeft + spr.width * inst.scaleX;
+	updateBoundingBox: function(i) {
+		let spr = sprite.get(i.sprite);
+		if (spr !== null) {
+			i.boxTop = i.y - spr.originY * i.scaleY;
+			i.boxLeft = i.x - spr.originX * i.scaleX;
+			i.boxBottom = i.boxTop + spr.height * i.scaleY;
+			i.boxRight = i.boxLeft + spr.width * i.scaleX;
 		}
-
 	},
 
 	/**
-	 * @param {object} inst
+	 * @param {object} i Instance.
 	 */
-	updateCollisionBox: function( inst ) {
-		
-		let box = inst.boxCollision;
-		box.top    = inst.y - box.y * inst.scaleY;
-		box.left   = inst.x - box.x * inst.scaleX;
-		box.bottom = box.top + box.height * inst.scaleY;
-		box.right  = box.left + box.width * inst.scaleX;
-			
+	updateCollisionBox: function(i) {
+		let box = i.boxCollision;
+		box.top = i.y - box.y * i.scaleY;
+		box.left = i.x - box.x * i.scaleX;
+		box.bottom = box.top + box.height * i.scaleY;
+		box.right = box.left + box.width * i.scaleX;
 	},
 
 	/**
@@ -367,29 +352,29 @@ let instance = {
 	/**
 	 *
 	 */
-	instanceCollisionInstance: function( inst, target ) {
+	instanceCollisionInstance: function(inst, target) {
 		
-		let arr = object.getAllInstances( target );
+		let arr = object.getAllInstances(target);
 		let box1 = inst.boxCollision;
-		arr.forEach( function( targ ) {
+		arr.forEach(function(targ) {
 			
 			// same instance
-			if ( inst === targ )
+			if (inst === targ)
 				return;
 			
 			// no collision
 			let box2 = targ.boxCollision;
-			if ( box1.left > box2.right
-			||   box1.right < box2.left
-			||   box1.top > box2.bottom
-			||   box1.bottom < box2.top ) {
+			if (box1.left > box2.right
+			|| box1.right < box2.left
+			|| box1.top > box2.bottom
+			|| box1.bottom < box2.top) {
 				return;
 			}
 				
 			// execute collision event
-			instance.executeEvent( inst, "collision_" + target, targ );
+			instance.executeEvent(inst, "collision_" + target, targ);
 			
-		} );
+		});
 		
 	},
 
@@ -398,24 +383,22 @@ let instance = {
 	 * @param {event} event
 	 * @param {instance} otherInst The other instance, in collisions for example.
 	 */
-	executeEvent: function( inst, event, otherInst ) {
+	executeEvent: function(inst, event, otherInst) {
 		
 		// set the current "other" instance
-		otherStack.push( window.other );
+		otherStack.push(window.other);
 		window.other = otherInst;
 		
 		//
 		try {
-			
-			if ( inst.exists ) {
+			if (inst.exists) {
 				let actions = inst.events[event];
-				if ( actions ) {
-					instance.executeActions( inst, actions, otherInst );
+				if (actions) {
+					instance.executeActions(inst, actions, otherInst);
 				}
 			}
-			
 		}
-		catch ( err ) {
+		catch (err) {
 			console.error( err );
 			window.addConsoleText( "#F00",
 				"Failed to execute event [" + event + "]"
@@ -425,11 +408,11 @@ let instance = {
 		
 		// restore previous "other" instance
 		window.other = otherStack.pop();
-		
 	},
 	
 	/**
-	 *
+	 * @param {string} event The event to secute for all instances.
+	 * @param {instace} other
 	 */
 	executeEventAll: function(event, otherInst) {
 		for (var n = 0; n < aInstances.length; n++)
@@ -446,40 +429,38 @@ let instance = {
 			scope = 0,
 			a, action;
 		
-		for ( a=0; a<actions.length; a++ ) {
+		for (a=0; a<actions.length; a++) {
 			
 			action = actions[a];
-			switch ( action.flow ) {
+			switch (action.flow) {
 				
 				// regular action
-				case ( "" ):
+				case (""):
 					
-					if ( condition ) {
-						let func = action.action,
-							args = action.args,
-							n, newArgs = [];
-						
-						//console.log(args);
-						for ( n = 0; n < args.length; n++ ) {
-							switch ( args[n] ) {
-								case ( "self" ): newArgs[n] = inst; break;
-								case ( "other" ): newArgs[n] = otherInst; break;
-								default: newArgs[n] = compile.actionExpression.call(inst, args[n]); break
-							}
-							
+					if (!condition)
+						break;
+					
+					const args = action.args;
+					let n, newArgs = [];
+					for (n = 0; n < args.length; n++) {
+						switch (args[n]) {
+							case ("self"): newArgs[n] = inst; break;
+							case ("other"): newArgs[n] = otherInst; break;
+							default: newArgs[n] = Compiler.actionExpression.call(inst, args[n]); break
 						}
-							
-						condition = func.apply(inst, newArgs);
-						( condition === undefined )
-							? condition = true
-							: steps[scope] = 0;
 					}
+						
+					condition = action.action.apply(inst, newArgs);
+					(condition === undefined)
+						? condition = true
+						: steps[scope] = 0;
+					
 					break;
 				
 				// control actions
-				case ( "blockBegin" ): scope++; break;
-				case ( "blockEnd" ): scope--; break;
-				case ( "exitEvent" ): if ( condition ) return false; break;
+				case ("blockBegin"): scope++; break;
+				case ("blockEnd"): scope--; break;
+				case ("exitEvent"): if (condition) return false;
 				
 			}
 			
@@ -494,14 +475,14 @@ let instance = {
 	/**
 	 * @param {number} dt Delta time.
 	 */
-	stepAll: (dt) => {
+	stepAll: function(dt) {
 		aInstances.forEach((i) => {
 			instance.step(i, dt);
 		});
 	},
 
 	/** */
-	drawAll: () => {
+	drawAll: function() {
 		aInstances.forEach((i) => {
 			if (i) instance.draw(i);
 		});
