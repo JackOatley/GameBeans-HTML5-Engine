@@ -3,6 +3,7 @@
  */
 
 //
+import Generator from "./generator.js";
 import Grid from "./data/dataGrid.js";
 import draw from "./draw.js";
 import Sprite from "./sprite.js";
@@ -13,7 +14,15 @@ import Sprite from "./sprite.js";
 export default class Tilemap {
 	
 	/**
-	 *
+	 * @param {object} opts
+	 * @param {sprite} opts.atlas
+	 * @param {number} opts.tileWidth
+	 * @param {number} opts.tileHeight
+	 * @param {number} opts.tileSpacing
+	 * @param {number} opts.tileOverlay
+	 * @param {number} opts.tilesWide
+	 * @param {number} opts.mapWidth
+	 * @param {number} opts.mapHeight
 	 */
 	constructor(opts = {}) {
 		this.textureAtlas = opts.atlas || null;
@@ -79,11 +88,9 @@ export default class Tilemap {
 		}
 	}
 	
-	/**
-	 *
-	 */
-	static create(opts = {}) {
-		return new Tilemap(opts);
-	}
-	
 }
+
+// Static methods, created via the Generator class
+Tilemap.create = Generator.functionFromConstructor(Tilemap);
+Tilemap.set = Generator.functionFromMethod(Tilemap.prototype.set);
+Tilemap.draw = Generator.functionFromMethod(Tilemap.prototype.draw);

@@ -8,15 +8,11 @@ export default {
 	/**
 	 * @param {function} constructor Constructor function.
 	 */
-	functionFromConstructor: (constructor) => {
-		return function(...a) { return new constructor(...a); }
-	},
+	functionFromConstructor: c => (...a) => new c(...a),
 
 	/**
-	 * @param {function} method
+	 * @param {function} method Prototype method.
 	 */
-	functionFromMethod: (method) => {
-		return function(...a) { return method.call(...a); }
-	}
+	functionFromMethod: m => (...a) => m.call(...a)
 	
 }

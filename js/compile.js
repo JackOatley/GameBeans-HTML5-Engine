@@ -42,26 +42,26 @@ export default class Compiler {
 				
 			for (n = 0; n < exp.length; n++) {
 				
-				let c = exp.charAt( n );
-				switch ( c ) {
+				let c = exp.charAt(n);
+				switch (c) {
 					
-					case ( "'" ):
-						if ( sIndex === -1 ) {
+					case ("'"):
+						if (sIndex === -1) {
 							sIndex = n + 1
 						} else {
-							newArr.push( "'" + exp.slice( sIndex, n ) + "'" );
+							newArr.push("'" + exp.slice(sIndex, n) + "'");
 							sIndex = -1;
 						}
 						break;
 						
 					default:
-						if ( sIndex === -1 && c !== " " ) {
-							if ( c === "+" || c === "-" || c === "=" ) {
-								if ( string !== "" ) {
-									newArr.push( string );
+						if (sIndex === -1 && c !== " ") {
+							if (Compiler.splitCharacters.includes(c)) {
+								if (string !== "") {
+									newArr.push(string);
 									string = "";
 								}
-								newArr.push( c );
+								newArr.push(c);
 							} else {
 								string += c;
 							}
@@ -84,10 +84,10 @@ export default class Compiler {
 					let c = word.charAt(0);
 					if (c === "'") {
 						y += word;
-					} else if (c === "+" || c === "-") {
+					} else if (Compiler.splitCharacters.includes(c)) {
 						y += word;
 					} else {
-						if ( word === "fps" )
+						if (word === "fps")
 							y += global.fps;
 						else {
 							if (!Compiler.isResource(word)
@@ -136,19 +136,12 @@ export default class Compiler {
 	
 	/** */
 	static isBoolean(x) {
-		return x === "true"
-			|| x === "false"
-			|| x === true
-			|| x === false;
+		return Compiler.booleans.includes(x);
 	}
 	
 	/** */
 	static isOperator(x) {
-		return x === "<"
-			|| x === ">"
-			|| x === "<="
-			|| x === ">="
-			|| x === "==";
+		return Compiler.assignmentOperators.includes(x);
 	}
 	
 	/** */
@@ -157,3 +150,7 @@ export default class Compiler {
 	}
 
 }
+
+Compiler.booleans = [true, false, "true", "false"];
+Compiler.assignmentOperators = ["<", ">", "<=", ">=", "==", "===", "!=", "!=="];
+Compiler.splitCharacters = ["+", "-", "=", "!"];
