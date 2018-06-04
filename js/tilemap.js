@@ -36,7 +36,7 @@ export default class Tilemap {
 	}
 	
 	/**
-	 * @param {string} layer Name of the player in which to place this tile.
+	 * @param {string} layer Name of the player in which to place the tile.
 	 * @param {number} x The X grid position to place this tile.
 	 * @param {number} y The Y grid position to place this tile.
 	 * @param {number} index The tile index.

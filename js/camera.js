@@ -1,13 +1,22 @@
 import room from "./room.js";
 import draw from "./draw.js";
+import Generator from "./generator.js";
 
 /**
- *
+ * @author Jack Oatley
  */
 export default class Camera {
 	
 	/**
-	 *
+	 * Create a new Camera instance.
+	 * @param {object} [opts={}]
+	 * @param {number} [x]
+	 * @param {number} [y]
+	 * @param {number} [angle]
+	 * @param {number} [width]
+	 * @param {number} [height]
+	 * @param {number} [follow]
+	 * @param {number} [gridLocked]
 	 */
 	constructor(opts = {}) {
 		this.x = 0,
@@ -26,7 +35,7 @@ export default class Camera {
 	}
 	
 	/**
-	 *
+	 * Update the Camera.
 	 */
 	update() {
 		if (this.follow) {
@@ -65,23 +74,10 @@ export default class Camera {
 		// apply camera
 		draw.transform.translate(-this.left, -this.top);
 	}
-	
-	/**
-	 *
-	 */
-	static create(opts = {}) {
-		return new Camera(opts);
-	}
-	
-	/**
-	 *
-	 */
-	static updateAll() {
-		Camera.array.forEach((cam) => {
-			cam.update();
-		});
-	}
-	
+
 }
 
 Camera.array = [];
+
+Camera.create = Generator.functionFromConstructor(Camera);
+Camera.updateAll = Generator.arrayExecute(Camera.array, Camera.prototype.update);

@@ -27,4 +27,12 @@ export default class Generator {
 		return (...a) => m.call(...a);
 	}
 	
+	/**
+	 * @param {array} a An array of instances of constructor with the following method.
+	 * @param {function} m The method to execute for each instance in the array.
+	 */
+	static arrayExecute(a, m) {
+		return (...p) => a.forEach(i => m.call(i, ...p));
+	}
+	
 }
