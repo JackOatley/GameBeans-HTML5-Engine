@@ -4,27 +4,31 @@
 export default class Generator {
 	
 	/**
-	 * @param {function} constructor Constructor function.
+	 * @param {function} c Constructor function.
 	 */
 	static classStaticMatch(c) {
 		c.create = Generator.functionFromConstructor(c);
 		for (let m in c.prototype) {
-			c[m] = Generator.functionFromMethod(c.prototype[m]);
+			c[m] = Generator.functionFromMethod(c.prototype[m], c.get);
 		}
 	}
 	
 	/**
-	 * @param {function} constructor Constructor function.
+	 * @param {function} c Constructor function.
 	 */
 	static functionFromConstructor(c) {
 		return (...a) => new c(...a);
 	}
 
 	/**
-	 * @param {function} method Prototype method.
+	 * @param {function} m Prototype method.
+	 * @param {function} [get] Optional get function (static on the constructor.)
 	 */
-	static functionFromMethod(m) {
-		return (...a) => m.call(...a);
+	static functionFromMethod(m, get) {
+		if (get)
+			return (s, ...a) => m.call(get(s), ...a);
+		else
+			return (...a) => m.call(...a);
 	}
 	
 	/**
