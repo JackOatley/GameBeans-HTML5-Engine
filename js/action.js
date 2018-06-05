@@ -2,7 +2,7 @@
  * @module actions
  */
 
-import room from "./room.js";
+import Room from "./room.js";
 import Sound from "./sound.js";
 import draw from "./draw.js";
 import instance from "./instance.js";
@@ -207,7 +207,7 @@ let GAME = {
 		stop: Sound.stop,
 		get: Sound.get
 	},
-	room: room,
+	Room: Room,
 	input: {
 		keyboard: input.keyboard,
 		mouse: input.mouse,
