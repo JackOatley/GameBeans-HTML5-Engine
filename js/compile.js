@@ -2,6 +2,7 @@ import global from "./global.js";
 import object from "./object.js";
 import sprite from "./sprite.js";
 import sound from "./sound.js";
+import room from "./room.js";
  
 /**
  * @author Jack Oatley
@@ -101,6 +102,7 @@ export default class Compiler {
 				}
 			} );
 			
+			console.log(y)
 			return eval(y);
 			
 		}
@@ -113,7 +115,8 @@ export default class Compiler {
 	static isResource(x) {
 		return object.names.includes(x)
 			|| sprite.names.includes(x)
-			|| sound.names.includes(x);
+			|| sound.names.includes(x)
+			|| room.names.includes(x);
 	}
 	
 	/** */

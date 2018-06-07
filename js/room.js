@@ -22,6 +22,7 @@ export default class Room {
 		this.background = null;
 		this.backgroundMethod = "no-repeat";
 		this.instances = [];
+		Room.names.push(name);
 		Room.array.push(this);
 		if (Room.current === null)
 			Room.current = this;
@@ -31,7 +32,6 @@ export default class Room {
 	 * @param {string} spr
 	 */
 	setBackground(spr) {
-		console.log(this, spr);
 		this.background = spr;
 	}
 
@@ -41,6 +41,7 @@ export default class Room {
 	 * @param {number} y
 	 */
 	addInstance(inst, x, y) {
+		if (typeof inst === "object") inst = inst.objectName;
 		this.instances.push({
 			name: inst, x: x, y: y
 		});
@@ -77,7 +78,7 @@ export default class Room {
 		instance.executeEventAll("roomenter");
 
 	}
-
+	
 	/**
 	 *
 	 */
@@ -97,6 +98,18 @@ export default class Room {
 		}
 	}
 	
+	/** */
+	static next() {
+		const index = Room.array.indexOf(Room.current);
+		Room.enter(Room.array[index+1]);
+	}
+	
+	/** */
+	static previous() {
+		const index = Room.array.indexOf(Room.current);
+		Room.enter(Room.array[index-1]);
+	}
+	
 	/**
 	 *
 	 */
@@ -111,7 +124,8 @@ export default class Room {
 	}
 
 }
- 
+
+Room.names = [];
 Room.array = [];
 Room.current = null;
 Generator.classStaticMatch(Room);

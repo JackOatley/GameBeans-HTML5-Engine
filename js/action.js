@@ -227,6 +227,9 @@ let GAME = {
 let blockBegin            = "blockBegin",
 	blockEnd        	  = "blockEnd",
 	exitEvent        	  = "exitEvent",
+	roomEnter             = Room.enter,
+	roomNext              = Room.next,
+	roomPrevious          = Room.previous,
 	instanceCreate    	  = instance.create,
 	instanceCreateMoving  = instance.createMoving,
 	instanceDestroy       = instance.destroy,
@@ -242,7 +245,8 @@ let blockBegin            = "blockBegin",
 	drawText              = draw.text,
 	drawSelf              = instance.drawSelf,
 	drawSprite            = draw.sprite,
-	soundPlay = function(snd, loop) {Sound.play(snd, {loop: loop})};
+	soundPlay = function(snd, loop) {Sound.play(snd, {loop: loop})},
+	soundStop = Sound.stop;
 
 //
 export {
@@ -253,7 +257,7 @@ export {
 	instanceSetDirection,
 	changeSprite,
 	changeSprite as instanceChangeSprite,
-	soundPlay,
+	soundPlay, soundStop,
 	drawSetColor,
 	drawSetFont,
 	drawSetFontSize,
@@ -261,8 +265,8 @@ export {
 	drawSelf,
 	drawSelf as instanceDrawSelf,
 	drawSprite,
-	blockBegin,
-	blockEnd,
+	roomEnter, roomNext, roomPrevious,
+	blockBegin, blockEnd,
 	exitEvent,
 	actionSet        as set,
 	actionGet        as get,

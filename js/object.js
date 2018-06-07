@@ -13,12 +13,17 @@ export default class GameObject {
 	 * @param {number} sprite
 	 */
 	constructor(name, sprite) {
-		let obj = function(){};
+		let obj = function(x, y) {
+			let inst = obj.pool.get(this);
+			instance.setup(inst, obj, x, y);
+			return inst;
+		};
 		objectVars.set(obj.prototype);
 		obj.assetType = "object";
 		obj.objectName = name || "object_" + obj.id;
 		obj.prototype.sprite = sprite || null;
 		obj.pool = new Pool(obj);
+		//obj.instances = [];
 		GameObject.names.push(obj.objectName);
 		GameObject.array.push(obj);
 		return obj;
@@ -33,7 +38,7 @@ export default class GameObject {
 	
 	/**
 	 *
-		*/
+	 */
 	static set(obj, property, value) {
 		obj = GameObject.get(obj);
 		obj.prototype[property] = value;

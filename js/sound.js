@@ -1,9 +1,5 @@
 /**
- * @module sound
- */
- 
-/**
- *
+ * @author Jack Oatley
  */
 export default class Sound {
 

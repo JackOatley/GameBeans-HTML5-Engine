@@ -73,42 +73,39 @@ let draw = {
 	/**
 	 *
 	 */
-	setImageSmoothing: function( enable ) {
+	setImageSmoothing: function(enable) {
 		draw.imageSmoothing = enable;
 	},
 
 	//
 	transform: {
 		
-		scale: function( x, y ) {
-			draw.context.scale( x, y );
+		scale: function(x, y) {
+			draw.context.scale(x, y);
 		},
 		
-		rotate: function( rot ) {
-			draw.context.rotate( rot * math.DEGTORAD );
+		rotate: function(rot) {
+			draw.context.rotate(rot * math.DEGTORAD);
 		},
 		
-		translate: function( x, y ) {
+		translate: function(x, y) {
 			draw.offsetX = x;
 			draw.offsetY = y;
-			draw.context.translate( x, y );
+			draw.context.translate(x, y);
 		},
 		
 		/**
-		 * @param {object} opt
+		 * @param {object} [opts={}]
 		 */
-		setDefault: function( opt = {} ) {
-			
+		setDefault: function( opts = {} ) {
 			let trans = draw.defaultTransform;
-			if ( opt.scaleX ) trans[0] = opt.scaleX;
-			if ( opt.skewX ) trans[1] = opt.skewX;
-			if ( opt.skewY ) trans[2] = opt.skewY;
-			if ( opt.scaleY ) trans[3] = opt.scaleY;
-			if ( opt.moveX ) trans[4] = opt.moveX;
-			if ( opt.moveY ) trans[5] = opt.moveY;
-		
+			if (opts.scaleX) trans[0] = opts.scaleX;
+			if (opts.skewX) trans[1] = opts.skewX;
+			if (opts.skewY) trans[2] = opts.skewY;
+			if (opts.scaleY) trans[3] = opts.scaleY;
+			if (opts.moveX) trans[4] = opts.moveX;
+			if (opts.moveY) trans[5] = opts.moveY;
 		}
-		
 	},
 
 	/**
@@ -187,14 +184,12 @@ let draw = {
 	 * @param {number} h
 	 */
 	spriteTiled: function(spr, index, x, y, w, h) {
-
 		spr = sprite.get(spr);
-		
 		let dx, dy, rx, ry;
-		for ( rx=0, dx=x; rx<w; rx++, dx+=spr.width )
-		for ( ry=0, dy=y; ry<h; ry++, dy+=spr.height )
-			drawSprite( spr, index, dx, dy, 1, 1, 0 );
-
+		for (rx=0, dx=x; rx<w; rx++, dx+=spr.width)
+		for (ry=0, dy=y; ry<h; ry++, dy+=spr.height) {
+			drawSprite(spr, index, dx, dy, 1, 1, 0);
+		}
 	},
 
 	/**
@@ -387,17 +382,15 @@ let draw = {
 		 * @param {number} y1
 		 * @param {number} x2
 		 * @param {number} y2
-		 * @param {object} options
+		 * @param {object} [opts={}]
 		 */
-		line: function( x1, y1, x2, y2, options = {} ) {
-		
+		line: function(x1, y1, x2, y2, opts = {}) {
 			let ctx = draw.context;
-			ctx.strokeStyle = options.color || draw.color;
+			ctx.strokeStyle = opts.color || draw.color;
 			ctx.beginPath();
-			ctx.moveTo( x1, y1 );
-			ctx.lineTo( x2, y2 );
+			ctx.moveTo(x1, y1);
+			ctx.lineTo(x2, y2);
 			ctx.stroke();
-		
 		},
 		
 		/**
@@ -405,7 +398,7 @@ let draw = {
 		 * @param {number} y1
 		 * @param {number} x2
 		 * @param {number} y2
-		 * @param {object} options
+		 * @param {object} [opts={}]
 		 */
 		ellipse: function(x, y, xr, yr, opts = {}) {
 		
@@ -456,28 +449,28 @@ let draw = {
 		 * @param {number} y
 		 * @param {number} w
 		 * @param {number} h
-		 * @param {object} options
+		 * @param {object} [opts={}]
 		 */
-		rectangle: function( x, y, w, h, options = {} ) {
+		rectangle: function(x, y, w, h, opts = {}) {
 		
 			//
 			let ctx = draw.context;
 			ctx.beginPath();
-			ctx.rect( x, y, w, h );
+			ctx.rect(x, y, w, h);
 			
 			//
 			let style;
-			if ( options.healthbar ) {
-				let amount = options.healthbar.amount || 1;
-				let color = options.healthbar.color || "#0F0";
-				let background = options.healthbar.background || "#F00";
-				style = ctx.createLinearGradient( x, 0, x+w, 0 );
-				style.addColorStop( 0, color );
-				style.addColorStop( amount, color );
-				style.addColorStop( amount, background );
-				style.addColorStop( 1, background );
+			if ( opts.healthbar ) {
+				let amount = opts.healthbar.amount || 1;
+				let color = opts.healthbar.color || "#0F0";
+				let background = opts.healthbar.background || "#F00";
+				style = ctx.createLinearGradient(x, 0, x+w, 0);
+				style.addColorStop(0, color);
+				style.addColorStop(amount, color);
+				style.addColorStop(amount, background);
+				style.addColorStop(1, background);
 			} else {
-				style = options.color || draw.color;
+				style = opts.color || draw.color;
 			}
 			
 			//
@@ -485,14 +478,14 @@ let draw = {
 				opts.fill = true;
 			
 			//
-			if (options.fill) {
+			if (opts.fill) {
 				ctx.fillStyle = style;
 				ctx.fill();
 			}
 			
 			if (opts.stroke) {
 				ctx.strokeStyle = style;
-				ctx.lineWidth = options.lineWidth || 1;
+				ctx.lineWidth = opts.lineWidth || 1;
 				ctx.stroke();
 			}
 		

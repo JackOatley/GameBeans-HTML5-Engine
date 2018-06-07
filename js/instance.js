@@ -32,7 +32,12 @@ let instance = {
 			return null;
 		}
 		
-		let inst = o.pool.get();
+		let inst = new o(x, y);
+		return inst;
+
+	},
+	
+	setup: function(inst, o, x, y) {
 		inst.object = o;
 		inst.objectName = o.objectName;
 		inst.assetType = "instance";
@@ -54,10 +59,6 @@ let instance = {
 		instance.updateBoundingBox(inst);
 		instance.updateCollisionBox(inst);
 		instance.executeEvent(inst, "create");
-		
-		//
-		return inst;
-
 	},
 
 	/**
@@ -98,12 +99,13 @@ let instance = {
 	/**
 	 *
 	 */
-	find: function(objectName, instNumber) {
-		let n, c=0, inst;
-		for (n=0; n<aInstances.length; n++) {
-			inst = instance.instanceArray[n];
-			if (inst.objectName === objectName) {
-				if (c++ === instNumber)
+	find: function(obj, n) {
+		if (typeof obj === "function") obj = obj.objectName;
+		let i, c=0, inst;
+		for (i=0; i<aInstances.length; i++) {
+			inst = instance.instanceArray[i];
+			if (inst.objectName === obj) {
+				if (c++ === n)
 					return inst;
 			}
 		}
@@ -113,18 +115,10 @@ let instance = {
 	/**
 	 *
 	 */
-	findRandom: function( name ) {
-		
-		let n, c = 0, instNumber = math.randomInt( 0, count( name ) - 1 );
-		for ( n=0; n<instance.instanceArray.length; n++ ) {
-			let inst = instance.instanceArray[n];
-			if ( inst.objectName === name ) {
-				if ( c++ === instNumber )
-					return inst;
-			}
-		}
-		return null;
-		
+	findRandom: function(obj) {
+		if (typeof obj === "function") obj = obj.objectName;
+		let n = math.randomInt(0, instance.count(obj) - 1);
+		return instance.find(obj, n);
 	},
 
 	/**
@@ -281,10 +275,8 @@ let instance = {
 	/**
 	 *
 	 */
-	destroy: function( inst, ev = true ) {
-		
+	destroy: function(inst, ev = true) {
 		inst.exists = false;
-		
 	},
 
 	/**
