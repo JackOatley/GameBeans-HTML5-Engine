@@ -58,9 +58,9 @@ let input = {
 		input.initTouch();
 		
 		// disable context menu
-		element.oncontextmenu = function( e ) {
+		element.addEventListener("contextmenu", function( e ) {
 			e.preventDefault();
-		}
+		});
 	
 	},
 	
@@ -70,7 +70,7 @@ let input = {
 	initMouse: function() {
 		
 		//
-		let handleMouseDown = function( e ) {
+		let handleMouseDown = function(e) {
 			e.preventDefault();
 			( !__mouse.pressed[e.button] ) && window.focus();
 			__mouse.pressed[e.button] = true;
@@ -78,7 +78,7 @@ let input = {
 		}
 		
 		//
-		let handleMouseUp = function( e ) {
+		let handleMouseUp = function(e) {
 			e.preventDefault();
 			__mouse.pressed[e.button] = false;
 			__mouse.released[e.button] = true;
@@ -94,7 +94,7 @@ let input = {
 		}
 		
 		//
-		let handleMouseWheel = function( e ) {
+		let handleMouseWheel = function(e) {
 			e.preventDefault();
 			let delta = Math.max( -1, Math.min( 1, e.wheelDelta ) );
 			__mouse.wheelUp = delta > 0;
@@ -102,11 +102,10 @@ let input = {
 		}
 		
 		//
-		element.onmousedown = handleMouseDown;
-		element.onmouseup = handleMouseUp;
-		element.onmousemove = handleMouseMove;
-		element.onmousewheel = handleMouseWheel;
-		
+		element.addEventListener("mousedown", handleMouseDown);
+		element.addEventListener("mouseup", handleMouseUp);
+		element.addEventListener("mousemove", handleMouseMove);
+		element.addEventListener("mousewheel", handleMouseWheel);
 	},
 	
 	/**
@@ -115,32 +114,33 @@ let input = {
 	initKeyboard: function() {
 		
 		//
-		keyValues.forEach( function( key ) {
+		keyValues.forEach(function(key) {
 			__keyboard.pressed[key] = false;
 			__keyboard.down[key] = false;
 			__keyboard.released[key] = false;
-		} );
+		});
 		
 		//
-		let handleKeyDown = function( e ) {
+		let handleKeyDown = function(e) {
 			e.preventDefault();
-			if ( !__keyboard.down[e.code] ) {
-				__keyboard.pressed[e.code] = true;
-				__keyboard.down[e.code] = true;
+			const code = e.code || e.key;
+			if ( !__keyboard.down[code] ) {
+				__keyboard.pressed[code] = true;
+				__keyboard.down[code] = true;
 			}
 		}
 		
 		//
-		let handleKeyUp = function( e ) {
+		let handleKeyUp = function(e) {
 			e.preventDefault();
-			__keyboard.released[e.code] = true;
-			__keyboard.down[e.code] = false;
+			const code = e.code || e.key;
+			__keyboard.released[code] = true;
+			__keyboard.down[code] = false;
 		}
 		
 		//
-		element.onkeydown = handleKeyDown;
-		element.onkeyup = handleKeyUp;
-		
+		element.addEventListener("keydown", handleKeyDown);
+		element.addEventListener("keyup", handleKeyUp);
 	},
 	
 	/**
@@ -173,11 +173,10 @@ let input = {
 		}
 		
 		//
-		element.ontouchstart = handleTouchStart;
-		element.ontouchend = handleTouchEnd;
-		element.ontouchcancel = handleTouchEnd;
-		element.ontouchmove = handleTouchMove;
-		
+		element.addEventListener("touchstart", handleTouchStart);
+		element.addEventListener("touchend", handleTouchEnd);
+		element.addEventListener("touchcancel", handleTouchEnd);
+		element.addEventListener("touchmove", handleTouchMove);
 	},
 
 	/**
@@ -200,13 +199,11 @@ let input = {
 					__triggerEvents.push( key + "Released" );
 				
 			} else {
-			
 				console.warn( "input key not supported: ", key );
 				delete __keyboard.down[key];
-			
 			}
 			
-		} );
+		});
 		
 		// map mouse ids to names
 		let mouseMap = ["Left", "Middle", "Right"];
