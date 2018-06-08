@@ -100,11 +100,9 @@ export default class Compiler {
 				} else {
 					y += word;
 				}
-			} );
+			});
 			
-			console.log(y)
 			return eval(y);
-			
 		}
 		
 		return exp;

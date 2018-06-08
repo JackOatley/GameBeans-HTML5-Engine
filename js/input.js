@@ -58,7 +58,7 @@ let input = {
 		input.initTouch();
 		
 		// disable context menu
-		element.addEventListener("contextmenu", function( e ) {
+		element.addEventListener("contextmenu", function(e) {
 			e.preventDefault();
 		});
 	
@@ -72,7 +72,7 @@ let input = {
 		//
 		let handleMouseDown = function(e) {
 			e.preventDefault();
-			( !__mouse.pressed[e.button] ) && window.focus();
+			if (!__mouse.pressed[e.button]) window.focus();
 			__mouse.pressed[e.button] = true;
 			__mouse.down[e.button] = true;
 		}
@@ -96,7 +96,7 @@ let input = {
 		//
 		let handleMouseWheel = function(e) {
 			e.preventDefault();
-			let delta = Math.max( -1, Math.min( 1, e.wheelDelta ) );
+			let delta = Math.max(-1, Math.min(1, e.wheelDelta));
 			__mouse.wheelUp = delta > 0;
 			__mouse.wheelDown = delta < 0;
 		}
@@ -124,7 +124,7 @@ let input = {
 		let handleKeyDown = function(e) {
 			e.preventDefault();
 			const code = e.code || e.key;
-			if ( !__keyboard.down[code] ) {
+			if (!__keyboard.down[code]) {
 				__keyboard.pressed[code] = true;
 				__keyboard.down[code] = true;
 			}
@@ -149,15 +149,15 @@ let input = {
 	initTouch: function() {
 		
 		//
-		let handleTouchStart = function( e ) {
+		let handleTouchStart = function(e) {
 			e.preventDefault();
-			( !__touch.start[0] ) && window.focus();
+			(!__touch.start[0]) && window.focus();
 			__touch.start[0] = true;
 			__touch.held[0] = true;
 		}
 		
 		//
-		let handleTouchEnd = function( e ) {
+		let handleTouchEnd = function(e) {
 			e.preventDefault();
 			__touch.start[0] = false;
 			__touch.end[0] = true;
@@ -165,7 +165,7 @@ let input = {
 		}
 		
 		//
-		let handleTouchMove = function( e ) {
+		let handleTouchMove = function(e) {
 			e.preventDefault();
 			let touches = e.changedTouches;
 			__touch.x[0] = touches[0].pageX;
@@ -183,47 +183,29 @@ let input = {
 	 *
 	 */
 	getTriggerEvents: function() {    
-
-		__triggerEvents.length = 0;
-		Object.keys( __keyboard.down ).forEach( key => {
-			
-			if ( keyValues.includes( key ) ) {
-			
-				if ( __keyboard.down[key] )
-					__triggerEvents.push( key );
-				
-				if ( __keyboard.pressed[key] )
-					__triggerEvents.push( key + "Pressed" );
-				
-				if ( __keyboard.released[key] )
-					__triggerEvents.push( key + "Released" );
-				
+		let triggers = __triggerEvents;
+		triggers.length = 0;
+		Object.keys(__keyboard.down).forEach((key) => {
+			if (keyValues.includes(key)) {
+				if (__keyboard.down[key]) triggers.push(key);
+				if (__keyboard.pressed[key]) triggers.push(key + "Pressed");
+				if (__keyboard.released[key]) triggers.push(key + "Released");
 			} else {
 				console.warn( "input key not supported: ", key );
 				delete __keyboard.down[key];
 			}
-			
 		});
 		
-		// map mouse ids to names
-		let mouseMap = ["Left", "Middle", "Right"];
-		
 		// mouse events
-		for( var n=0; n<3; n++ ) {
-			
-			if ( __mouse.down[n] )
-				__triggerEvents.push( mouseMap[n] + "Down" );
-			
-			if ( __mouse.pressed[n] )
-				__triggerEvents.push( mouseMap[n] + "Pressed" );
-			
-			if ( __mouse.released[n] )
-				__triggerEvents.push( mouseMap[n] + "Released" );
-			
+		let mouseMap = ["Left", "Middle", "Right"];
+		for(var n=0; n<3; n++) {
+			if (__mouse.down[n]) triggers.push(mouseMap[n] + "Down");
+			if (__mouse.pressed[n]) triggers.push(mouseMap[n] + "Pressed");
+			if (__mouse.released[n]) triggers.push(mouseMap[n] + "Released");
 		}
 		
-		if ( __mouse.wheelUp ) __triggerEvents.push( "WheelUp" );
-		if ( __mouse.wheelDown ) __triggerEvents.push( "WheelDown" );
+		if (__mouse.wheelUp) triggers.push("WheelUp");
+		if (__mouse.wheelDown) triggers.push("WheelDown");
 		
 	},
 
@@ -232,21 +214,21 @@ let input = {
 	 */
 	update: function() {
 		
-		Object.keys( __keyboard.down ).forEach( key => {
+		Object.keys(__keyboard.down).forEach( key => {
 			__keyboard.pressed[key] = false;
 			__keyboard.released[key] = false;
-		} );
+		});
 
-		Object.keys( __mouse.down ).forEach( button => {
+		Object.keys(__mouse.down).forEach( button => {
 			__mouse.pressed[button] = false;
 			__mouse.released[button] = false;
-		} );
+		});
 		
-		Object.keys( __touch.held ).forEach( button => {
+		Object.keys(__touch.held).forEach( button => {
 			__touch.start[button] = false;
 			__touch.end[button] = false;
 			__touch.held[button] = false;
-		} );
+		});
 		
 		__mouse.wheelUp = false;
 		__mouse.wheelDown = false;

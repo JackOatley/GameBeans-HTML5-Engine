@@ -114,7 +114,7 @@ function moveReverseY() { this.speedY = -this.speedY; }
 function actionWrap() {
 	let width = this.boxRight - this.boxLeft;
 	let height = this.boxBottom - this.boxTop;
-	let thisRoom = room.current;
+	let thisRoom = Room.current;
 	let roomW = thisRoom.width;
 	let roomH = thisRoom.height;
 	if (this.boxRight < 0) this.x += roomW + width;
@@ -129,7 +129,7 @@ function actionWrap() {
 function actionConfine() {
 	let width = this.boxRight - this.boxLeft;
 	let height = this.boxBottom - this.boxTop;
-	let thisRoom = room.current;
+	let thisRoom = Room.current;
 	let roomW = thisRoom.width;
 	let roomH = thisRoom.height;
 	if (this.boxLeft < 0) this.x = 0;
