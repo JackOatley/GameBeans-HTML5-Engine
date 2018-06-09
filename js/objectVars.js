@@ -1,8 +1,3 @@
-/**
- *
- */
- 
-//
 import math from "./math.js";
 import instance from "./instance.js";
  
@@ -39,31 +34,26 @@ let basic = JSON.stringify({
 		bottom: 0,
 		left: 0,
 		right: 0 
-	},
-	_depth: 0
+	}
 });
  
 //
-let objectVarsModule = {
+let objectVars = {
 	
 	/**
 	 *
 	 */
-	set: function( proto ) {
+	set: function(proto) {
+		Object.assign(proto, JSON.parse( basic ) );
 		
-		Object.assign( proto, JSON.parse( basic ) );
-		
+		let depth = 0;
 		Object.defineProperty( proto, "depth", {
-			set: function( x ) {
-				this._depth = x;
-				instance.instanceArray.sort( function( a, b ) {
-					return a._depth - b._depth;
-				} );
+			set: function(x) {
+				depth = x;
+				instance.instanceArray.sort((a, b) => a.depth - b.depth);
 			},
-			get: function() {
-				return this._depth;
-			}
-		} );
+			get: () => depth
+		});
 		
 		Object.defineProperty( proto, "speed", {
 			set: function( x ) {
@@ -92,4 +82,4 @@ let objectVarsModule = {
 }
 
 //
-export default objectVarsModule;
+export default objectVars;

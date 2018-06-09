@@ -93,7 +93,7 @@ function tick( timestamp ) {
 	
 	//
 	input.getTriggerEvents();
-	queueUpdates( numTicks );
+	queueUpdates(numTicks);
 	gameDraw();
 	
 	//

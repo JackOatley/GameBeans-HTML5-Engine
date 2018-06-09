@@ -34,7 +34,6 @@ let instance = {
 		
 		let inst = new o(x, y);
 		return inst;
-
 	},
 	
 	setup: function(inst, o, x, y) {
@@ -468,7 +467,8 @@ let instance = {
 	 * @param {number} dt Delta time.
 	 */
 	stepAll: function(dt) {
-		aInstances.forEach((i) => {
+		let arr = aInstances.slice();
+		arr.forEach((i) => {
 			instance.step(i, dt);
 		});
 	},
