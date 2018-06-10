@@ -475,6 +475,8 @@ let instance = {
 
 	/** */
 	drawAll: function() {
+		if (instance.doDepthSort)
+			instance.instanceArray.sort((a, b) => a.depth - b.depth);
 		aInstances.forEach((i) => {
 			if (i) instance.draw(i);
 		});

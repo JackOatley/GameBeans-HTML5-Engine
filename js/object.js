@@ -19,8 +19,8 @@ export default class GameObject {
 			return inst;
 		};
 		objectVars.set(obj.prototype);
-		obj.assetType = "object";
 		obj.objectName = name || "object_" + obj.id;
+		obj.prototype.assetType = "object";
 		obj.prototype.sprite = sprite || null;
 		obj.pool = new Pool(obj);
 		//obj.instances = [];

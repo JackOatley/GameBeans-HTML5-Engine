@@ -16,7 +16,6 @@ export default class Room {
 	 */
 	constructor(name, width, height) {
 		this.name = name;
-		this.assetType = "room";
 		this.width = Number(width);
 		this.height = Number(height);
 		this.background = null;
@@ -125,6 +124,7 @@ export default class Room {
 
 }
 
+Room.prototype.assetType = "room";
 Room.names = [];
 Room.array = [];
 Room.current = null;

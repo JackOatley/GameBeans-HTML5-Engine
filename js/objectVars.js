@@ -44,33 +44,36 @@ let objectVars = {
 	 *
 	 */
 	set: function(proto) {
-		Object.assign(proto, JSON.parse( basic ) );
+		Object.assign(proto, JSON.parse(basic));
 		
 		let depth = 0;
-		Object.defineProperty( proto, "depth", {
+		Object.defineProperty(proto, "depth", {
 			set: function(x) {
-				depth = x;
-				instance.instanceArray.sort((a, b) => a.depth - b.depth);
+				if (depth !== x) {
+					depth = x;
+					console.log("DEPTH SORT!");
+					instance.doDepthSort = true;
+				}
 			},
 			get: () => depth
 		});
 		
-		Object.defineProperty( proto, "speed", {
-			set: function( x ) {
+		Object.defineProperty(proto, "speed", {
+			set: function(x) {
 				let y = this.direction * math.DEGTORAD;
-				this.speedX = Math.cos( y ) * x;
-				this.speedY = Math.sin( y ) * x;
+				this.speedX = Math.cos(y) * x;
+				this.speedY = Math.sin(y) * x;
 			},
 			get: function( x ) {
 				return math.pointDistance( 0, 0, this.speedX, this.speedY );
 			}
 		} );
 		
-		Object.defineProperty( proto, "direction", {
-			set: function( x ) {
+		Object.defineProperty(proto, "direction", {
+			set: function(x) {
 				let y = this.speed;
-				this.speedX = Math.cos( x * math.DEGTORAD ) * y;
-				this.speedY = Math.sin( x * math.DEGTORAD ) * y;
+				this.speedX = Math.cos(x * math.DEGTORAD) * y;
+				this.speedY = Math.sin(x * math.DEGTORAD) * y;
 			},
 			get: function( x ) {
 				return math.pointDirection( 0, 0, this.speedX, this.speedY );

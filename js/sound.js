@@ -8,7 +8,6 @@ export default class Sound {
 	 */
 	constructor(name, source) {
 		this.name = name;
-		this.assetType = "sound";
 		this.instances = [new Audio(source)];
 		this.ready = false;
 		Sound.names.push(name);
@@ -142,6 +141,7 @@ export default class Sound {
 
 }
 
+Sound.prototype.assetType = "sound";
 Sound.isEnabled = true;
 Sound.names = [];
 Sound.array = [];
