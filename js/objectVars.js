@@ -34,7 +34,8 @@ let basic = JSON.stringify({
 		bottom: 0,
 		left: 0,
 		right: 0 
-	}
+	},
+	_depth: 0
 });
  
 //
@@ -46,16 +47,14 @@ let objectVars = {
 	set: function(proto) {
 		Object.assign(proto, JSON.parse(basic));
 		
-		let depth = 0;
 		Object.defineProperty(proto, "depth", {
 			set: function(x) {
-				if (depth !== x) {
-					depth = x;
-					console.log("DEPTH SORT!");
+				if (this._depth !== x) {
+					this._depth = x;
 					instance.doDepthSort = true;
 				}
 			},
-			get: () => depth
+			get: function() { return this._depth; }
 		});
 		
 		Object.defineProperty(proto, "speed", {
