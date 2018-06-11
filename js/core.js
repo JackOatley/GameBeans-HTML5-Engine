@@ -18,6 +18,7 @@ import math from "./math.js";
 import tween from "./tween.js";
 import Transition from "./transition.js";
 import Primitive from "./drawing/primitive.js";
+import Font from "./font.js";
 
 export {
 	main,
@@ -34,5 +35,6 @@ export {
 	draw,
 	math,
 	tween,
-	Transition
+	Transition,
+	Font
 }

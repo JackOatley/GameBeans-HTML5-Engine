@@ -1,9 +1,6 @@
-/**
- * @module draw
- */
-
 import math from "./math.js";
 import sprite from "./sprite.js";
+import canvas from "./canvas.js";
 
 //
 let draw = {
@@ -31,39 +28,34 @@ let draw = {
 		draw.context = target.getContext( "2d" );
 	},
 	
-	/**
-	 *
-	 */
+	/** */
 	resetTarget: function() {
 		let target = draw.targetStack.pop();
 		draw.target = target;
 		draw.context = target.getContext( "2d" );
 	},
 	
-	/**
-	 *
-	 */
+	/** */
 	getTarget: function() {
 		return draw.target;
 	},
+	
+	/** */
+	clear: function(col) {
+		canvas.clear(draw.target, col);
+	},
 
-	/**
-	 *
-	 */
+	/** */
 	save: function() {
 		draw.context.save();
 	},
 	 
-	/**
-	 *
-	 */
+	/** */
 	restore: function() {
 		draw.context.restore();
 	},
 	
-	/**
-	 *
-	 */
+	/** */
 	reset: function() {
 		draw.context.imageSmoothingEnabled = draw.imageSmoothing;
 		draw.context.setTransform(...draw.defaultTransform);
@@ -144,7 +136,7 @@ let draw = {
 	 * @param {number} x
 	 * @param {number} y
 	 */
-	sprite: function( spr, index, x, y, scaleX, scaleY, rotation ) {
+	sprite: function(spr, index, x, y, scaleX, scaleY, rotation ) {
 
 		spr = sprite.get( spr );
 		
@@ -158,7 +150,7 @@ let draw = {
 		ctx.scale( scaleX, scaleY );
 		
 		//
-		index = Math.floor( index ) % spr.images.length;
+		index = Math.floor(index) % spr.images.length;
 		
 		//
 		let frame = spr.images[index];
@@ -172,7 +164,6 @@ let draw = {
 		
 		//
 		ctx.restore();
-
 	},
 
 	/**
@@ -198,8 +189,8 @@ let draw = {
 	 * @param {number} x The X position to draw at.
 	 * @param {number} y The Y position to draw at.
 	 */
-	canvas: function(canvas, x, y) {
-		draw.context.drawImage(canvas, x, y);
+	canvas: function(canv, x, y) {
+		draw.context.drawImage(canv, x, y);
 	},
 	
 	/**
@@ -208,18 +199,16 @@ let draw = {
 	 * @param {string} align Horizontal alignment.
 	 * @param {string} baseline Vertical alignment.
 	 */
-	setFont: function( font, size, align, baseline ) {
-		
+	setFont: function(font, size, align, baseline) {
+		font = typeof font === "string" ? font : font.name;
 		draw.font = font;
 		draw.fontSize = size;
 		draw.textAlign = align;
 		draw.textBaseline = baseline;
-		
-		let ctx = draw.context;
-		ctx.font = draw.fontSize + "px " + draw.font;
-		ctx.textAlign = draw.textAlign;
-		ctx.textBaseline = draw.textBaseline;
-		
+		const ctx = draw.context;
+		ctx.font = size + "px " + font;
+		ctx.textAlign = align;
+		ctx.textBaseline = baseline;
 	},
 
 	/**

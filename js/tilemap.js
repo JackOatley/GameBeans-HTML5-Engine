@@ -96,3 +96,4 @@ export default class Tilemap {
 
 // Static methods, created via the Generator class
 Generator.classStaticMatch(Tilemap);
+Tilemap.prototype.assetType = "tilemap";

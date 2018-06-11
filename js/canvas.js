@@ -1,8 +1,3 @@
-/**
- * @module canvas
- */
-
-//
 import draw from "./draw.js";
 	
 //
@@ -16,23 +11,22 @@ let canvas = {
 	/**
 	 *
 	 */
-	create: function( options = {} ) {
+	create: function(opts = {}) {
 		
 		//
-		let c = document.createElement( "CANVAS" );
+		let c = document.createElement("CANVAS");
+		let ctx = c.getContext("2d");
 		canvas.array.push( c );
 		
 		//
-		c.width = options.width || 300;
-		c.height = options.height || 150;
-		c.scale = options.scale || 1;
-		c.application = options.application || false;
+		c.width = opts.width || 300;
+		c.height = opts.height || 150;
+		c.scale = opts.scale || 1;
+		c.application = opts.application || false;
 		
 		//
-		if ( options.crisp2D ) {
-			let ctx = c.getContext( "2d" );
+		if (opts.crisp2D) {
 			ctx.imageSmoothingEnabled = false;
-			//ctx.scale( c.scale, c.scale );
 		}
 		
 		//
@@ -48,13 +42,12 @@ let canvas = {
 		
 		//
 		return c;
-		
 	},
 
 	/**
 	 *
 	 */
-	setMain: function( c ) {
+	setMain: function(c) {
 	
 		canvas.main = c;
 		if ( canvas.dom === null ) {
@@ -75,7 +68,7 @@ let canvas = {
 	/**
 	 *
 	 */
-	clear: function( c, color ) {
+	clear: function(c, color) {
 		var ctx = c.getContext( "2d" );
 		ctx.fillStyle = color || "#000000";
 		ctx.fillRect( 0, 0, c.width / c.scale, c.height / c.scale );
