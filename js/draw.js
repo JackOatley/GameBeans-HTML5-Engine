@@ -1,6 +1,7 @@
 import math from "./math.js";
 import sprite from "./sprite.js";
 import canvas from "./canvas.js";
+import Font from "./font.js";
 
 //
 let draw = {
@@ -221,6 +222,14 @@ let draw = {
 		x = Number(x);
 		y = Number(y);
 		
+		let bitmap, lookup, useBitmap = false;
+		let font = Font.get(draw.font);
+		if (font && font.method === "bitmap") {
+			useBitmap = true;
+			lookup = font.bitmapFont.lookup
+			bitmap = font.bitmapFont.image;
+		}
+		
 		let drawMethod = "fillText";
 		let ctx = draw.context;
 		
@@ -263,8 +272,19 @@ let draw = {
 						let a = line.slice(0, startN);
 						let b = line.slice(startN, endN);
 						drawX += ctx.measureText(a).width;
-						if ( 0 < endN )
-							ctx[drawMethod]( b, drawX, y );
+						if ( 0 < endN ) {
+							if (useBitmap) {
+								let metrics = lookup[b[0]];
+								let sx = metrics.left;
+								let sy = metrics.top;
+								let sw = metrics.right - metrics.left;
+								let sh = metrics.bottom - metrics.top;
+								console.log(sx, sy, sw, sh, drawX, y, sw, sh);
+								ctx.drawImage(bitmap, sx, sy, sw, sh, drawX, y, sw, sh);
+							} else {
+								ctx[drawMethod](b, drawX, y);
+							}
+						}
 						lineLength = testLine.length;
 						startN -= lineLength;
 						endN -= lineLength;
@@ -282,8 +302,19 @@ let draw = {
 				let a = line.slice(0, startN);
 				let b = line.slice(startN, endN);
 				drawX += ctx.measureText(a).width;
-				if ( 0 < endN )
-					ctx[drawMethod]( b, drawX, y );
+				if (0 < endN) {
+					if (useBitmap) {
+						let metrics = lookup[b[0]];
+						let sx = metrics.left;
+						let sy = metrics.top;
+						let sw = metrics.right - metrics.left;
+						let sh = metrics.bottom - metrics.top;
+						console.log(sx, sy, sw, sh, drawX, y, sw, sh);
+						ctx.drawImage(bitmap, sx, sy, sw, sh, drawX, y, sw, sh);
+					} else {
+						ctx[drawMethod](b, drawX, y);
+					}
+				}
 				lineLength = line.length;
 				
 			} else {
@@ -291,7 +322,21 @@ let draw = {
 				let a = lines[i].slice(0, startN);
 				let b = lines[i].slice(startN, endN);
 				drawX += ctx.measureText(a).width;
-				ctx[drawMethod]( b, drawX, y );
+				if (useBitmap) {
+					let dx = drawX;
+					for (var cn=0; cn<b.length; cn++) {
+						let metrics = lookup[b[cn]];
+						let sx = metrics.left;
+						let sy = metrics.top;
+						let sw = metrics.right - metrics.left;
+						let sh = metrics.bottom - metrics.top;
+						//console.log(sx, sy, sw, sh, drawX, y, sw, sh);
+						ctx.drawImage(bitmap, sx, sy, sw, sh, dx, y, sw, sh);
+						dx += sw + 1;
+					}
+				} else {
+					ctx[drawMethod](b, drawX, y);
+				}
 				lineLength = lines[i].length;
 				
 			}

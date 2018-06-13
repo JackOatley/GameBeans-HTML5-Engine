@@ -1,4 +1,5 @@
-import Generator from "./generator.js"
+import Generator from "./generator.js";
+import Grid from "./data/dataGrid.js";
 
 /**
  *
@@ -16,6 +17,8 @@ export default class Font {
 		this.hasBitmapFont = this.bitmap !== null;
 		this.method = opts.method || "normal";
 		if (opts.apply) this.applyCss();
+		Font.names.push(this.name);
+		Font.array.push(this);
 	}
 	
 	/**
@@ -66,14 +69,12 @@ export default class Font {
 		ctx.textAlign = "center";
 		ctx.textBaseline = "middle"; 
 		
+		let charMap = new Grid(size/scale, size/scale);
 		let lookupTable = {};
-		let rangeStart = 32;
-		let rangeEnd = 128;
-		let n;
-		for (n=0; n<map.length; n++) {
+		for (var n=0; n<map.length; n++) {
 			
 			ctx.clearRect(0, 0, size, size);
-			let pmap = [];
+			charMap.clear(-1);
 			
 			let c = map[n];
 			ctx.fillStyle = "#000000";
@@ -88,33 +89,38 @@ export default class Font {
 				let x = ~~(((p/4) % size) / scale);
 				let y = ~~((~~((p/4) / size)) / scale);
 				let i = x+(size/scale)*y;
-				if (pmap[i] === undefined) pmap[i] = data[p+3];
+				if (charMap.get(x, y) === -1) charMap.set(x, y, data[p+3]);
 			}
 			
 			// Get metrics
 			let metrics = { left: 100, top: 100, right: 0, bottom: 0 };
-			let x, y, i = 0;
+			let minY = 100;
+			let maxY = 0;
+			let x, y;
 			for (y=0; y<size/scale; y++)
 			for (x=0; x<size/scale; x++) {
-				if (pmap[i++] > alphaThreshold) {
+				if (charMap.get(x, y) > alphaThreshold) {
 					metrics.left = Math.min(metrics.left, x);
 					metrics.top = Math.min(metrics.top, y);
-					metrics.right = Math.max(metrics.right, x);
-					metrics.bottom = Math.max(metrics.bottom, y);
+					metrics.right = Math.max(metrics.right, x+1);
+					metrics.bottom = Math.max(metrics.bottom, y+1);
+					minY = Math.min(minY, metrics.top);
+					maxY = Math.max(maxY, metrics.bottom);
 				}
 			}
 			
 			// Print to atlas
-			x, y, i = 0;
 			for (y=0; y<size/scale; y++)
 			for (x=0; x<size/scale; x++) {
-				pointData[3] = (pmap[i++] > alphaThreshold) ? 255 : 0;
+				pointData[3] = (charMap.get(x, y) > alphaThreshold) ? 255 : 0;
 				atlasCtx.putImageData(pointImageData, n*(size/scale)+x, y);
 			}
 			
 			// Tweak metrics into atlas coords and add to lookup table
 			metrics.left += n*(size/scale);
 			metrics.right += n*(size/scale);
+			metrics.top = 0;
+			metrics.bottom = size/scale;
 			lookupTable[c] = metrics;
 		}
 		
@@ -123,17 +129,35 @@ export default class Font {
 		//link.href = canvas.toDataURL()
 		//link.click();
 		
-		var link = document.createElement('a');
-		link.download = 'filename.png';
-		link.href = atlas.toDataURL()
-		link.click();
+		//var link = document.createElement('a');
+		//link.download = 'filename.png';
+		//link.href = atlas.toDataURL()
+		//link.click();
 		
 		this.bitmapFont = {
 			lookup: lookupTable,
 			image: atlas
 		}
 		
+		this.method = "bitmap";
 		console.log(this.bitmapFont);
+		
+	}
+	
+	/**
+	 *
+	 */
+	static get(value) {
+		
+		if (typeof value === "object" || typeof value === "function")
+			return value;
+		
+		for (var n = 0; n < Font.array.length; n++)
+			if (Font.array[n].name === value)
+				return Font.array[n];
+			
+		console.warn("FAIL: ", typeof value, value);
+		return null;
 		
 	}
 	
@@ -141,3 +165,5 @@ export default class Font {
 
 Generator.classStaticMatch(Font);
 Font.prototype.assetType = "font";
+Font.names = [];
+Font.array = [];
