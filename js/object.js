@@ -20,7 +20,6 @@ export default class GameObject {
 		};
 		objectVars.set(obj.prototype);
 		obj.objectName = name || "object_" + obj.id;
-		obj.prototype.assetType = "object";
 		obj.prototype.sprite = sprite || null;
 		obj.pool = new Pool(obj);
 		//obj.instances = [];
@@ -72,11 +71,9 @@ export default class GameObject {
 				flow = action;
 			
 			// create a new event if not yet defined
-			if ( obj.prototype.events[event] === undefined ) {
-				
+			if (!obj.prototype.events[event]) {
 				obj.prototype.events[event] = [];
-				
-				if ( event.includes( "collision_" ) ) {
+				if (event.includes("collision_")) {
 					let index = event.indexOf("_") + 1;
 					let name = event.slice(index, 200);
 					GameObject.addCollisionListener(obj, name);
@@ -138,5 +135,6 @@ export default class GameObject {
 
 }
 
+GameObject.prototype.assetType = "object";
 GameObject.names = [];
 GameObject.array = [];

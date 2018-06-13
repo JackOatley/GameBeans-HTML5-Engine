@@ -4,7 +4,8 @@
 export default class Sound {
 
 	/**
-	 *
+	 * @param {string} String name for the resource.
+	 * @param {string} A path to an audio source, or a base64 encoded audio.
 	 */
 	constructor(name, source) {
 		this.name = name;
@@ -20,7 +21,7 @@ export default class Sound {
 	}
 	
 	/**
-	 * @param {object} opts object.
+	 * @param {object} [opts={}] object.
 	 */
 	play(opts = {}) {
 		if (Sound.isEnabled) {
@@ -76,9 +77,7 @@ export default class Sound {
 		return null;
 	}
 	
-	/**
-	 *
-	 */
+	/** Stop all instances of the sound from playing. */
 	stop() {
 		for (var i=0, n=this.instances.length; i<n; i++) {
 			let instance = this.instances[i];
@@ -106,7 +105,7 @@ export default class Sound {
 	 */
 	static get(name) {
 		if (typeof name === "object") return name;
-		for ( var i=0, n=Sound.array.length; i<n; i++ ) {
+		for (var i=0, n=Sound.array.length; i<n; i++) {
 			if (Sound.array[i].name === name) {
 				return Sound.array[i];
 			}

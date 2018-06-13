@@ -1,32 +1,25 @@
-/**
- * @module dataGrid
- */
-
-//
 import Pool from "../utils/pool.js";
+import Generator from "../generator.js";
 
 /**
- *
+ * @author Jack Oatley
  */
 export default class Grid {
 
 	/**
-	 *
+	 * @param {number} Initial width of the grid.
+	 * @param {number} Initial height of the grid
+	 * @param {object} [opts={}] Options object.
+	 * @param {*} [opts.value=0] Initial value for each cell of the grid.
 	 */
 	constructor(width, height, opts = {}) {
-		let size = width * height;
-		let value = opts.value || 0;
 		let myGrid = Grid.pool.get(this);
-		let array = (myGrid === this) ? this.data = [] : myGrid.data;
-		
-		// fill grid with default value
-		for (var n=0; n<size; n++)
-			array[n] = value;
-
-		//
-		myGrid.size = size;
+		myGrid.size = width * height;
+		myGrid.data = (myGrid === this) ? [] : myGrid.data;
+		myGrid.data.length = myGrid.size;
 		myGrid.width = width;
 		myGrid.height = height;
+		myGrid.clear(opts.value || 0);
 		return myGrid;
 	}
 	
@@ -47,8 +40,23 @@ export default class Grid {
 	/**
 	 *
 	 */
-	create(...args) {
-		return newGrid(...args);
+	add(x, y, value) {
+		this.data[x + y * this.width] += value;
+	}
+	
+	/**
+	 *
+	 */
+	multiply(x, y, value) {
+		this.data[x + y * this.width] *= value;
+	}
+	
+	/**
+	 * Clears all cells in the grid to the given value.
+	 * @param {*} value Value to clear the grid to.
+	 */
+	clear(value) {
+		this.data.fill(value);
 	}
 	
 	/**
@@ -57,18 +65,9 @@ export default class Grid {
 	destroy() {
 		Grid.pool.release(this);
 	}
-	
-	/** */
-	static get(...args) {
-		return Grid.prototype.get.call(...args);
-	}
-	
-	/** */
-	static set(...args) {
-		return Grid.prototype.set.call(...args);
-	}
 
 }
 
 //
 Grid.pool = new Pool(Grid);
+Generator.classStaticMatch(Grid);

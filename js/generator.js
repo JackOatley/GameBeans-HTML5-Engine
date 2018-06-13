@@ -4,12 +4,19 @@
 export default class Generator {
 	
 	/**
+	 * If class has a static "get" method it is used in functions created from
+	 * prototype methods. If there is a "get" method on the prototype it is not
+	 * used in the created functions, however it will overide the static "get"
+	 * method. If there is both a static "get" method and a "get" method on the
+	 * prototype, the static one is used in created functions and remains so,
+	 * but the static method on the class is still overwritten.
 	 * @param {function} c Constructor function.
 	 */
 	static classStaticMatch(c) {
 		c.create = Generator.functionFromConstructor(c);
+		let get = c.get;
 		for (let m in c.prototype) {
-			c[m] = Generator.functionFromMethod(c.prototype[m], c.get);
+			c[m] = Generator.functionFromMethod(c.prototype[m], get);
 		}
 	}
 	
