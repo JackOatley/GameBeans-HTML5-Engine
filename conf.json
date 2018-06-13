@@ -4,12 +4,12 @@
         "dictionaries": ["jsdoc","closure"]
     },
     "source": {
-        "include": [ "documentation/README.md", "core" ],
+        "include": [ "docs/README.md", "core" ],
         "includePattern": ".+\\.js(doc|x)?$",
         "excludePattern": "(^|\\/|\\\\)_"
     },
     "opts": {
-        "destination": "./documentation/"
+        "destination": "./docs/"
     },
     "plugins": [],
     "templates": {
