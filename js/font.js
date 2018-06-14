@@ -134,7 +134,11 @@ export default class Font {
 		//link.href = atlas.toDataURL()
 		//link.click();
 		
+		// Space is special because it can't actually be measured
+		lookupTable[" "] = {left: -4, top: 0, right: 0, bottom: size/scale}
+		
 		this.bitmapFont = {
+			size: size/scale,
 			lookup: lookupTable,
 			image: atlas
 		}
