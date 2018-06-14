@@ -143,9 +143,9 @@ let draw = {
 		
 		//
 		let ctx = draw.context;
-		ctx.save();
 		
 		//
+		ctx.save();
 		ctx.translate( x, y );
 		ctx.rotate( rotation * math.DEGTORAD );
 		ctx.scale( scaleX, scaleY );

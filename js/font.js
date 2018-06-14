@@ -52,6 +52,7 @@ export default class Font {
 		const cx = size * 0.5;
 		const cy = cx;
 		const alphaThreshold = opts.alphaThreshold || 150;
+		const color = opts.color || { r: 0, g: 0, b: 0, a: 255 };
 		
 		const atlas = document.createElement("CANVAS");
 		atlas.width = (size /scale) * map.length;
@@ -59,6 +60,9 @@ export default class Font {
 		const atlasCtx = atlas.getContext("2d");
 		const pointImageData = atlasCtx.createImageData(1, 1);
 		const pointData = pointImageData.data;
+		pointData[0] = color.r;
+		pointData[1] = color.g;
+		pointData[2] = color.b;
 		
 		const canvas = document.createElement("CANVAS");
 		canvas.width = canvas.height = size;
@@ -112,7 +116,7 @@ export default class Font {
 			// Print to atlas
 			for (y=0; y<size/scale; y++)
 			for (x=0; x<size/scale; x++) {
-				pointData[3] = (charMap.get(x, y) > alphaThreshold) ? 255 : 0;
+				pointData[3] = (charMap.get(x, y) > alphaThreshold) ? color.a : 0;
 				atlasCtx.putImageData(pointImageData, n*(size/scale)+x, y);
 			}
 			
