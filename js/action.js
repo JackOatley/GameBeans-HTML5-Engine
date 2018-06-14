@@ -14,7 +14,7 @@ import color from "./color.js";
 import main from "./main.js";
 import Camera from "./camera.js";
 import app from "./app.js";
-import data from "./data.js";
+import Grid from "./data/grid";
 import Tilemap from "./tilemap.js";
 import tween from "./tween.js";
 import Transition from "./transition.js";
@@ -216,7 +216,7 @@ let GAME = {
 	math: math,
 	Camera: Camera,
 	app: app,
-	data: data,
+	Grid: Grid,
 	Tilemap: Tilemap,
 	tween: tween,
 	Transition: Transition,

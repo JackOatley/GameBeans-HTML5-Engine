@@ -1,5 +1,5 @@
 import Generator from "./generator.js";
-import Grid from "./data/dataGrid.js";
+import Grid from "./data/grid.js";
 import draw from "./draw.js";
 import Sprite from "./sprite.js";
 
