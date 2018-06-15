@@ -43,6 +43,9 @@ export default class Font {
 	/**
 	 * @param {object} [opts={}] Options object.
 	 * @param {number} [opts.size=8] Size of the font.
+	 * @param {string} [opts.map] A string of all the characters to include in the bitmap font.
+	 * @param {int} [opts.alphaThreshold=150] Threshold that dertmines which pixels shall be visible.
+	 * @param {array} [opts.color=[0,0,0,255]] An array containing the RGBA channels respectively.
 	 */
 	convertToBitmapFont(opts = {}) {
 		
@@ -52,17 +55,14 @@ export default class Font {
 		const cx = size * 0.5;
 		const cy = cx;
 		const alphaThreshold = opts.alphaThreshold || 150;
-		const color = opts.color || { r: 0, g: 0, b: 0, a: 255 };
+		const color = opts.color || [0, 0, 0, 255];
 		
 		const atlas = document.createElement("CANVAS");
 		atlas.width = (size /scale) * map.length;
 		atlas.height = (size / scale);
 		const atlasCtx = atlas.getContext("2d");
 		const pointImageData = atlasCtx.createImageData(1, 1);
-		const pointData = pointImageData.data;
-		pointData[0] = color.r;
-		pointData[1] = color.g;
-		pointData[2] = color.b;
+		pointImageData.data.set(color, 0);
 		
 		const canvas = document.createElement("CANVAS");
 		canvas.width = canvas.height = size;
@@ -83,8 +83,6 @@ export default class Font {
 			let c = map[n];
 			ctx.fillStyle = "#000000";
 			ctx.fillText(c, cx, cy);
-			
-			//console.log(c, cx, cy, n*size, 0);
 			
 			let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 			let data = imageData.data;
@@ -116,8 +114,9 @@ export default class Font {
 			// Print to atlas
 			for (y=0; y<size/scale; y++)
 			for (x=0; x<size/scale; x++) {
-				pointData[3] = (charMap.get(x, y) > alphaThreshold) ? color.a : 0;
-				atlasCtx.putImageData(pointImageData, n*(size/scale)+x, y);
+				if (charMap.get(x, y) > alphaThreshold) {
+					atlasCtx.putImageData(pointImageData, n*(size/scale)+x, y);
+				}
 			}
 			
 			// Tweak metrics into atlas coords and add to lookup table
@@ -127,11 +126,6 @@ export default class Font {
 			metrics.bottom = size/scale;
 			lookupTable[c] = metrics;
 		}
-		
-		//var link = document.createElement('a');
-		//link.download = 'Q.png';
-		//link.href = canvas.toDataURL()
-		//link.click();
 		
 		//var link = document.createElement('a');
 		//link.download = 'filename.png';
@@ -157,14 +151,14 @@ export default class Font {
 	 */
 	static get(value) {
 		
+		if (["object", "function"].includes(typeof value))
 		if (typeof value === "object" || typeof value === "function")
 			return value;
 		
 		for (var n = 0; n < Font.array.length; n++)
 			if (Font.array[n].name === value)
 				return Font.array[n];
-			
-		console.warn("FAIL: ", typeof value, value);
+		
 		return null;
 		
 	}

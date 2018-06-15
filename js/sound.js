@@ -1,3 +1,5 @@
+import Generator from "./generator.js";
+
 /**
  * @author Jack Oatley
  */
@@ -43,7 +45,7 @@ export default class Sound {
 			}
 			
 			//
-			playSound.onError = function(err) {
+			playSound.onError = (err) => {
 				console.error(soundName, err);
 			}
 			
@@ -103,6 +105,13 @@ export default class Sound {
 	/**
 	 *
 	 */
+	static enable(x) {
+		Sound.isEnabled = x;
+	}
+	
+	/**
+	 *
+	 */
 	static get(name) {
 		if (typeof name === "object") return name;
 		for (var i=0, n=Sound.array.length; i<n; i++) {
@@ -114,32 +123,9 @@ export default class Sound {
 		return null;
 	}
 	
-	/**
-	 *
-	 */
-	static enable(x) {
-		Sound.isEnabled = x;
-	}
-	
-	/** */
-	static create(name, src) {
-		return new Sound(name, src);
-	}
-	
-	/** */
-	static play(sound, opts = {}) {
-		sound = Sound.get(sound);
-		return Sound.prototype.play.call(sound, opts);
-	}
-	
-	/** */
-	static stop(sound) {
-		sound = Sound.get(sound);
-		Sound.prototype.stop.call(sound);
-	}
-
 }
 
+Generator.classStaticMatch(Sound);
 Sound.prototype.assetType = "sound";
 Sound.isEnabled = true;
 Sound.names = [];

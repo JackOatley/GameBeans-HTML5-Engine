@@ -14,8 +14,8 @@ export default class Generator {
 	 */
 	static classStaticMatch(c) {
 		c.create = Generator.functionFromConstructor(c);
-		let get = c.get;
-		for (let m in c.prototype) {
+		const get = c.get;
+		for (var m in c.prototype) {
 			c[m] = Generator.functionFromMethod(c.prototype[m], get);
 		}
 	}

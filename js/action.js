@@ -1,7 +1,3 @@
-/**
- * @module actions
- */
-
 import Room from "./room.js";
 import Sound from "./sound.js";
 import draw from "./draw.js";
@@ -13,7 +9,7 @@ import canvas from "./canvas.js";
 import color from "./color.js";
 import main from "./main.js";
 import Camera from "./camera.js";
-import app from "./app.js";
+import App from "./app.js";
 import Grid from "./data/grid";
 import Tilemap from "./tilemap.js";
 import tween from "./tween.js";
@@ -37,6 +33,9 @@ function actionSet(varName, value, relative) {
  */
 function actionTest(varName, op, value) {
 	switch (op) {
+		case("!=="): return this[varName] !== value;
+		case("==="): return this[varName] === value;
+		case("!="): return this[varName] != value;
 		case("=="): return this[varName] == value;
 		case("<"): return this[varName] < value;
 		case(">"): return this[varName] > value;
@@ -202,11 +201,7 @@ let GAME = {
 		get: sprite.get,
 		cache: sprite.cache
 	},
-	Sound: {
-		play: Sound.play,
-		stop: Sound.stop,
-		get: Sound.get
-	},
+	Sound: Sound,
 	Room: Room,
 	input: {
 		keyboard: input.keyboard,
@@ -215,7 +210,7 @@ let GAME = {
 	},
 	math: math,
 	Camera: Camera,
-	app: app,
+	App: App,
 	Grid: Grid,
 	Tilemap: Tilemap,
 	tween: tween,
