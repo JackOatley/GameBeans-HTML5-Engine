@@ -1,15 +1,11 @@
-/**
- * @module main
- */
-
-import canvas from "./canvas.js";
-import room from "./room.js";
-import input from "./input.js";
-import instance from "./instance.js";
-import global from "./global.js";
-import draw from "./draw.js";
-import Camera from "./camera.js";
-import Transition from "./transition.js";
+import canvas from "./canvas";
+import room from "./room";
+import input from "./input";
+import instance from "./instance";
+import global from "./global";
+import draw from "./draw";
+import Camera from "./camera";
+import Transition from "./transition";
 
 let lastTick = performance.now(),
 	tickLength = 1000 / 60,

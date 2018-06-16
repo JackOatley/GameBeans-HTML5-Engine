@@ -1,5 +1,5 @@
 import Room from "./room.js";
-import Sound from "./sound.js";
+import Sound from "./Sound";
 import draw from "./draw.js";
 import instance from "./instance.js";
 import input from "./input.js";
@@ -9,7 +9,7 @@ import canvas from "./canvas.js";
 import color from "./color.js";
 import main from "./main.js";
 import Camera from "./camera.js";
-import App from "./app.js";
+import App from "./App";
 import Grid from "./data/grid";
 import Tilemap from "./tilemap.js";
 import tween from "./tween.js";
@@ -21,9 +21,10 @@ import Primitive from "./drawing/primitive.js";
  * @param {value} value
  */
 function actionSet(varName, value, relative) {
-	(relative)
-		? this[varName] += value
-		: this[varName] = value;
+	if (relative)
+		this[varName] += value
+	else
+		this[varName] = value;
 }
 
 /**

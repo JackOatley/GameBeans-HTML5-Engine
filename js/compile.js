@@ -1,7 +1,7 @@
 import global from "./global.js";
 import object from "./object.js";
 import sprite from "./sprite.js";
-import sound from "./sound.js";
+import Sound from "./Sound";
 import room from "./room.js";
  
 /**
@@ -113,7 +113,7 @@ export default class Compiler {
 	static isResource(x) {
 		return object.names.includes(x)
 			|| sprite.names.includes(x)
-			|| sound.names.includes(x)
+			|| Sound.names.includes(x)
 			|| room.names.includes(x);
 	}
 	
