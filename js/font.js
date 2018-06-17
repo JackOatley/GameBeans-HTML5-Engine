@@ -1,13 +1,18 @@
-import Generator from "./generator.js";
-import Grid from "./data/grid.js";
+import Generator from "./generator";
+import Grid from "./data/grid";
 
 /**
- *
+ * @author Jack Oatley
  */
 export default class Font {
 
 	/**
-	 *
+	 * @param {object} [opts={}] Options.
+	 * @param {string} [opts.name="_UNNAMEDFONT"] Name of the font.
+	 * @param {string} [opts.src=""] Source of the font.
+	 * @param {image} [opts.bitmap=null] An existing bitmap.
+	 * @param {string} [opts.method="normal"] Initial drawing method.
+	 * @param {boolean} [opts.apply] Apply the font in CSS,
 	 */
 	constructor(opts = {}) {
 		this.name = opts.name || "_UNNAMEDFONT";
@@ -22,7 +27,7 @@ export default class Font {
 	}
 	
 	/**
-	 *
+	 * Returns the CSS code that's needed to be applied to the page to use this font in the DOM or on the canvas.
 	 */
 	getCss() {
 		return "@font-face {\
@@ -32,7 +37,7 @@ export default class Font {
 	}
 	
 	/**
-	 *
+	 * Applies the CSS code.
 	 */
 	applyCss() {
 		let style = document.createElement("STYLE");
@@ -147,7 +152,7 @@ export default class Font {
 	}
 	
 	/**
-	 *
+	 * @param {*} value The string name of the font to get.
 	 */
 	static get(value) {
 		

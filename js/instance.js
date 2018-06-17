@@ -4,9 +4,10 @@ import object from "./object.js";
 import sprite from "./sprite.js";
 import draw from "./draw.js";
 import Compiler from "./compile.js";
+import global from "./global";
 
 //
-window.global = {};
+window.global = global;
 let aInstances = [];
 let otherStack = [];
 
