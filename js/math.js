@@ -29,19 +29,27 @@ let math = {
 	choose: function( ...value ) {
 		return value[Math.floor( Math.random() * value.length )];
 	},
-
+	
 	/**
 	 *
 	 */
-	lengthDirX: function( l, d ) {
-		return Math.cos( d * math.DEGTORAD ) * l;
+	lengthDir: (l, d) => {
+		d *= math.DEGTORAD;
+		return [Math.cos(d) * l, Math.sin(d) * l];
 	},
 
 	/**
 	 *
 	 */
-	lengthDirY: function( l, d ) {
-		return Math.sin( d * math.DEGTORAD ) * l;
+	lengthDirX: function(l, d) {
+		return Math.cos(d * math.DEGTORAD) * l;
+	},
+
+	/**
+	 *
+	 */
+	lengthDirY: function(l, d) {
+		return Math.sin(d * math.DEGTORAD) * l;
 	},
 	 
 	/**
@@ -50,10 +58,10 @@ let math = {
 	 * @param {number} x2
 	 * @param {number} y2
 	 */
-	pointDistance: function( x1, y1, x2, y2 ) {
-		let a = x1 - x2,
-			b = y1 - y2;
-		return Math.sqrt( a * a + b * b );
+	pointDistance: function(x1, y1, x2, y2) {
+		const a = x1 - x2;
+		const b = y1 - y2;
+		return Math.sqrt(a*a + b*b);
 	},
 
 	/**
