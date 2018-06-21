@@ -125,7 +125,7 @@ function gameUpdate(dt) {
  */
 function gameDraw() {
 	draw.reset();
-	canvas.clear(canvas.main, "#000000");
+	canvas.fill(canvas.main, "#000000");
 	room.draw(room.current);
 	Camera.updateAll();
 	instance.drawAll();

@@ -253,12 +253,11 @@ let instance = {
 	 */
 	updateBoundingBox: function(i) {
 		let spr = sprite.get(i.sprite);
-		if (spr !== null) {
-			i.boxTop = i.y - spr.originY * i.scaleY;
-			i.boxLeft = i.x - spr.originX * i.scaleX;
-			i.boxBottom = i.boxTop + spr.height * i.scaleY;
-			i.boxRight = i.boxLeft + spr.width * i.scaleX;
-		}
+		if (spr === null) return;
+		i.boxTop = i.y - spr.originY * i.scaleY;
+		i.boxLeft = i.x - spr.originX * i.scaleX;
+		i.boxBottom = i.boxTop + spr.height * i.scaleY;
+		i.boxRight = i.boxLeft + spr.width * i.scaleX;
 	},
 
 	/**
@@ -275,7 +274,7 @@ let instance = {
 	/**
 	 *
 	 */
-	destroy: function(inst, ev = true) {
+	destroy: function(inst) {
 		inst.exists = false;
 	},
 
@@ -283,23 +282,26 @@ let instance = {
 	 *
 	 */
 	draw: function(inst) {
-		(inst.events["draw"] !== undefined)
-			? instance.executeEvent(inst, "draw")
-			: instance.drawSelf(inst);
+		if (!inst.visible) return;
+		if (inst.events["draw"]) {
+			instance.executeEvent(inst, "draw")
+		} else {
+			instance.drawSelf(inst);
+		}
 	},
 
 	/**
 	 *
 	 */
 	drawSelf: function(inst) {
-		if (inst.sprite !== null)
-			draw.sprite(
-				inst.sprite,
-				inst.index,
-				inst.x, inst.y,
-				inst.scaleX, inst.scaleY,
-				inst.rotation
-			);
+		if (inst.sprite === null) return;
+		draw.sprite(
+			inst.sprite,
+			inst.index,
+			inst.x, inst.y,
+			inst.scaleX, inst.scaleY,
+			inst.rotation
+		);
 	},
 
 	/**
@@ -469,18 +471,15 @@ let instance = {
 	 */
 	stepAll: function(dt) {
 		let arr = aInstances.slice();
-		arr.forEach((i) => {
-			instance.step(i, dt);
-		});
+		arr.forEach((i) => instance.step(i, dt));
 	},
 
 	/** */
 	drawAll: function() {
-		if (instance.doDepthSort)
+		if (instance.doDepthSort) {
 			instance.instanceArray.sort((a, b) => a.depth - b.depth);
-		aInstances.forEach((i) => {
-			if (i) instance.draw(i);
-		});
+		}
+		aInstances.forEach((i) => instance.draw(i));
 	},
 	
 	/**

@@ -23,17 +23,17 @@ let draw = {
 	/**
 	 *
 	 */
-	setTarget: function( target ) {
-		draw.targetStack.push( draw.target );
+	setTarget: function(target) {
+		draw.targetStack.push(draw.target);
 		draw.target = target;
-		draw.context = target.getContext( "2d" );
+		draw.context = target.domElement.getContext("2d");
 	},
 	
 	/** */
 	resetTarget: function() {
 		let target = draw.targetStack.pop();
 		draw.target = target;
-		draw.context = target.getContext( "2d" );
+		draw.context = target.domElement.getContext( "2d" );
 	},
 	
 	/** */
@@ -191,7 +191,7 @@ let draw = {
 	 * @param {number} y The Y position to draw at.
 	 */
 	canvas: function(canv, x, y) {
-		draw.context.drawImage(canv, x, y);
+		draw.context.drawImage(canv.domElement, x, y);
 	},
 	
 	/**

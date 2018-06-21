@@ -1,20 +1,20 @@
-import Room from "./room.js";
+import Room from "./room";
 import Sound from "./Sound";
-import draw from "./draw.js";
-import instance from "./instance.js";
-import input from "./input.js";
-import math from "./math.js";
-import sprite from "./sprite.js";
-import canvas from "./canvas.js";
-import color from "./color.js";
-import main from "./main.js";
-import Camera from "./camera.js";
+import draw from "./draw";
+import instance from "./instance";
+import input from "./input";
+import math from "./math";
+import sprite from "./sprite";
+import Canvas from "./canvas";
+import color from "./color";
+import main from "./main";
+import Camera from "./camera";
 import App from "./App";
 import Grid from "./data/grid";
-import Tilemap from "./tilemap.js";
-import tween from "./tween.js";
-import Transition from "./transition.js";
-import Primitive from "./drawing/primitive.js";
+import Tilemap from "./tilemap";
+import tween from "./tween";
+import Transition from "./transition";
+import Primitive from "./drawing/primitive";
  
 /**
  * @param {string} varName
@@ -190,10 +190,7 @@ let GAME = {
 		self: instance.drawSelf,
 		debug: instance.drawDebug
 	} ),
-	canvas: {
-		getMain: canvas.getMain,
-		create: canvas.create
-	},
+	Canvas: Canvas,
 	color: color,
 	sprite: {
 		create: sprite.create,

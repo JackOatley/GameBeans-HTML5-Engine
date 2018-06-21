@@ -84,8 +84,8 @@ export default class Room {
 	draw() {
 		let spr = sprite.get(this.background);
 		if ( spr !== null ) {
-			var canvas = draw.getTarget();
-			var ctx = canvas.getContext( "2d" );
+			var canvas = draw.getTarget().domElement;
+			var ctx = canvas.getContext("2d");
 			let image = spr.images[0].img;
 			if ( this.backgroundMethod === "stretch" ) {
 				ctx.drawImage( image, 0, 0, canvas.width, canvas.height );

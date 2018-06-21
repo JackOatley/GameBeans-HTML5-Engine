@@ -87,7 +87,7 @@ let input = {
 		
 		//
 		let handleMouseMove = function(e) {
-			let canv = canvas.main;
+			let canv = canvas.main.domElement;
 			let rect = canv.getBoundingClientRect();
 			__mouse.x = e.clientX - rect.left;
 			__mouse.y = e.clientY - rect.top;
