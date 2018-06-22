@@ -276,6 +276,8 @@ let instance = {
 	 */
 	destroy: function(inst) {
 		inst.exists = false;
+		let index = inst.object.instances.indexOf(inst);
+		inst.object.instances.splice(index, 1);
 	},
 
 	/**

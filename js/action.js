@@ -148,10 +148,20 @@ function actionFunc(func, ...args) {
 }
 
 /**
+ * Executes the given Script with an array of arguments.
+ * @param {script} func
+ * @param {array} args
+ */
+function script(s, args) {
+	console.log(window[s], args);
+	window[s].apply(this, args);
+}
+
+/**
  * Executes the given function with variable arguments on the instance.
  * @param {string} code
  */
-function runCode(code) {
+function code(code) {
 	if (typeof code === "string") {
 		try {
 			eval(code);
@@ -279,7 +289,8 @@ export {
 	actionWrap       as wrap,
 	actionConfine    as confine,
 	actionFunc       as func,	// DEPRECATE?
-	runCode          as code,
+	script,
+	code,
 	message,
 	alert,
 	confirm,

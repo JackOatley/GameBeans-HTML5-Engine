@@ -27,6 +27,8 @@ export default class Compiler {
 		||  Compiler.isCss(exp))
 			return exp;
 			
+		console.log(exp);
+			
 		if (Compiler.isString(exp)) {
 			return exp.slice(1, -1);
 		}
@@ -89,7 +91,9 @@ export default class Compiler {
 							y += global.fps;
 						else {
 							if (!Compiler.isResource(word)
-							&&  Compiler.isSingleWord(word)) {
+							&&  Compiler.isSingleWord(word)
+							&&  !Compiler.isString(word)
+							&&  !Compiler.isArray(word)) {
 								y += "this." + word;
 								//this[word] = this[word] || word;
 							} else {
@@ -102,6 +106,7 @@ export default class Compiler {
 				}
 			});
 			
+			console.log(y);
 			return eval(y);
 		}
 		
@@ -114,7 +119,13 @@ export default class Compiler {
 		return object.names.includes(x)
 			|| sprite.names.includes(x)
 			|| Sound.names.includes(x)
-			|| room.names.includes(x);
+			|| room.names.includes(x)
+			|| x === "Say";
+	}
+	
+	/** */
+	static isArray(x) {
+		return x.charAt(0) === "[";
 	}
 	
 	/** */

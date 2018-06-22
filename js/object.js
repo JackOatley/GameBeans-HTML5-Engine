@@ -16,13 +16,14 @@ export default class GameObject {
 		let obj = function(x, y) {
 			let inst = obj.pool.get(this);
 			instance.setup(inst, obj, x, y);
+			obj.instances.push(inst);
 			return inst;
 		};
 		objectVars.set(obj.prototype);
 		obj.objectName = name || "object_" + obj.id;
 		obj.prototype.sprite = sprite || null;
 		obj.pool = new Pool(obj);
-		//obj.instances = [];
+		obj.instances = [];
 		GameObject.names.push(obj.objectName);
 		GameObject.array.push(obj);
 		return obj;
