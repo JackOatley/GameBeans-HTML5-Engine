@@ -10,6 +10,7 @@ import global from "./global";
 window.global = global;
 let aInstances = [];
 let otherStack = [];
+let currentEvent = "";
 
 //
 let instance = {
@@ -384,6 +385,7 @@ let instance = {
 		// set the current "other" instance
 		otherStack.push(window.other);
 		window.other = otherInst;
+		currentEvent = event;
 		
 		//
 		try {
@@ -395,11 +397,11 @@ let instance = {
 			}
 		}
 		catch (err) {
-			console.error( err );
-			window.addConsoleText( "#F00",
+			console.error(err);
+			window.addConsoleText("#F00",
 				"Failed to execute event [" + event + "]"
 				+ " of object [" + inst.objectName + "]"
-				+ " with error: " + err );
+				+ " with error: " + err);
 		}
 		
 		// restore previous "other" instance
@@ -419,15 +421,13 @@ let instance = {
 	 *
 	 */
 	executeActions: function(inst, actions, otherInst) {
+		const steps = [];
+		let condition = true;
+		let scope = 0;
 		
-		let condition = true,
-			steps = [],
-			scope = 0,
-			a, action;
-		
-		for (a=0; a<actions.length; a++) {
+		for (let a=0; a<actions.length; a++) {
 			
-			action = actions[a];
+			let action = actions[a];
 			switch (action.flow) {
 				
 				// regular action
@@ -444,6 +444,18 @@ let instance = {
 							case ("other"): newArgs[n] = otherInst; break;
 							default: newArgs[n] = Compiler.actionExpression.call(inst, args[n]); break
 						}
+					}
+					
+					// Catch and undefined arguments
+					if (newArgs.includes(undefined)) {
+						window.addConsoleText("#F00",
+							"[" + inst.objectName + "]"
+							+ " > [" + currentEvent + "]"
+							+ " > [" + action.action.name + "]"
+							+ " Action contains undefined values!");
+						console.log(action);
+						window._GB_stop();
+						return false;
 					}
 						
 					condition = action.action.apply(inst, newArgs);
