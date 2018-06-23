@@ -1,8 +1,9 @@
+import draw from "./draw";
+import noop from "./utils/noop";
 
-import draw from "./draw.js";
-
-const noop = () => {};
-
+/**
+ *
+ */
 export default class Transition {
 	
 	/**
@@ -89,8 +90,7 @@ Transition.prefabs = {
 			}
 		},
 		draw: function() {
-			var canvas = draw.getTarget();
-			var ctx = canvas.getContext("2d");
+			var ctx = draw.context;
 			ctx.globalAlpha = this.alpha;
 			ctx.fillStyle = this.color;
 			ctx.fillRect(0, 0, 9999999, 9999999);
