@@ -1,8 +1,10 @@
-import global from "./global.js";
-import object from "./object.js";
-import sprite from "./sprite.js";
+import Font from "./font";
+import global from "./global";
+import object from "./object";
+import room from "./room";
+import Script from "./Script";
 import Sound from "./Sound";
-import room from "./room.js";
+import sprite from "./sprite";
  
 /**
  * @author Jack Oatley
@@ -65,6 +67,8 @@ export default class Compiler {
 							} else {
 								string += c;
 							}
+						} else {
+							string += c;
 						}
 						
 				}
@@ -120,7 +124,8 @@ export default class Compiler {
 			|| sprite.names.includes(x)
 			|| Sound.names.includes(x)
 			|| room.names.includes(x)
-			|| x === "Say";
+			|| Font.names.includes(x)
+			|| Script.names.includes(x);
 	}
 	
 	/** */

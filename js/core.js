@@ -4,6 +4,7 @@ import canvas from "./canvas";
 import Camera from "./camera";
 import Room from "./room";
 import input from "./input";
+import Script from "./Script";
 import sprite from "./sprite";
 import Sound from "./Sound";
 import object from "./object";
@@ -27,6 +28,7 @@ export {
 	input,
 	sprite,
 	Sound,
+	Script,
 	object,
 	event,
 	action,
