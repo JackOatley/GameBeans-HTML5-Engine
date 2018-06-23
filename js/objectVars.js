@@ -47,6 +47,10 @@ let objectVars = {
 	set: function(proto) {
 		Object.assign(proto, JSON.parse(basic));
 		
+		proto.destroy = function() {
+			instance.destroy(this);
+		}
+		
 		Object.defineProperty(proto, "depth", {
 			set: function(x) {
 				if (this._depth !== x) {
