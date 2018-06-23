@@ -402,6 +402,8 @@ let instance = {
 				"Failed to execute event [" + event + "]"
 				+ " of object [" + inst.objectName + "]"
 				+ " with error: " + err);
+			window._GB_stop();
+			return false;
 		}
 		
 		// restore previous "other" instance
@@ -453,7 +455,6 @@ let instance = {
 							+ " > [" + currentEvent + "]"
 							+ " > [" + action.action.name + "]"
 							+ " Action contains undefined values!");
-						console.log(action);
 						window._GB_stop();
 						return false;
 					}
@@ -504,8 +505,7 @@ let instance = {
 			let i = aInstances[n];
 			if (!i.exists) {
 				i.exists = true;
-				i.speedX = 0;
-				i.speedY = 0;
+				i.speed = 0;
 				i.object.pool.release(i);
 				aInstances.splice(n, 1);
 			}

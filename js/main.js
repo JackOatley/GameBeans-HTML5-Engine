@@ -1,4 +1,4 @@
-import canvas from "./canvas";
+import Canvas from "./canvas";
 import room from "./room";
 import input from "./input";
 import instance from "./instance";
@@ -37,7 +37,7 @@ let main = {
 		}
 		
 		//
-		let canv = canvas.create({
+		let canv = new Canvas({
 			width: room.current.width,
 			height: room.current.height,
 			crisp2D: true,
@@ -48,7 +48,7 @@ let main = {
 		if (opts.enableMouse) input.initMouse();
 		if (opts.enableKeyboard) input.initKeyboard();
 		if (opts.enableTouch) input.initTouch();
-		if (opts.hideCursor) canv.style.cursor = "none";
+		if (opts.hideCursor) canv.domElement.style.cursor = "none";
 		
 		//
 		room.enter(room.current);
@@ -68,33 +68,40 @@ let main = {
 /**
  *
  */
-function tick( timestamp ) {
+function tick(timestamp) {
 	
-	// exit game with Esc key
-	if ( window._GB_stop && input.triggerEvents.includes("EscapePressed") )
-		window._GB_stop();
+	try {
 	
-	// request the next frame
-	window.requestAnimationFrame( tick );
-	let nextTick = lastTick + tickLength;
-	let numTicks = 0;
-	global.fps = 1000 / (timestamp - last);
-	last = timestamp;
+		// exit game with Esc key
+		if (window._GB_stop && input.triggerEvents.includes("EscapePressed"))
+			window._GB_stop();
+		
+		// request the next frame
+		window.requestAnimationFrame(tick);
+		let nextTick = lastTick + tickLength;
+		let numTicks = 0;
+		global.fps = 1000 / (timestamp - last);
+		last = timestamp;
 
-	//
-	if ( timestamp > nextTick ) {
-		let timeSinceTick = timestamp - lastTick;
-		numTicks = Math.floor( timeSinceTick / tickLength );
-	}
-	
-	//
-	input.getTriggerEvents();
-	queueUpdates(numTicks);
-	gameDraw();
-	
-	//
-	if ( numTicks ) {
-		input.update();
+		//
+		if ( timestamp > nextTick ) {
+			let timeSinceTick = timestamp - lastTick;
+			numTicks = Math.floor( timeSinceTick / tickLength );
+		}
+		
+		//
+		input.getTriggerEvents();
+		queueUpdates(numTicks);
+		gameDraw();
+		
+		//
+		if ( numTicks ) {
+			input.update();
+		}
+		
+	} catch (err) {
+		window.addConsoleText("#F00", "Error: " + err);
+		window._GB_stop();
 	}
 	
 }
@@ -125,7 +132,7 @@ function gameUpdate(dt) {
  */
 function gameDraw() {
 	draw.reset();
-	canvas.fill(canvas.main, "#000000");
+	Canvas.main.fill("#000000");
 	room.draw(room.current);
 	Camera.updateAll();
 	instance.drawAll();
