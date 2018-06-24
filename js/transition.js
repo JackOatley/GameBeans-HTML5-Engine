@@ -86,7 +86,6 @@ Transition.prefabs = {
 				this.direction = 0;
 			} else if (this.alpha <= 0) {
 				this.destroy();
-				console.log("destroy");
 			}
 		},
 		draw: function() {

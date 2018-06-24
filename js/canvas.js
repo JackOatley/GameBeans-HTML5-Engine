@@ -4,15 +4,21 @@ import Generator from "./generator";
 /**
  *
  */
-export default class Canvas {
+class Canvas {
 
 	/**
-	 *
+	 * @param {Object} [opts={}]
+	 * @param {Number} [opts.width=300]
+	 * @param {Number} [opts.height=150]
+	 * @param {Number} [opts.scale=1]
+	 * @param {Boolean} [opts.application=false]
+	 * @param {Boolean} [opts.script2D=false]
 	 */
 	constructor(opts = {}) {
 		const c = document.createElement("CANVAS");
 		const ctx = c.getContext("2d");
 		this.domElement = c;
+		this.context = ctx;
 		this.width = opts.width || 300;
 		this.height = opts.height || 150;
 		
@@ -57,7 +63,7 @@ export default class Canvas {
 	}
 	
 	/**
-	 *
+	 * Sets the canvas as the main canvas for the game.
 	 */
 	setMain() {
 		let c = this.domElement;
@@ -65,21 +71,20 @@ export default class Canvas {
 		if (Canvas.dom === null) {
 			Canvas.dom = c;
 			var el = document.getElementById("gbgamebox") || document.body;
-			console.log(this, c);
 			el.appendChild(c);
 		}
 	
 	}
 	
 	/**
-	 *
+	 * Gets the canvas that is currently set as the main game canvas.
 	 */
 	static getMain() {
 		return Canvas.main;
 	}
 	
 	/**
-	 *
+	 * @param {String} color="#000000" CSS value as a string.
 	 */
 	fill(color) {
 		let c = this.domElement;
@@ -96,6 +101,17 @@ export default class Canvas {
 		var ctx = c.getContext("2d");
 		ctx.clearRect(0, 0, c.width / c.scale, c.height / c.scale);
 	}
+	
+	/**
+	 * Returns the RGBA components of a pixel on the canvas as an ArrayBuffer.
+	 * @param {Number} x X position of the pixel, must be an integer.
+	 * @param {Number} y Y position of the pixel, must be an integer.
+	 * @returns {ArrayBuffer} An ArrayBuffer with 4 values (for R, G, B, A).
+	 */
+	getPixel(x, y) {
+		const data = this.context.getImageData(x, y, 1, 1).data;
+		return data;
+	}
 
 }
 
@@ -103,3 +119,5 @@ Generator.classStaticMatch(Canvas);
 Canvas.array = [];
 Canvas.main = null;
 Canvas.dom = null;
+
+export default Canvas;
