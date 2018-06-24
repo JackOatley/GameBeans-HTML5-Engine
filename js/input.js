@@ -1,13 +1,7 @@
-/**
- * @module input
- */
- 
-import canvas from "./canvas";
-import keyValues from "./keyvalues.js";
+import Canvas from "./canvas";
+import keyValues from "./keyvalues";
 
-let element = document;
-
-// mouse object
+// Mouse object
 let __mouse = {
 	pressed: [false, false, false],
 	down: [false, false, false],
@@ -18,14 +12,14 @@ let __mouse = {
 	y: 0
 }
 
-// keboard object
+// Keyboard object
 let __keyboard = {
 	pressed: {},
 	down: {},
 	released: {}
 }
 
-// touch object
+// Touch object
 let __touch = {
 	start: [],
 	held: [],
@@ -36,41 +30,30 @@ let __touch = {
 	y: []
 }
 
-//
-let __triggerEvents = [];
-
-//
-let input = {
-	
-	triggerEvents: __triggerEvents,
-	mouse: __mouse,
-	keyboard: __keyboard,
-	touch: __touch,
+/**
+ * @author Jack Oatley
+ */
+export default class Input {
 	
 	/**
 	 *
 	 */
-	init: function() {
-	
-		// init all input methods
-		input.initMouse();
-		input.initKeyboard();
-		input.initTouch();
-		
-		// disable context menu
-		element.addEventListener("contextmenu", function(e) {
-			e.preventDefault();
-		});
-	
-	},
+	static init() {
+		Input.initMouse();
+		Input.initKeyboard();
+		Input.initTouch();
+		Input.element.addEventListener("contextmenu",
+			(e) => e.preventDefault()
+		);
+	}
 	
 	/**
 	 *
 	 */
-	initMouse: function() {
+	static initMouse() {
 		
 		//
-		let handleMouseDown = function(e) {
+		let handleMouseDown = (e) => {
 			e.preventDefault();
 			if (!__mouse.pressed[e.button]) window.focus();
 			__mouse.pressed[e.button] = true;
@@ -78,7 +61,7 @@ let input = {
 		}
 		
 		//
-		let handleMouseUp = function(e) {
+		let handleMouseUp = (e) => {
 			e.preventDefault();
 			__mouse.pressed[e.button] = false;
 			__mouse.released[e.button] = true;
@@ -86,15 +69,15 @@ let input = {
 		}
 		
 		//
-		let handleMouseMove = function(e) {
-			let canv = canvas.main.domElement;
+		let handleMouseMove = (e) => {
+			let canv = Canvas.main.domElement;
 			let rect = canv.getBoundingClientRect();
 			__mouse.x = e.clientX - rect.left;
 			__mouse.y = e.clientY - rect.top;
 		}
 		
 		//
-		let handleMouseWheel = function(e) {
+		let handleMouseWheel = (e) => {
 			e.preventDefault();
 			let delta = Math.max(-1, Math.min(1, e.wheelDelta));
 			__mouse.wheelUp = delta > 0;
@@ -102,26 +85,26 @@ let input = {
 		}
 		
 		//
-		element.addEventListener("mousedown", handleMouseDown);
-		element.addEventListener("mouseup", handleMouseUp);
-		element.addEventListener("mousemove", handleMouseMove);
-		element.addEventListener("mousewheel", handleMouseWheel);
-	},
+		Input.element.addEventListener("mousedown", handleMouseDown);
+		Input.element.addEventListener("mouseup", handleMouseUp);
+		Input.element.addEventListener("mousemove", handleMouseMove);
+		Input.element.addEventListener("mousewheel", handleMouseWheel);
+	}
 	
 	/**
 	 *
 	 */
-	initKeyboard: function() {
+	static initKeyboard() {
 		
 		//
-		keyValues.forEach(function(key) {
+		keyValues.forEach((key) => {
 			__keyboard.pressed[key] = false;
 			__keyboard.down[key] = false;
 			__keyboard.released[key] = false;
 		});
 		
 		//
-		let handleKeyDown = function(e) {
+		let handleKeyDown = (e) => {
 			e.preventDefault();
 			const code = e.code || e.key;
 			if (!__keyboard.down[code]) {
@@ -131,7 +114,7 @@ let input = {
 		}
 		
 		//
-		let handleKeyUp = function(e) {
+		let handleKeyUp = (e) => {
 			e.preventDefault();
 			const code = e.code || e.key;
 			__keyboard.released[code] = true;
@@ -139,17 +122,17 @@ let input = {
 		}
 		
 		//
-		element.addEventListener("keydown", handleKeyDown);
-		element.addEventListener("keyup", handleKeyUp);
-	},
+		Input.element.addEventListener("keydown", handleKeyDown);
+		Input.element.addEventListener("keyup", handleKeyUp);
+	}
 	
 	/**
 	 *
 	 */
-	initTouch: function() {
+	static initTouch() {
 		
 		//
-		let handleTouchStart = function(e) {
+		let handleTouchStart = (e) => {
 			e.preventDefault();
 			(!__touch.start[0]) && window.focus();
 			__touch.start[0] = true;
@@ -157,7 +140,7 @@ let input = {
 		}
 		
 		//
-		let handleTouchEnd = function(e) {
+		let handleTouchEnd = (e) => {
 			e.preventDefault();
 			__touch.start[0] = false;
 			__touch.end[0] = true;
@@ -165,7 +148,7 @@ let input = {
 		}
 		
 		//
-		let handleTouchMove = function(e) {
+		let handleTouchMove = (e) => {
 			e.preventDefault();
 			let touches = e.changedTouches;
 			__touch.x[0] = touches[0].pageX;
@@ -173,17 +156,17 @@ let input = {
 		}
 		
 		//
-		element.addEventListener("touchstart", handleTouchStart);
-		element.addEventListener("touchend", handleTouchEnd);
-		element.addEventListener("touchcancel", handleTouchEnd);
-		element.addEventListener("touchmove", handleTouchMove);
-	},
+		Input.element.addEventListener("touchstart", handleTouchStart);
+		Input.element.addEventListener("touchend", handleTouchEnd);
+		Input.element.addEventListener("touchcancel", handleTouchEnd);
+		Input.element.addEventListener("touchmove", handleTouchMove);
+	}
 
 	/**
 	 *
 	 */
-	getTriggerEvents: function() {    
-		let triggers = __triggerEvents;
+	static getTriggerEvents() {    
+		let triggers = Input.triggerEvents;
 		triggers.length = 0;
 		Object.keys(__keyboard.down).forEach((key) => {
 			if (keyValues.includes(key)) {
@@ -207,24 +190,24 @@ let input = {
 		if (__mouse.wheelUp) triggers.push("WheelUp");
 		if (__mouse.wheelDown) triggers.push("WheelDown");
 		
-	},
+	}
 
 	/**
 	 *
 	 */
-	update: function() {
+	static update() {
 		
-		Object.keys(__keyboard.down).forEach( key => {
+		Object.keys(__keyboard.down).forEach((key) => {
 			__keyboard.pressed[key] = false;
 			__keyboard.released[key] = false;
 		});
 
-		Object.keys(__mouse.down).forEach( button => {
+		Object.keys(__mouse.down).forEach((button) => {
 			__mouse.pressed[button] = false;
 			__mouse.released[button] = false;
 		});
 		
-		Object.keys(__touch.held).forEach( button => {
+		Object.keys(__touch.held).forEach((button) => {
 			__touch.start[button] = false;
 			__touch.end[button] = false;
 			__touch.held[button] = false;
@@ -237,5 +220,8 @@ let input = {
 	
 }
 
-//
-export default input;
+Input.element = document;
+Input.triggerEvents = [];
+Input.mouse = __mouse;
+Input.keyboard = __keyboard;
+Input.touch = __touch;
