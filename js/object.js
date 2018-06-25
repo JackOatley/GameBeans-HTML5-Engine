@@ -1,7 +1,8 @@
-import event from "./event.js";
-import instance from "./instance.js";
-import objectVars from "./objectVars.js";
-import Pool from "./utils/pool.js";
+import event from "./event";
+import instance from "./instance";
+import objectVars from "./objectVars";
+import Pool from "./utils/pool";
+import Generator from "./generator"
 
 /**
  *
@@ -19,6 +20,7 @@ export default class GameObject {
 			obj.instances.push(inst);
 			return inst;
 		};
+		Object.assign(obj, GameObject.prototype);
 		objectVars.set(obj.prototype);
 		obj.objectName = name || "object_" + obj.id;
 		obj.prototype.sprite = sprite || null;
@@ -32,16 +34,27 @@ export default class GameObject {
 	/**
 	 *
 	 */
-	static create(...args) {
-		return new GameObject(...args);
+	//static create(...args) {
+		//return new GameObject(...args);
+	//}
+	
+	/**
+	 *
+	 */
+	set(property, value) {
+		//obj = GameObject.get(obj);
+		this.prototype[property] = value;
 	}
 	
 	/**
 	 *
 	 */
-	static set(obj, property, value) {
-		obj = GameObject.get(obj);
-		obj.prototype[property] = value;
+	executeScript() {
+		//obj = GameObject.get(obj);
+		let closure = function() {
+			console.log(this.objectScript);
+			eval(this.objectScript);
+		}.call(this);
 	}
 	
 	/**
@@ -51,14 +64,14 @@ export default class GameObject {
 	 * @param action
 	 * @param {...*} args
 	 */
-	static eventAddAction(obj, event, action, ...args) {
+	eventAddAction(event, action, ...args) {
 		
-		obj = GameObject.get(obj);
+		//obj = GameObject.get(obj);
 		
 		if (typeof event === "object") {
 			Object.keys(event).forEach((key) => {
 				event[key].forEach((params) => {
-					GameObject.eventAddAction(obj, key, ...params);
+					GameObject.eventAddAction(this, key, ...params);
 				});
 			});
 			return;
@@ -72,17 +85,17 @@ export default class GameObject {
 				flow = action;
 			
 			// create a new event if not yet defined
-			if (!obj.prototype.events[event]) {
-				obj.prototype.events[event] = [];
+			if (!this.prototype.events[event]) {
+				this.prototype.events[event] = [];
 				if (event.includes("collision_")) {
 					let index = event.indexOf("_") + 1;
 					let name = event.slice(index, 200);
-					GameObject.addCollisionListener(obj, name);
+					GameObject.addCollisionListener(this, name);
 				}
 			}
 			
 			// add action data to event
-			obj.prototype.events[event].push({
+			this.prototype.events[event].push({
 				flow: flow,
 				action: action,
 				args: args
@@ -97,8 +110,8 @@ export default class GameObject {
 	/**
 	 *
 	 */
-	static addCollisionListener(obj, target) {
-		obj.prototype.listeners.push({
+	addCollisionListener(target) {
+		this.prototype.listeners.push({
 			type: "collision",
 			target: target
 		});
@@ -107,11 +120,11 @@ export default class GameObject {
 	/**
 	 *
 	 */
-	static getAllInstances(obj) {
+	getAllInstances() {
 		let arr = [];
 		instance.instanceArray.forEach(instance => {
 			let name = instance.constructor.objectName;
-			if (name === obj)
+			if (name === this.objectName)
 				arr.push(instance);
 		});
 		return arr;
@@ -136,6 +149,7 @@ export default class GameObject {
 
 }
 
+Generator.classStaticMatch(GameObject);
 GameObject.prototype.assetType = "object";
 GameObject.names = [];
 GameObject.array = [];

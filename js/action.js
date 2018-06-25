@@ -14,6 +14,7 @@ import Grid from "./data/grid";
 import Tilemap from "./tilemap";
 import tween from "./tween";
 import Transition from "./transition";
+import GameObject from "./object";
 import Primitive from "./drawing/primitive";
  
 /**
@@ -223,6 +224,7 @@ let GAME = {
 	Tilemap: Tilemap,
 	tween: tween,
 	Transition: Transition,
+	Object: GameObject,
 	Primitive: Primitive
 }
 
