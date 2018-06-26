@@ -81,6 +81,7 @@ function tick(timestamp) {
 		let nextTick = lastTick + tickLength;
 		let numTicks = 0;
 		global.fps = 1000 / (timestamp - last);
+		global.dt = timestamp - last;
 		last = timestamp;
 
 		//
