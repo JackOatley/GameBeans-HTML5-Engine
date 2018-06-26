@@ -50,7 +50,7 @@ let draw = {
 	save: function() {
 		draw.context.save();
 	},
-	 
+	
 	/** */
 	restore: function() {
 		draw.context.restore();
@@ -139,7 +139,7 @@ let draw = {
 	 */
 	sprite: function(spr, index, x, y, scaleX, scaleY, rotation ) {
 
-		spr = sprite.get( spr );
+		spr = sprite.get(spr);
 		
 		//
 		let ctx = draw.context;

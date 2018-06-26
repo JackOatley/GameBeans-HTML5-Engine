@@ -34,15 +34,7 @@ export default class GameObject {
 	/**
 	 *
 	 */
-	//static create(...args) {
-		//return new GameObject(...args);
-	//}
-	
-	/**
-	 *
-	 */
 	set(property, value) {
-		//obj = GameObject.get(obj);
 		this.prototype[property] = value;
 	}
 	
@@ -50,7 +42,6 @@ export default class GameObject {
 	 *
 	 */
 	executeScript() {
-		//obj = GameObject.get(obj);
 		let closure = function() {
 			console.log(this.objectScript);
 			eval(this.objectScript);
@@ -65,8 +56,6 @@ export default class GameObject {
 	 * @param {...*} args
 	 */
 	eventAddAction(event, action, ...args) {
-		
-		//obj = GameObject.get(obj);
 		
 		if (typeof event === "object") {
 			Object.keys(event).forEach((key) => {

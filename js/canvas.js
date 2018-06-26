@@ -88,17 +88,17 @@ class Canvas {
 	 */
 	fill(color) {
 		let c = this.domElement;
-		var ctx = c.getContext( "2d" );
+		var ctx = this.context;
 		ctx.fillStyle = color || "#000000";
-		ctx.fillRect( 0, 0, c.width / c.scale, c.height / c.scale );
+		ctx.fillRect(0, 0, c.width / c.scale, c.height / c.scale);
 	}
 
 	/**
-	 *
+	 * Clears the canvas.
 	 */
 	clear() {
 		var c = this.domElement;
-		var ctx = c.getContext("2d");
+		var ctx = this.context;
 		ctx.clearRect(0, 0, c.width / c.scale, c.height / c.scale);
 	}
 	

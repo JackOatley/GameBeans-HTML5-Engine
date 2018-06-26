@@ -1,12 +1,7 @@
-/**
- * @module event
- */
- 
 import keyValues from "./keyvalues.js";
 
 //
 let events = {
-	
 	create: "create",
 	roomEnter: "roomEnter",
 	roomLeave: "roomLeave",
@@ -19,18 +14,17 @@ let events = {
 		pressed: translate( keyValues, "Pressed" ),
 		released: translate( keyValues, "Released" )
 	}
-	
 }
 	
 /**
  * @param {array} array
  * @param {string} [postfix=""]
  */
-function translate( array, postfix = "" ) {
+function translate(array, postfix = "") {
 	let obj = {};
-	array.forEach( function( name ) {
+	array.forEach((name) => {
 		obj[name] = name + postfix;
-	} );
+	});
 	return obj;
 }
 

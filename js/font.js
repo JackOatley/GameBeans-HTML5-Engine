@@ -132,11 +132,6 @@ export default class Font {
 			lookupTable[c] = metrics;
 		}
 		
-		//var link = document.createElement('a');
-		//link.download = 'filename.png';
-		//link.href = atlas.toDataURL()
-		//link.click();
-		
 		// Space is special because it can't actually be measured
 		lookupTable[" "] = {left: -3, top: 0, right: 0, bottom: size/scale}
 		
