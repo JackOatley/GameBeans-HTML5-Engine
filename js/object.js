@@ -42,8 +42,7 @@ export default class GameObject {
 	 *
 	 */
 	executeScript() {
-		let closure = function() {
-			console.log(this.objectScript);
+		const closure = function() {
 			eval(this.objectScript);
 		}.call(this);
 	}

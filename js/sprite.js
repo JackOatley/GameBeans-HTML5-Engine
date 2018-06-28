@@ -198,7 +198,7 @@ let sprite = {
 			
 			// get data, do thing, put data back
 			let imageData = ctx.getImageData( 0, 0, canvas.width, canvas.height );
-			pixelDataTint( imageData.data, (typeof col === "object") ? col : color.hexToRgb( col ) );
+			pixelDataTint(imageData.data, (typeof col === "object") ? col : color.hexToRgb(col));
 			ctx.putImageData( imageData, 0, 0 );
 			
 			//

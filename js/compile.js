@@ -28,9 +28,7 @@ export default class Compiler {
 		||  Compiler.isResource(exp)
 		||  Compiler.isCss(exp))
 			return exp;
-			
-		console.log(exp);
-			
+		
 		if (Compiler.isString(exp)) {
 			return exp.slice(1, -1);
 		}
@@ -110,7 +108,7 @@ export default class Compiler {
 				}
 			});
 			
-			console.log(y);
+			//console.log(y);
 			return eval(y);
 		}
 		

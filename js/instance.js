@@ -458,7 +458,7 @@ let instance = {
 						window._GB_stop();
 						return false;
 					}
-						
+					
 					condition = action.action.apply(inst, newArgs);
 					(condition === undefined)
 						? condition = true
