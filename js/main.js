@@ -13,6 +13,10 @@ let lastTick = performance.now(),
 	last = 0;
 	
 //
+window.addConsoleText = window.addConsoleText || console.log;
+window._GB_stop = window._GB_stop || (() => {});
+
+//
 let main = {
 	
 	/**
