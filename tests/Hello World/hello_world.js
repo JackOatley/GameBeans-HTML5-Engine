@@ -10,7 +10,7 @@ GB.object.eventAddAction( "objHello", {
 	]
 } );
 
-GB.room.create( "rmHello", 640, 480 );
-GB.room.addInstance( "rmHello", "objHello", 0, 0 );
+GB.Room.create( "rmHello", 640, 480 );
+GB.Room.addInstance( "rmHello", "objHello", 0, 0 );
 
 GB.main.start();
