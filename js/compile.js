@@ -16,6 +16,15 @@ export default class Compiler {
 	 */
 	static actionExpression(exp) {
 		
+		let isActionParam = false;
+		if (exp instanceof String) {
+			isActionParam = true;
+			exp = String(exp);
+		}
+		
+		if (exp === "self") return this;
+		if (exp === "other") return window.other;
+		
 		if (!isNaN(Number(exp)))
 			return Number(exp);
 		
@@ -25,8 +34,10 @@ export default class Compiler {
 		if (Compiler.isFunction(exp)
 		||  Compiler.isOperator(exp)
 		||  Compiler.isResource(exp)
-		||  Compiler.isCss(exp))
+		||  Compiler.isCss(exp)
+		||  (!isActionParam && typeof exp === "string")) {
 			return exp;
+		}
 		
 		if (typeof exp === "string") {
 			let words = Compiler.getWords(exp);
@@ -139,7 +150,8 @@ export default class Compiler {
 	
 	/** */
 	static isString(x) {
-		return x.charAt(0) === "\"";
+		return (x.charAt(0) === "\"" && x.charAt(x.length-1) === "\"")
+			|| (x.charAt(0) === "'" && x.charAt(x.length-1) === "'");
 	}
 	
 	/** */
@@ -169,6 +181,7 @@ export default class Compiler {
 
 }
 
+Compiler.keywords = ["self", "other"];
 Compiler.booleans = [true, false, "true", "false"];
 Compiler.assignmentOperators = ["<", ">", "<=", ">=", "==", "===", "!=", "!=="];
 Compiler.splitCharacters = ["+", "-", "=", "!"];
