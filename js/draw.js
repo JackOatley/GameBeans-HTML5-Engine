@@ -115,15 +115,15 @@ let draw = {
 		else {
 			
 			// RGB / RGBA
-			if ( "r" in c && "g" in c && "b" in c ) {
-				draw.color = ( "a" in c )
+			if ("r" in c && "g" in c && "b" in c) {
+				draw.color = ("a" in c)
 					? "rgba("+c.r+","+c.g+","+c.b+","+c.a+")"
 					: "rgb("+c.r+","+c.g+","+c.b+")";
 			}
 			
 			// HSL / HSLA
-			else if ( "h" in c && "s" in c && "l" in c ) {
-				draw.color = ( "a" in c )
+			else if ("h" in c && "s" in c && "l" in c) {
+				draw.color = ("a" in c)
 					? "hsla("+c.h+","+c.s+"%,"+c.l+"%,"+c.a+")"
 					: "hsl("+c.h+","+c.s+"%,"+c.l+"%)";
 			}
@@ -134,15 +134,26 @@ let draw = {
 	/**
 	 * Draws the sprite at the given x, y position.
 	 * @param {sprite} sprite
-	 * @param {number} x
-	 * @param {number} y
+	 * @param {Number} index
+	 * @param {Number} x
+	 * @param {Number} y
+	 * @param {Number} scaleX
+	 * @param {Number} scaleY
+	 * @param {Number} rotation
+	 * @param {Object} [opts={}]
+	 * @param {Number} [originX] Overrides sprite's originX property.
+	 * @param {Number} [originY] Overrides sprite's originY property.
 	 */
-	sprite: function(spr, index, x, y, scaleX, scaleY, rotation ) {
+	sprite: function(spr, index, x, y, scaleX, scaleY, rotation, opts = {}) {
 
 		spr = sprite.get(spr);
 		
 		//
-		let ctx = draw.context;
+		const ctx = draw.context;
+		let ox = spr.originX;
+		let oy = spr.originY;
+		if (opts.originX !== undefined) ox = opts.originX;
+		if (opts.originY !== undefined) oy = opts.originY;
 		
 		//
 		ctx.save();
@@ -159,7 +170,7 @@ let draw = {
 		ctx.drawImage(
 			img, frame.clip.x, frame.clip.y,
 			frame.clip.w, frame.clip.h,
-			-spr.originX, -spr.originY,
+			-ox, -oy,
 			spr.width, spr.height
 		);
 		
