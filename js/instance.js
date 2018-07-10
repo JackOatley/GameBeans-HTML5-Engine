@@ -294,16 +294,18 @@ let instance = {
 	},
 
 	/**
-	 *
+	 * @param {Object} inst Instance to draw.
+	 * @param {Object} [opts] Options object.
 	 */
-	drawSelf: function(inst) {
+	drawSelf: function(inst, opts) {
 		if (inst.sprite === null) return;
 		draw.sprite(
 			inst.sprite,
 			inst.index,
 			inst.x, inst.y,
 			inst.scaleX, inst.scaleY,
-			inst.rotation
+			inst.rotation,
+			opts
 		);
 	},
 
