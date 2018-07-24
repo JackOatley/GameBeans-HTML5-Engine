@@ -14,18 +14,18 @@ module.exports = function(speed, keys) {
 	this.eventAddAction("step", function() {
 		
 		// Get direction
-		let dir = 0;
-		if (GB.input.keyboard.down[keys[0]]) dir = 1;
-		if (GB.input.keyboard.down[keys[1]]) dir = 2;
-		if (GB.input.keyboard.down[keys[2]]) dir = 3;
-		if (GB.input.keyboard.down[keys[3]]) dir = 4;
+		let x = 0, y = 0;
+		if (GB.input.keyboard.down[keys[0]]) y -= 1;
+		if (GB.input.keyboard.down[keys[1]]) x -= 1;
+		if (GB.input.keyboard.down[keys[2]]) y += 1;
+		if (GB.input.keyboard.down[keys[3]]) x += 1;
 		
 		// Apply
-		switch (dir) {
-			case (1): this.y -= speed; break;
-			case (2): this.x -= speed; break;
-			case (3): this.y += speed; break;
-			case (4): this.x += speed; break;
+		if (x !== 0 || y !== 0) {
+			const dir = GB.math.pointDirection(0, 0, x, y);
+			[x, y] = GB.math.lengthDir(speed, dir);
+			this.x += x;
+			this.y += y;
 		}
 		
 	});
