@@ -353,7 +353,14 @@ let instance = {
 	 */
 	instanceCollisionInstance: function(inst, target) {
 		
-		let arr = object.getAllInstances(target);
+		//
+		let arr;
+		if (target === "solid") {
+			arr = instance.getAllSolid(target);
+		} else {
+			arr = object.getAllInstances(target);
+		}
+		
 		let box1 = inst.boxCollision;
 		arr.forEach(function(targ) {
 			
@@ -512,8 +519,18 @@ let instance = {
 				aInstances.splice(n, 1);
 			}
 		}
-	}
+	},
 
+	getAllSolid: function() {
+		let arr = [];
+		instance.instanceArray.forEach((i) => {
+			if (i.solid) {
+				arr.push(i);
+			}
+		});
+		return arr;
+	}
+	
 }
 
 
