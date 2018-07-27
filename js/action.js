@@ -4,7 +4,7 @@ import draw from "./draw";
 import instance from "./instance";
 import input from "./input";
 import math from "./math";
-import sprite from "./sprite";
+import Sprite from "./sprite";
 import Canvas from "./canvas";
 import color from "./color";
 import main from "./main";
@@ -203,13 +203,7 @@ let GAME = {
 	} ),
 	Canvas: Canvas,
 	color: color,
-	sprite: {
-		create: sprite.create,
-		addFrame: sprite.addFrame,
-		tint: sprite.tint,
-		get: sprite.get,
-		cache: sprite.cache
-	},
+	sprite: Sprite,
 	Sound: Sound,
 	Room: Room,
 	input: {

@@ -1,8 +1,3 @@
-/**
- * @module sprite
- */
-
-//
 import color from "./color.js";
 
 //
@@ -129,34 +124,43 @@ let sprite = {
 	/**
 	 *
 	 */
-	cache: function( spr, options = {} ) {
+	cache: function(spr, opts = {}) {
 		
 		spr = sprite.get( spr );
-		spr.images.forEach( function( frame ) {
+		spr.images.forEach((frame) => {
 			let canvas = document.createElement( "CANVAS" );
-			canvas.width = options.width || frame.img.width;
-			canvas.height = options.height || frame.img.height;
+			canvas.width = opts.width || frame.img.width;
+			canvas.height = opts.height || frame.img.height;
 			let ctx = canvas.getContext( "2d" );
 			ctx.drawImage( frame.img, 0, 0, canvas.width+1, canvas.height+1 );
-			
+			frame.__orig = Object.assign({}, frame);
 			frame.clip.x = 0;
 			frame.clip.y = 0;
 			frame.clip.w = canvas.width;
 			frame.clip.h = canvas.height;
 			frame.img = canvas;
-		} );
+		});
 		
+	},
+	
+	/**
+	 *
+	 */
+	restore: function(spr, options = {}) {
+		spr = sprite.get(spr);
+		spr.images.forEach((frame) => {
+			if (frame.__orig) frame = frame._orig;
+			if (frame.__origSrc) frame.img.src = frame.__origSrc;
+		});
 	},
 
 	/**
 	 *
 	 */
-	setOrigin: function( spr, x, y ) {
-		
-		spr = sprite.get( spr );
-		spr.originX = Number( x );
-		spr.originY = Number( y );
-		
+	setOrigin: function(spr, x, y) {
+		spr = sprite.get(spr);
+		spr.originX = Number(x);
+		spr.originY = Number(y);
 	},
 	
 	/**
@@ -187,14 +191,14 @@ let sprite = {
 			spr = sprite.get( spr );
 		
 		//
-		spr.images.forEach( function( image ) {
+		spr.images.forEach( function( frame ) {
 			
 			// create canvas, draw image
 			let canvas = document.createElement( "CANVAS" );
 			let ctx = canvas.getContext( "2d" );
 			canvas.width = spr.width;
 			canvas.height = spr.height;
-			ctx.drawImage( image.img, 0, 0 );
+			ctx.drawImage( frame.img, 0, 0 );
 			
 			// get data, do thing, put data back
 			let imageData = ctx.getImageData( 0, 0, canvas.width, canvas.height );
@@ -202,7 +206,8 @@ let sprite = {
 			ctx.putImageData( imageData, 0, 0 );
 			
 			//
-			image.img.src = canvas.toDataURL( "image/png" );
+			frame.__origSrc = frame.img.src;
+			frame.img.src = canvas.toDataURL( "image/png" );
 			
 		} );
 		
@@ -211,13 +216,13 @@ let sprite = {
 	/**
 	 *
 	 */
-	get: function( name ) {
+	get: function(name) {
 		
-		if ( typeof name === "object" )
+		if (typeof name === "object")
 			return name;
 		
-		for ( var n = 0; n < aLength; n++ )
-			if ( aSprites[n].name === name )
+		for (var n = 0; n < aLength; n++)
+			if (aSprites[n].name === name)
 				return aSprites[n];
 			
 		return null;
