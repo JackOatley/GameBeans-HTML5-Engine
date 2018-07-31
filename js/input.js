@@ -8,6 +8,8 @@ let __mouse = {
 	released: [false, false, false],
 	wheelUp: false,
 	wheelDown: false,
+	rawX: 0,
+	rawY: 0,
 	x: 0,
 	y: 0
 }
@@ -70,10 +72,14 @@ export default class Input {
 		
 		//
 		let handleMouseMove = (e) => {
-			let canv = Canvas.main.domElement;
-			let rect = canv.getBoundingClientRect();
-			__mouse.x = e.clientX - rect.left;
-			__mouse.y = e.clientY - rect.top;
+			const canv = Canvas.main.domElement;
+			const rect = canv.getBoundingClientRect();
+			const hs = canv.width / rect.width;
+			const vs = canv.height / rect.height;
+			__mouse.rawX = e.clientX - rect.left;
+			__mouse.rawY = e.clientY - rect.top;
+			__mouse.x = __mouse.rawX * hs;
+			__mouse.y = __mouse.rawY * vs;
 		}
 		
 		//
