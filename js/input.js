@@ -54,43 +54,38 @@ export default class Input {
 	 */
 	static initMouse() {
 		
-		//
-		let handleMouseDown = (e) => {
+		const handleMouseDown = (e) => {
 			e.preventDefault();
 			if (!__mouse.pressed[e.button]) window.focus();
 			__mouse.pressed[e.button] = true;
 			__mouse.down[e.button] = true;
 		}
 		
-		//
-		let handleMouseUp = (e) => {
+		const handleMouseUp = (e) => {
 			e.preventDefault();
 			__mouse.pressed[e.button] = false;
 			__mouse.released[e.button] = true;
 			__mouse.down[e.button] = false;
 		}
 		
-		//
-		let handleMouseMove = (e) => {
+		const handleMouseMove = (e) => {
 			const canv = Canvas.main.domElement;
 			const rect = canv.getBoundingClientRect();
 			const hs = canv.width / rect.width;
 			const vs = canv.height / rect.height;
 			__mouse.rawX = e.clientX - rect.left;
 			__mouse.rawY = e.clientY - rect.top;
-			__mouse.x = __mouse.rawX * hs;
-			__mouse.y = __mouse.rawY * vs;
+			__mouse.x = ~~__mouse.rawX * hs;
+			__mouse.y = ~~__mouse.rawY * vs;
 		}
 		
-		//
-		let handleMouseWheel = (e) => {
+		const handleMouseWheel = (e) => {
 			e.preventDefault();
-			let delta = Math.max(-1, Math.min(1, e.wheelDelta));
+			const delta = Math.max(-1, Math.min(1, e.wheelDelta));
 			__mouse.wheelUp = delta > 0;
 			__mouse.wheelDown = delta < 0;
 		}
 		
-		//
 		Input.element.addEventListener("mousedown", handleMouseDown);
 		Input.element.addEventListener("mouseup", handleMouseUp);
 		Input.element.addEventListener("mousemove", handleMouseMove);
