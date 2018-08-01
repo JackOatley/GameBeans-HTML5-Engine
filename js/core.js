@@ -18,6 +18,7 @@ import Transition from "./transition";
 import Primitive from "./drawing/primitive";
 import Font from "./font";
 import Grid from "./data/grid";
+import Vector2 from "./Vector2";
 
 export {
 	App,
@@ -38,5 +39,6 @@ export {
 	tween,
 	Transition,
 	Font,
-	Grid
+	Grid,
+	Vector2
 }

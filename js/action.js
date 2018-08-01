@@ -16,7 +16,8 @@ import tween from "./tween";
 import Transition from "./transition";
 import GameObject from "./object";
 import Primitive from "./drawing/primitive";
- 
+import Vector2 from "./Vector2";
+
 /**
  * @param {string} varName
  * @param {value} value
@@ -219,7 +220,8 @@ let GAME = {
 	tween: tween,
 	Transition: Transition,
 	Object: GameObject,
-	Primitive: Primitive
+	Primitive: Primitive,
+	Vector2: Vector2
 }
 
 //
