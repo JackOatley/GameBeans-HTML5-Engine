@@ -40,7 +40,7 @@ let values = [
 	"KeyU",
 	"KeyV",
 	"KeyW",
-	"KeyZ",
+	"KeyX",
 	"KeyY",
 	"KeyZ",
 	"Digit0",
