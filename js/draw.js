@@ -43,7 +43,7 @@ let draw = {
 	
 	/** */
 	clear: function(col) {
-		canvas.clear(draw.target, col);
+		canvas.fill(draw.target, col);
 	},
 
 	/** */
@@ -162,7 +162,7 @@ let draw = {
 		ctx.scale( scaleX, scaleY );
 		
 		//
-		index = Math.floor(index) % spr.images.length;
+		index = Math.floor(index || 0) % spr.images.length;
 		
 		//
 		let frame = spr.images[index];
@@ -265,23 +265,23 @@ let draw = {
 		
 		//
 		let lineHeight = ctx.measureText("M").width * 1.2;
-		let lines = text.toString().split( "#" );
+		let lines = text.toString().split("#");
 		for (var i=0; i<lines.length; i++) {
 			
-			if ( opts.maxWidth ) {
+			if (opts.maxWidth) {
 				var words = lines[i].split(' ');
 				var line = '';
 				
-				for(var n = 0; n < words.length; n++) {
+				for(var n=0; n<words.length; n++) {
 					
 					var testLine = line + words[n] + ' ';
 					var metrics = ctx.measureText(testLine);
 					var testWidth = metrics.width;
 					if (testWidth > opts.maxWidth && n > 0) {
 						
-						
 						let a = line.slice(0, startN);
 						let b = line.slice(startN, endN);
+						//drawX += Draw.measureText(a).width;
 						drawX += ctx.measureText(a).width;
 						if ( 0 < endN ) {
 							_drawWord(drawX, y, b, lookup, ctx, useBitmap, bitmap, scale, drawMethod);
@@ -310,8 +310,9 @@ let draw = {
 			
 				let a = lines[i].slice(0, startN);
 				let b = lines[i].slice(startN, endN);
+				//console.log(b);
 				drawX += ctx.measureText(a).width;
-				_drawWord(drawX, y, b, lookup, ctx, useBitmap, bitmap, scale, drawMethod);
+				_drawWord(~~drawX, y, b, lookup, ctx, useBitmap, bitmap, scale, drawMethod);
 				lineLength = lines[i].length;
 				
 			}

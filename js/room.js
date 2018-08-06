@@ -1,7 +1,7 @@
 import Generator from "./generator.js";
 import Transition from "./transition.js";
 import instance from "./instance.js";
-import sprite from "./sprite.js";
+import Sprite from "./sprite.js";
 import draw from "./draw.js";
 
 /**
@@ -20,6 +20,7 @@ export default class Room {
 		this.height = Number(height);
 		this.background = null;
 		this.backgroundMethod = "no-repeat";
+		this.backgroundColor = "#FF0000";
 		this.instances = [];
 		Room.names.push(name);
 		Room.array.push(this);
@@ -82,17 +83,18 @@ export default class Room {
 	 *
 	 */
 	draw() {
-		let spr = sprite.get(this.background);
-		if ( spr !== null ) {
-			var canvas = draw.getTarget().domElement;
-			var ctx = canvas.getContext("2d");
+		var canvas = draw.target.domElement;
+		var ctx = draw.context;
+		draw.clear(this.backgroundColor);
+		let spr = Sprite.get(this.background);
+		if (spr !== null) {
 			let image = spr.images[0].img;
-			if ( this.backgroundMethod === "stretch" ) {
-				ctx.drawImage( image, 0, 0, canvas.width, canvas.height );
+			if (this.backgroundMethod === "stretch") {
+				ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
 			} else {
-				let ptrn = ctx.createPattern( image, this.backgroundMethod );
+				let ptrn = ctx.createPattern(image, this.backgroundMethod);
 				ctx.fillStyle = ptrn;
-				ctx.fillRect( 0, 0, canvas.width, canvas.height );
+				ctx.fillRect(0, 0, canvas.width, canvas.height);
 			}
 		}
 	}
