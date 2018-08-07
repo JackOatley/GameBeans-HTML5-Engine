@@ -44,6 +44,8 @@ let instance = {
 		inst.assetType = "instance";
 		inst.x = Number(x);
 		inst.y = Number(y);
+		inst.startX = inst.x;
+		inst.startY = inst.y;
 		inst.boxCollision = Object.assign({}, inst.boxCollision);
 		
 		//
