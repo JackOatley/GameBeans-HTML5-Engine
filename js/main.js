@@ -1,7 +1,7 @@
 import Canvas from "./canvas";
 import room from "./room";
 import input from "./input";
-import instance from "./instance";
+import Instance from "./instance";
 import global from "./global";
 import draw from "./draw";
 import Camera from "./camera";
@@ -127,8 +127,9 @@ function queueUpdates(ticks) {
  * @param {number} dt Delta Time.
  */
 function gameUpdate(dt) {
-	instance.stepAll(dt);
-	instance.clearDestroyed();
+	Instance.newStep(dt);
+	Instance.stepAll(dt);
+	Instance.clearDestroyed();
 	Transition.updateAll();
 }
 
@@ -140,7 +141,7 @@ function gameDraw() {
 	Canvas.main.fill("#000000");
 	room.draw(room.current);
 	Camera.updateAll();
-	instance.drawAll();
+	Instance.drawAll();
 	Transition.drawAll();
 }
 
@@ -148,7 +149,7 @@ function gameDraw() {
  *
  */
 function handleResizeEvent() {
-	instance.executeEventAll("resize");
+	Instance.executeEventAll("resize");
 }
 
 // attach event listerners

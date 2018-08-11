@@ -46,6 +46,8 @@ let instance = {
 		inst.y = Number(y);
 		inst.startX = inst.x;
 		inst.startY = inst.y;
+		inst.previousX = inst.x;
+		inst.previousY = inst.y;
 		inst.boxCollision = Object.assign({}, inst.boxCollision);
 		
 		//
@@ -162,7 +164,7 @@ let instance = {
 	},
 
 	/**
-	 * @param {instance} inst Instance to excute step event of.
+	 * @param {instance} inst Instance to execute step event of.
 	 * @param {time} dt Delta time.
 	 */
 	step: function(inst, dt) {
@@ -190,10 +192,10 @@ let instance = {
 	updateAnimation: function(inst, dt) {
 		
 		inst.index += inst.imageSpeed;
-		let spr = sprite.get( inst.sprite );
-		if ( spr ) {
+		let spr = sprite.get(inst.sprite);
+		if (spr) {
 			let length = spr.images.length;
-			if ( inst.index >= length ) {
+			if (inst.index >= length) {
 				
 				let behavior = inst.animationBehavior;
 				let type = typeof behavior;
@@ -278,6 +280,7 @@ let instance = {
 	 *
 	 */
 	destroy: function(inst) {
+		instance.executeEvent(inst, "destroy");
 		inst.exists = false;
 		let index = inst.object.instances.indexOf(inst);
 		inst.object.instances.splice(index, 1);
@@ -490,6 +493,17 @@ let instance = {
 			
 		}
 		
+	},
+	
+	/**
+	 * @param {number} dt Delta time.
+	 */
+	newStep: function(dt) {
+		let arr = aInstances.slice();
+		arr.forEach((i) => {
+			i.previousX = i.x;
+			i.previousY = i.y;
+		});
 	},
 
 	/**
