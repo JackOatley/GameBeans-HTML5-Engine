@@ -2,22 +2,22 @@ import math from "./math.js";
 import input from "./input.js";
 import object from "./object.js";
 import sprite from "./sprite.js";
-import draw from "./draw.js";
+import Draw from "./draw.js";
 import Compiler from "./compile.js";
 import global from "./global";
 
 //
 window.global = global;
-let aInstances = [];
-let otherStack = [];
-let currentEvent = "";
 
 //
-let instance = {
+let instance = (function() {
 
 	//
-	instanceArray: aInstances,
-	instanceHardLimit: 1000,
+	let instanceArray = [];
+	let instanceHardLimit = 1000;
+	let doDepthSort = false;
+	let otherStack = [];
+	let currentEvent = "";
 
 	/***************************************************************************
 	 * @param {Object} obj
@@ -25,7 +25,7 @@ let instance = {
 	 * @param {number} y
 	 * @return {Object}
 	 */
-	create: function(obj, x, y) {
+	function create(obj, x, y) {
 
 		//
 		let o = object.get(obj);
@@ -35,11 +35,18 @@ let instance = {
 			return null;
 		}
 
-		let inst = new o(x, y);
-		return inst;
-	},
+		//
+		return new o(x, y);
 
-	setup: function(inst, o, x, y) {
+	}
+
+	/***************************************************************************
+	 *
+	 */
+	function setup(inst, o, x, y) {
+
+		inst.exists = true;
+		inst.speed = 0;
 		inst.object = o;
 		inst.objectName = o.objectName;
 		inst.assetType = "instance";
@@ -61,25 +68,26 @@ let instance = {
 		}
 
 		//
-		instance.addToArray(inst);
-		instance.updateBoundingBox(inst);
-		instance.updateCollisionBox(inst);
-		instance.executeEvent(inst, "create");
-	},
+		addToArray(inst);
+		updateBoundingBox(inst);
+		updateCollisionBox(inst);
+		executeEvent(inst, "create");
+	}
 
-	/**
-	 *
+	/***************************************************************************
+	 * @param {Object} inst
+	 * @return {void}
 	 */
-	addToArray: function(inst) {
-		let i;
-		for (i=0; i<aInstances.length; i++) {
-			if (inst.depth <= aInstances[i].depth) {
-				aInstances.splice(i, 0, inst);
+	function addToArray(inst) {
+		let i = instanceArray.length;
+		while (i--) {
+			if (inst.depth <= instanceArray[i].depth) {
+				instanceArray.splice(i, 0, inst);
 				return;
 			}
 		}
-		aInstances.push(inst);
-	},
+		instanceArray.push(inst);
+	}
 
 	/**
 	 * @param {object} obj
@@ -88,108 +96,108 @@ let instance = {
 	 * @param {number} speed
 	 * @param {number} direction
 	 */
-	createMoving: function(obj, x, y, speed, direction) {
+	function createMoving(obj, x, y, speed, direction) {
 
-		if ( aInstances.length >= instance.instanceHardLimit ) {
-			console.warn( "instance number hard limit reached:", instance.instanceHardLimit );
+		if (instanceArray.length >= instanceHardLimit) {
+			console.warn("instance number hard limit reached:", instanceHardLimit);
 			return;
 		}
 
-		let newInst = instance.create(obj, x, y);
+		let newInst = create(obj, x, y);
 		newInst.speed = speed;
 		newInst.direction = direction;
 		return newInst;
 
-	},
+	}
 
 	/**
 	 *
 	 */
-	find: function(obj, n) {
+	function find(obj, n) {
 		if (typeof obj === "function") obj = obj.objectName;
 		let i, c=0, inst;
-		for (i=0; i<aInstances.length; i++) {
-			inst = instance.instanceArray[i];
+		for (i=0; i<instanceArray.length; i++) {
+			inst = instanceArray[i];
 			if (inst.objectName === obj) {
 				if (c++ === n)
 					return inst;
 			}
 		}
 		return null;
-	},
+	}
 
 	/**
 	 *
 	 */
-	findRandom: function(obj) {
+	function findRandom(obj) {
 		if (typeof obj === "function") obj = obj.objectName;
-		let n = math.randomInt(0, instance.count(obj) - 1);
-		return instance.find(obj, n);
-	},
+		let n = math.randomInt(0, count(obj) - 1);
+		return find(obj, n);
+	}
 
 	/**
 	 *
 	 */
-	count: function(objectName) {
+	function count(objectName) {
 		let c=0;
-		instance.instanceArray.forEach((inst) => {
+		instanceArray.forEach((inst) => {
 			c += (inst.objectName === objectName);
 		});
 		return c;
-	},
+	}
 
 	/**
 	 * @param {number} rotation
 	 * @param {boolean} relative
 	 */
-	setRotation: function(rotation, relative) {
+	function setRotation(rotation, relative) {
 		this.rotation = (relative) ? this.rotation + rotation : rotation;
-	},
+	}
 
 	/**
 	 * @param {number} rotation
 	 * @param {boolean} relative
 	 */
-	setDirection: function(direction, relative) {
+	function setDirection(direction, relative) {
 		this.direction = (relative) ? this.direction + direction : direction;
-	},
+	}
 
 	/**
 	 * @param {object} inst Check the mouse is over this instance.
 	 */
-	mouseOn: function(inst) {
-		return !(inst.boxTop > input.mouse.y/2 - draw.offsetY
-		|| inst.boxBottom < input.mouse.y/2 - draw.offsetY
-		|| inst.boxLeft > input.mouse.x/2 - draw.offsetX
-		|| inst.boxRight < input.mouse.x/2 - draw.offsetX);
-	},
+	function mouseOn(inst) {
+		return !(inst.boxTop > input.mouse.y/2 - Draw.offsetY
+		|| inst.boxBottom < input.mouse.y/2 - Draw.offsetY
+		|| inst.boxLeft > input.mouse.x/2 - Draw.offsetX
+		|| inst.boxRight < input.mouse.x/2 - Draw.offsetX);
+	}
 
 	/**
 	 * @param {instance} inst Instance to execute step event of.
 	 */
-	step: function(inst) {
+	function step(inst) {
 
 		// step events
-		instance.executeEvent(inst, "step");
-		instance.updateAnimation(inst);
-		instance.updatePosition(inst);
-		instance.updateBoundingBox(inst);
-		instance.updateCollisionBox(inst);
+		executeEvent(inst, "step");
+		updateAnimation(inst);
+		updatePosition(inst);
+		updateBoundingBox(inst);
+		updateCollisionBox(inst);
 
 		// collision events
-		instance.instanceExecuteListeners(inst);
+		instanceExecuteListeners(inst);
 
 		// input events
 		input.triggerEvents.forEach((event) => {
-			instance.executeEvent(inst, event);
+			executeEvent(inst, event);
 		});
 
-	},
+	}
 
 	/**
 	 *
 	 */
-	updateAnimation: function(inst) {
+	function updateAnimation(inst) {
 
 		inst.index += inst.imageSpeed;
 		let spr = sprite.get(inst.sprite);
@@ -224,12 +232,12 @@ let instance = {
 			}
 		}
 
-	},
+	}
 
 	/**
 	 *
 	 */
-	updatePosition: function(inst) {
+	function updatePosition(inst) {
 
 		// if the instance is already falling at terminal velocity then we no longer apply gravity
 		let gravVector = {
@@ -251,60 +259,60 @@ let instance = {
 		inst.x += inst.speedX;
 		inst.y += inst.speedY;
 
-	},
+	}
 
 	/**
 	 * @param {object} i Instance whos bounding box to update.
 	 */
-	updateBoundingBox: function(i) {
+	function updateBoundingBox(i) {
 		let spr = sprite.get(i.sprite);
 		if (spr === null) return;
 		i.boxTop = i.y - spr.originY * i.scaleY;
 		i.boxLeft = i.x - spr.originX * i.scaleX;
 		i.boxBottom = i.boxTop + spr.height * i.scaleY;
 		i.boxRight = i.boxLeft + spr.width * i.scaleX;
-	},
+	}
 
 	/**
 	 * @param {object} i Instance.
 	 */
-	updateCollisionBox: function(i) {
+	function updateCollisionBox(i) {
 		let box = i.boxCollision;
 		box.top = i.y - box.y * i.scaleY;
 		box.left = i.x - box.x * i.scaleX;
 		box.bottom = box.top + box.height * i.scaleY;
 		box.right = box.left + box.width * i.scaleX;
-	},
+	}
 
 	/**
 	 *
 	 */
-	destroy: function(inst) {
-		instance.executeEvent(inst, "destroy");
+	function destroy(inst) {
+		executeEvent(inst, "destroy");
 		inst.exists = false;
 		let index = inst.object.instances.indexOf(inst);
 		inst.object.instances.splice(index, 1);
-	},
+	}
 
 	/**
 	 *
 	 */
-	draw: function(inst) {
+	function draw(inst) {
 		if (!inst.visible) return;
 		if (inst.events["draw"]) {
-			instance.executeEvent(inst, "draw")
+			executeEvent(inst, "draw")
 		} else {
-			instance.drawSelf(inst);
+			drawSelf(inst);
 		}
-	},
+	}
 
 	/**
 	 * @param {Object} inst Instance to draw.
 	 * @param {Object} [opts] Options object.
 	 */
-	drawSelf: function(inst, opts) {
+	function drawSelf(inst, opts) {
 		if (inst.sprite === null) return;
-		draw.sprite(
+		Draw.sprite(
 			inst.sprite,
 			inst.index,
 			inst.x, inst.y,
@@ -312,14 +320,14 @@ let instance = {
 			inst.rotation,
 			opts
 		);
-	},
+	}
 
 	/**
 	 *
 	 */
-	drawDebug: function(inst) {
+	function drawDebug(inst) {
 		let box = inst.boxCollision;
-		draw.shape.rectangle(
+		Draw.shape.rectangle(
 			box.left,
 			box.top,
 			box.right - box.left,
@@ -327,41 +335,41 @@ let instance = {
 				color: "#FF000055"
 			}
 		);
-	},
+	}
 
 	/**
 	 * @param {object} sprite
 	 */
-	changeSprite: function(sprite) {
+	function changeSprite(sprite) {
 		this.sprite = sprite;
-	},
+	}
 
 	/**
 	 * @param {object} inst
 	 */
-	instanceExecuteListeners: function( inst ) {
+	function instanceExecuteListeners(inst) {
 
-		inst.listeners.forEach( listener => {
-			switch ( listener.type ) {
+		inst.listeners.forEach((listener) => {
+			switch (listener.type) {
 
-				case ( "collision" ):
-					instance.instanceCollisionInstance( inst, listener.target );
+				case ("collision"):
+					instanceCollisionInstance(inst, listener.target);
 					break;
 
 			}
-		} );
+		});
 
-	},
+	}
 
 	/**
 	 *
 	 */
-	instanceCollisionInstance: function(inst, target) {
+	function instanceCollisionInstance(inst, target) {
 
 		//
 		let arr;
 		if (target === "solid") {
-			arr = instance.getAllSolid(target);
+			arr = getAllSolid(target);
 		} else {
 			arr = object.getAllInstances(target);
 		}
@@ -370,8 +378,9 @@ let instance = {
 		arr.forEach(function(targ) {
 
 			// same instance
-			if (inst === targ)
+			if (inst === targ) {
 				return;
+			}
 
 			// no collision
 			let box2 = targ.boxCollision;
@@ -383,20 +392,35 @@ let instance = {
 			}
 
 			// execute collision event
-			instance.executeEvent(inst, "collision_" + target, targ);
+			executeEvent(inst, "collision_" + target, targ);
 
 		});
 
-	},
+	}
 
-	/**
-	 * @param {instance} inst
-	 * @param {event} event
-	 * @param {instance} otherInst The other instance, in collisions for example.
+	/***************************************************************************
+	 * Execute a particular event for all current instances.
+	 * @param {string} event The event to execute.
+	 * @param {Object} otherInst
+	 * @return {void}
 	 */
-	executeEvent: function(inst, event, otherInst) {
+	function executeEventAll(event, otherInst) {
+		var n = instanceArray.length;
+		while (n--) {
+			executeEvent(instanceArray[n], event, otherInst);
+		}
+	}
 
-		// set the current "other" instance
+	/***************************************************************************
+	 * Execute an event for the given instance only.
+	 * @param {Object} inst
+	 * @param {event} event
+	 * @param {Object} otherInst The other instance, in collisions for example.
+	 * @return {void}
+	 */
+	function executeEvent(inst, event, otherInst) {
+
+		// Set the current "other" instance.
 		otherStack.push(window.other);
 		window.other = otherInst;
 		currentEvent = event;
@@ -406,37 +430,28 @@ let instance = {
 			if (inst.exists) {
 				let actions = inst.events[event];
 				if (actions) {
-					instance.executeActions(inst, actions, otherInst);
+					executeActions(inst, actions, otherInst);
 				}
 			}
 		}
 		catch (err) {
 			console.error(err);
-			window.addConsoleText("#F00",
-				"Failed to execute event [" + event + "]"
-				+ " of object [" + inst.objectName + "]"
-				+ " with error: " + err);
+			window.addConsoleText("#F00", "Failed to execute event [" + event + "]" + " of object [" + inst.objectName + "]" + " with error: " + err);
 			window._GB_stop();
 			return false;
 		}
 
-		// restore previous "other" instance
+		// Restore previous "other" instance.
 		window.other = otherStack.pop();
-	},
 
-	/**
-	 * @param {string} event The event to secute for all instances.
-	 * @param {instace} other
-	 */
-	executeEventAll: function(event, otherInst) {
-		for (var n = 0; n < aInstances.length; n++)
-			instance.executeEvent(aInstances[n], event, otherInst);
-	},
+	}
 
-	/**
-	 *
+	/***************************************************************************
+	 * @param {Object} inst
+	 * @param {Array} actions
+	 * @param {Object} otherInst
 	 */
-	executeActions: function(inst, actions, otherInst) {
+	function executeActions(inst, actions, otherInst) {
 		const steps = [];
 		let condition = true;
 		let scope = 0;
@@ -462,7 +477,7 @@ let instance = {
 						}
 					}
 
-					// Catch and undefined arguments
+					// Catch any undefined arguments.
 					if (newArgs.includes(undefined)) {
 						window.addConsoleText("#F00",
 							"[" + inst.objectName + "]"
@@ -488,66 +503,92 @@ let instance = {
 			}
 
 			// exit from a single statement after an expression not contained in a block
-			if (steps[scope]++ === 1)
+			if (steps[scope]++ === 1) {
 				condition = true;
+			}
 
 		}
 
-	},
+	}
 
 	/**
 	 *
 	 */
-	newStep: function() {
-		let arr = aInstances.slice();
+	function newStep() {
+		let arr = instanceArray.slice();
 		arr.forEach((i) => {
 			i.previousX = i.x;
 			i.previousY = i.y;
 		});
-	},
+	}
 
 	/**
 	 *
 	 */
-	stepAll: function() {
-		let arr = aInstances.slice();
-		arr.forEach((i) => instance.step(i));
-	},
+	function stepAll() {
+		newStep();
+		let arr = instanceArray.slice();
+		arr.forEach(step);
+		clearDestroyed();
+	}
 
 	/** */
-	drawAll: function() {
-		if (instance.doDepthSort) {
-			instance.instanceArray.sort((a, b) => a.depth - b.depth);
+	function drawAll() {
+		if (doDepthSort) {
+			instanceArray.sort((a, b) => a.depth - b.depth);
 		}
-		aInstances.forEach((i) => instance.draw(i));
-	},
+		instanceArray.forEach(draw);
+	}
 
-	/**
-	 *
+	/***************************************************************************
+	 * Remove isntances that have been requested to be destroyed.
+	 * @return {void}
 	 */
-	clearDestroyed: function() {
-		for (var n=aInstances.length-1; n>=0; n--) {
-			let i = aInstances[n];
+	function clearDestroyed() {
+		let l = instanceArray.length;
+		let n = l;
+		let i;
+		while (i = instanceArray[--n]) {
 			if (!i.exists) {
-				i.exists = true;
-				i.speed = 0;
 				i.object.pool.release(i);
-				aInstances.splice(n, 1);
+				instanceArray[n] = instanceArray[--l];
 			}
 		}
-	},
+		instanceArray.length = l;
+	}
 
-	getAllSolid: function() {
+	/***************************************************************************
+	 * Returns all instances set as "solid".
+	 * @return {Array}
+	 */
+	function getAllSolid() {
 		let arr = [];
-		instance.instanceArray.forEach((i) => {
+		let n = instanceArray.length;
+		let i;
+		while (i = instanceArray[--n]) {
 			if (i.solid) {
 				arr.push(i);
 			}
-		});
+		}
 		return arr;
 	}
 
-}
+	return {
+		get instanceArray() { return instanceArray; },
+		set doDepthSort(x) { doDepthSort = x; },
+		create: create,
+		setup: setup,
+		stepAll: stepAll,
+		drawAll: drawAll,
+		executeEventAll: executeEventAll,
+		changeSprite: changeSprite,
+		createMoving: createMoving,
+		destroy: destroy,
+		drawSelf: drawSelf,
+		setDirection: setDirection,
+		setRotation: setRotation
+	}
 
+})();
 
 export default instance;

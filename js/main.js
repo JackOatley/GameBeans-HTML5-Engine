@@ -102,19 +102,21 @@ function tick(timestamp) {
 		gameDraw();
 
 		//
-		if ( numTicks ) {
+		if (numTicks) {
 			input.update();
 		}
 
 	} catch (err) {
+		console.error(err);
 		window.addConsoleText("#F00", "Error: " + err);
 		window._GB_stop();
 	}
 
 }
 
-/**
+/*******************************************************************************
  * @param {number} ticks
+ * @return {void}
  */
 function queueUpdates(ticks) {
 	while (ticks--) {
@@ -122,13 +124,12 @@ function queueUpdates(ticks) {
 	}
 }
 
-/**
- *
+/*******************************************************************************
+ * Update sequence.
+ * @return {void}
  */
 function gameUpdate() {
-	Instance.newStep();
 	Instance.stepAll();
-	Instance.clearDestroyed();
 	Transition.updateAll();
 }
 

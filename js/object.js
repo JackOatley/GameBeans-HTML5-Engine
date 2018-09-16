@@ -30,14 +30,14 @@ export default class GameObject {
 		GameObject.array.push(obj);
 		return obj;
 	}
-	
+
 	/**
 	 *
 	 */
 	set(property, value) {
 		this.prototype[property] = value;
 	}
-	
+
 	/**
 	 *
 	 */
@@ -46,16 +46,19 @@ export default class GameObject {
 			eval(this.objectScript);
 		}.call(this);
 	}
-	
+
 	/**
 	 * Add an action with variable parameters to an event of an object.
-	 * @param object Can be an object constructor or integer ID.
-	 * @param event
-	 * @param action
+	 * @param {*} object Can be an object constructor or integer ID.
+	 * @param {*} event
+	 * @param {*} action
 	 * @param {...*} args
+	 * @return {void}
 	 */
 	eventAddAction(event, action, ...args) {
-		
+
+		//console.log(event, action);
+
 		if (typeof event === "object") {
 			Object.keys(event).forEach((key) => {
 				event[key].forEach((params) => {
@@ -64,14 +67,14 @@ export default class GameObject {
 			});
 			return;
 		}
-		
+
 		if (action !== undefined) {
-			
+
 			// if flow action, get flow tag
 			let flow = "";
 			if (typeof action === "string")
 				flow = action;
-			
+
 			// create a new event if not yet defined
 			if (!this.prototype.events[event]) {
 				this.prototype.events[event] = [];
@@ -81,20 +84,20 @@ export default class GameObject {
 					GameObject.addCollisionListener(this, name);
 				}
 			}
-			
+
 			// add action data to event
 			this.prototype.events[event].push({
 				flow: flow,
 				action: action,
 				args: args
 			});
-			
+
 		} else {
 			console.warn("tried to add an undefined action to an event!");
 		}
-		
+
 	}
-	
+
 	/**
 	 *
 	 */
@@ -110,10 +113,10 @@ export default class GameObject {
 	 */
 	getAllInstances() {
 		let arr = [];
-		instance.instanceArray.forEach(instance => {
-			let name = instance.constructor.objectName;
+		instance.instanceArray.forEach(inst => {
+			let name = inst.constructor.objectName;
 			if (name === this.objectName)
-				arr.push(instance);
+				arr.push(inst);
 		});
 		return arr;
 	}
@@ -122,17 +125,17 @@ export default class GameObject {
 	 * @param {number}
 	 */
 	static get(value) {
-		
+
 		if (typeof value === "object" || typeof value === "function")
 			return value;
-		
+
 		for (var n = 0; n < GameObject.array.length; n++)
 			if (GameObject.array[n].objectName === value)
 				return GameObject.array[n];
-			
+
 		console.warn("FAIL: ", typeof value, value);
 		return null;
-		
+
 	}
 
 }
