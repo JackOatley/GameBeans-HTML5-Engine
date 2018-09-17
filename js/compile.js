@@ -5,32 +5,32 @@ import room from "./room";
 import Script from "./Script";
 import Sound from "./Sound";
 import sprite from "./sprite";
- 
+
 /**
  * @author Jack Oatley
  */
 export default class Compiler {
-	
-	/**
+
+	/***************************************************************************
 	 * @param {string} exp
 	 */
-	static actionExpression(exp) {
-		
+	static actionExpressionEval(exp) {
+
 		let isActionParam = false;
 		if (exp instanceof String) {
 			isActionParam = true;
 			exp = String(exp);
 		}
-		
+
 		if (exp === "self") return this;
 		if (exp === "other") return window.other;
-		
+
 		if (!isNaN(Number(exp)))
 			return Number(exp);
-		
+
 		if (Compiler.isBoolean(exp))
 			return exp === true || exp === "true";
-		
+
 		if (Compiler.isFunction(exp)
 		||  Compiler.isOperator(exp)
 		||  Compiler.isResource(exp)
@@ -38,17 +38,58 @@ export default class Compiler {
 		||  (!isActionParam && typeof exp === "string")) {
 			return exp;
 		}
-		
+
 		if (typeof exp === "string") {
 			let words = Compiler.getWords(exp);
 			let expression = Compiler.joinWords(words);
 			return eval(expression);
 		}
-		
+
 		return exp;
 
 	}
-	
+
+	/***************************************************************************
+	 * @param {string} exp
+	 * @return {*}
+	 */
+	static actionExpression(exp) {
+
+		let isActionParam = false;
+		if (exp instanceof String) {
+			isActionParam = true;
+			exp = String(exp);
+		}
+
+		if (exp === "self") return "this";
+		if (exp === "other") return "window.other";
+
+		if (!isNaN(Number(exp)))
+			return Number(exp);
+
+		if (Compiler.isBoolean(exp))
+			return (exp === true || exp === "true");// ? "true" : "false";
+
+		if (Compiler.isOperator(exp))
+			return "'" + exp + "'";
+
+		if (Compiler.isFunction(exp)
+		||  Compiler.isResource(exp)
+		||  Compiler.isCss(exp)
+		||  (!isActionParam && typeof exp === "string")) {
+			return exp;
+		}
+
+		if (typeof exp === "string") {
+			let words = Compiler.getWords(exp);
+			let expression = Compiler.joinWords(words);
+			return expression;
+		}
+
+		return exp;
+
+	}
+
 	/**
 	 *
 	 */
@@ -58,11 +99,11 @@ export default class Compiler {
 		let sIndex = -1;
 		let sType = "";
 		let newArr = [];
-			
+
 		for (n = 0; n < exp.length; n++) {
-			
+
 			let c = exp.charAt(n);
-			
+
 			if (c === "'" || c === "\"") {
 				if (sIndex === -1) {
 					sType = c;
@@ -72,7 +113,7 @@ export default class Compiler {
 					sIndex = -1;
 				}
 			}
-				
+
 			else if (sIndex === -1) {
 				if (c !== " ") {
 					if (Compiler.splitCharacters.includes(c)) {
@@ -88,17 +129,17 @@ export default class Compiler {
 					string += c;
 				}
 			}
-			
+
 		}
-		
+
 		if (string !== "") {
 			newArr.push(string);
 			string = "";
 		}
-		
+
 		return newArr;
 	}
-	
+
 	/**
 	 *
 	 */
@@ -119,7 +160,8 @@ export default class Compiler {
 						if (!Compiler.isResource(word)
 						&&  Compiler.isSingleWord(word)
 						&&  !Compiler.isString(word)
-						&&  !Compiler.isArray(word)) {
+						&&  !Compiler.isArray(word)
+						&& word !== "this") {
 							y += "this." + word;
 						} else {
 							y += word;
@@ -132,7 +174,7 @@ export default class Compiler {
 		});
 		return y;
 	}
-	
+
 	/** */
 	static isResource(x) {
 		return object.names.includes(x)
@@ -142,38 +184,38 @@ export default class Compiler {
 			|| Font.names.includes(x)
 			|| Script.names.includes(x);
 	}
-	
+
 	/** */
 	static isArray(x) {
 		return x.charAt(0) === "[";
 	}
-	
+
 	/** */
 	static isString(x) {
 		return (x.charAt(0) === "\"" && x.charAt(x.length-1) === "\"")
 			|| (x.charAt(0) === "'" && x.charAt(x.length-1) === "'");
 	}
-	
+
 	/** */
 	static isSingleWord(x) {
 		return !x.includes(".");
 	}
-	
+
 	/** */
 	static isFunction(x) {
 		return typeof x === "function";
 	}
-	
+
 	/** */
 	static isBoolean(x) {
 		return Compiler.booleans.includes(x);
 	}
-	
+
 	/** */
 	static isOperator(x) {
 		return Compiler.assignmentOperators.includes(x);
 	}
-	
+
 	/** */
 	static isCss(x) {
 		return x.charAt(0) === "#";

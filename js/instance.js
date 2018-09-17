@@ -1,9 +1,9 @@
-import math from "./math.js";
-import input from "./input.js";
-import object from "./object.js";
-import sprite from "./sprite.js";
-import Draw from "./draw.js";
-import Compiler from "./compile.js";
+import math from "./math";
+import input from "./input";
+import object from "./object";
+import sprite from "./sprite";
+import Draw from "./draw";
+import Compiler from "./compile";
 import global from "./global";
 
 //
@@ -20,6 +20,7 @@ let instance = (function() {
 	let currentEvent = "";
 
 	/***************************************************************************
+	 * Create a new instance of an object.
 	 * @param {Object} obj
 	 * @param {number} x
 	 * @param {number} y
@@ -467,28 +468,46 @@ let instance = (function() {
 					if (!condition)
 						break;
 
-					const args = action.args;
-					let n, newArgs = [];
-					for (n = 0; n < args.length; n++) {
-						switch (args[n]) {
-							case ("self"): newArgs[n] = inst; break;
-							case ("other"): newArgs[n] = otherInst; break;
-							default: newArgs[n] = Compiler.actionExpression.call(inst, args[n]); break
+					if (!action.cache) {
+
+						const args = action.args;
+						let n, newArgs = [];
+						for (n = 0; n < args.length; n++) {
+							switch (args[n]) {
+								case ("self"): newArgs[n] = inst; break;
+								case ("other"): newArgs[n] = otherInst; break;
+								default: newArgs[n] = Compiler.actionExpression.call(inst, args[n]); break
+							}
 						}
+
+						// Catch any undefined arguments.
+						if (newArgs.includes(undefined)) {
+							window.addConsoleText("#F00",
+								"[" + inst.objectName + "]"
+								+ " > [" + currentEvent + "]"
+								+ " > [" + action.action.name + "]"
+								+ " Action contains undefined values!");
+							window._GB_stop();
+							return false;
+						}
+
+						//*
+						action.cache = (function() {
+							if (typeof newArgs[0] === "function") {
+								return newArgs[0];
+							}
+							let t = inst;
+							let f = action.action;
+							return eval(`
+								(function() {
+									return f.call(this, ` + newArgs.join(",") + `);
+								})
+							`);
+						})();
+
 					}
 
-					// Catch any undefined arguments.
-					if (newArgs.includes(undefined)) {
-						window.addConsoleText("#F00",
-							"[" + inst.objectName + "]"
-							+ " > [" + currentEvent + "]"
-							+ " > [" + action.action.name + "]"
-							+ " Action contains undefined values!");
-						window._GB_stop();
-						return false;
-					}
-
-					condition = action.action.apply(inst, newArgs);
+					condition = action.cache.call(inst);
 					(condition === undefined)
 						? condition = true
 						: steps[scope] = 0;

@@ -63,7 +63,7 @@ let main = {
 	/**
 	 *
 	 */
-	setGameSpeed: function( speed ) {
+	setGameSpeed: function(speed) {
 		tickLength = 1000 / speed;
 	}
 

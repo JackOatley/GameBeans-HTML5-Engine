@@ -18,15 +18,18 @@ import GameObject from "./object";
 import Primitive from "./drawing/primitive";
 import Vector2 from "./Vector2";
 
-/**
+/*******************************************************************************
  * @param {string} varName
- * @param {value} value
+ * @param {*} value
+ * @param {boolean} relative
+ * @param {void}
  */
 function actionSet(varName, value, relative) {
-	if (relative)
+	if (relative) {
 		this[varName] += value
-	else
+	} else {
 		this[varName] = value;
+	}
 }
 
 /**

@@ -5,7 +5,7 @@ import Font from "./font.js";
 
 //
 let draw = {
-	
+
 	//
 	color: "#FFFFFF",
 	font: "Arial",
@@ -19,7 +19,7 @@ let draw = {
 	imageSmoothing: false,
 	offsetX: 0,
 	offsetY: 0,
-	
+
 	/**
 	 *
 	 */
@@ -28,19 +28,19 @@ let draw = {
 		draw.target = target;
 		draw.context = target.domElement.getContext("2d");
 	},
-	
+
 	/** */
 	resetTarget: function() {
 		let target = draw.targetStack.pop();
 		draw.target = target;
 		draw.context = target.domElement.getContext( "2d" );
 	},
-	
+
 	/** */
 	getTarget: function() {
 		return draw.target;
 	},
-	
+
 	/** */
 	clear: function(col) {
 		canvas.fill(draw.target, col);
@@ -50,19 +50,19 @@ let draw = {
 	save: function() {
 		draw.context.save();
 	},
-	
+
 	/** */
 	restore: function() {
 		draw.context.restore();
 	},
-	
+
 	/** */
 	reset: function() {
 		draw.context.imageSmoothingEnabled = draw.imageSmoothing;
 		draw.context.setTransform(...draw.defaultTransform);
 		draw.context.globalAlpha = 1;
 	},
-	
+
 	/**
 	 *
 	 */
@@ -72,21 +72,21 @@ let draw = {
 
 	//
 	transform: {
-		
+
 		scale: function(x, y) {
 			draw.context.scale(x, y);
 		},
-		
+
 		rotate: function(rot) {
 			draw.context.rotate(rot * math.DEGTORAD);
 		},
-		
+
 		translate: function(x, y) {
 			draw.offsetX = x;
 			draw.offsetY = y;
 			draw.context.translate(x, y);
 		},
-		
+
 		/**
 		 * @param {object} [opts={}]
 		 */
@@ -105,22 +105,22 @@ let draw = {
 	 * @param {color} c Can be a number, a hex-value or an object containing R, G, B and optionally A properties or H, S, L and optionally A properties.
 	 */
 	setColor: function( c ) {
-		
+
 		// quick exit if c is already a CSS color value
 		if ( typeof c === "string" ) {
 			draw.color = c;
 		}
-		
+
 		// c is an object
 		else {
-			
+
 			// RGB / RGBA
 			if ("r" in c && "g" in c && "b" in c) {
 				draw.color = ("a" in c)
 					? "rgba("+c.r+","+c.g+","+c.b+","+c.a+")"
 					: "rgb("+c.r+","+c.g+","+c.b+")";
 			}
-			
+
 			// HSL / HSLA
 			else if ("h" in c && "s" in c && "l" in c) {
 				draw.color = ("a" in c)
@@ -128,7 +128,7 @@ let draw = {
 					: "hsl("+c.h+","+c.s+"%,"+c.l+"%)";
 			}
 		}
-		
+
 	},
 
 	/**
@@ -147,23 +147,23 @@ let draw = {
 	sprite: function(spr, index, x, y, scaleX, scaleY, rotation, opts = {}) {
 
 		spr = sprite.get(spr);
-		
+
 		//
 		const ctx = draw.context;
 		let ox = spr.originX;
 		let oy = spr.originY;
 		if (opts.originX !== undefined) ox = opts.originX;
 		if (opts.originY !== undefined) oy = opts.originY;
-		
+
 		//
 		ctx.save();
 		ctx.translate( x, y );
 		ctx.rotate( rotation * math.DEGTORAD );
 		ctx.scale( scaleX, scaleY );
-		
+
 		//
 		index = Math.floor(index || 0) % spr.images.length;
-		
+
 		//
 		let frame = spr.images[index];
 		let img = frame.img;
@@ -173,7 +173,7 @@ let draw = {
 			-ox, -oy,
 			spr.width, spr.height
 		);
-		
+
 		//
 		ctx.restore();
 	},
@@ -204,7 +204,7 @@ let draw = {
 	canvas: function(canv, x, y) {
 		draw.context.drawImage(canv.domElement, x, y);
 	},
-	
+
 	/**
 	 * @param {string} font
 	 * @param {number} size
@@ -229,10 +229,10 @@ let draw = {
 	 * @param {number} y
 	 */
 	text: function(text, x, y, opts = {}) {
-		
+
 		x = Number(x);
 		y = Number(y);
-		
+
 		let bitmap, lookup, scale, useBitmap = false;
 		let font = Font.get(draw.font);
 		if (font && font.method === "bitmap") {
@@ -241,7 +241,7 @@ let draw = {
 			bitmap = font.bitmapFont.image;
 			scale = draw.fontSize / font.bitmapFont.size;
 		}
-		
+
 		//
 		let ctx = draw.context;
 		let drawMethod = "fillText";
@@ -252,33 +252,34 @@ let draw = {
 		} else {
 			ctx.fillStyle = draw.color;
 		}
-		
+
 		//
 		let lineLength;
 		let drawX = x;
 		let startN = 0;
+		//console.log(text);
 		let endN = text.toString().length;
 		if (opts.pattern) {
 			startN = opts.pattern.start;
 			endN = opts.pattern.end;
 		}
-		
+
 		//
 		let lineHeight = ctx.measureText("M").width * 1.2;
 		let lines = text.toString().split("#");
 		for (var i=0; i<lines.length; i++) {
-			
+
 			if (opts.maxWidth) {
 				var words = lines[i].split(' ');
 				var line = '';
-				
+
 				for(var n=0; n<words.length; n++) {
-					
+
 					var testLine = line + words[n] + ' ';
 					var metrics = ctx.measureText(testLine);
 					var testWidth = metrics.width;
 					if (testWidth > opts.maxWidth && n > 0) {
-						
+
 						let a = line.slice(0, startN);
 						let b = line.slice(startN, endN);
 						//drawX += Draw.measureText(a).width;
@@ -289,50 +290,50 @@ let draw = {
 						lineLength = testLine.length;
 						startN -= lineLength;
 						endN -= lineLength;
-						
-						
+
+
 						line = words[n] + ' ';
 						y += lineHeight;
 						drawX = x;
 					} else {
 						line = testLine;
 					}
-					
+
 				}
-				
+
 				let a = line.slice(0, startN);
 				let b = line.slice(startN, endN);
 				drawX += ctx.measureText(a).width;
 				_drawWord(drawX, y, b, lookup, ctx, useBitmap, bitmap, scale, drawMethod);
 				lineLength = line.length;
-				
+
 			} else {
-			
+
 				let a = lines[i].slice(0, startN);
 				let b = lines[i].slice(startN, endN);
 				//console.log(b);
 				drawX += ctx.measureText(a).width;
 				_drawWord(~~drawX, y, b, lookup, ctx, useBitmap, bitmap, scale, drawMethod);
 				lineLength = lines[i].length;
-				
+
 			}
-			
+
 			drawX = x;
 			y += lineHeight;
 			startN -= lineLength;
 			endN -= lineLength;
-			
+
 		}
-		
-		
-		
+
+
+
 	},
-	
+
 	/**
 	 *
 	 */
 	shape: {
-		
+
 		/**
 		 * @param {number} x1
 		 * @param {number} y1
@@ -348,7 +349,7 @@ let draw = {
 			ctx.lineTo(x2, y2);
 			ctx.stroke();
 		},
-		
+
 		/**
 		 * @param {number} x1
 		 * @param {number} y1
@@ -357,7 +358,7 @@ let draw = {
 		 * @param {object} [opts={}]
 		 */
 		ellipse: function(x, y, xr, yr, opts = {}) {
-		
+
 			//
 			let ctx = draw.context;
 			ctx.save();
@@ -366,7 +367,7 @@ let draw = {
 			ctx.scale(xr, yr);
 			ctx.arc(1, 1, 1, 0, 2 * Math.PI, false);
 			ctx.restore();
-			
+
 			//
 			let style;
 			if (opts.healthbar) {
@@ -381,25 +382,25 @@ let draw = {
 			} else {
 				style = opts.color || draw.color;
 			}
-			
+
 			//
 			if (!opts.fill && !opts.stroke)
 				opts.fill = true;
-			
+
 			//
 			if (opts.fill) {
 				ctx.fillStyle = style;
 				ctx.fill();
 			}
-			
+
 			if (opts.stroke) {
 				ctx.strokeStyle = style
 				ctx.lineWidth = opts.lineWidth || 1;
 				ctx.stroke();
 			}
-			
+
 		},
-		
+
 		/**
 		 * @param {number} x
 		 * @param {number} y
@@ -408,12 +409,12 @@ let draw = {
 		 * @param {object} [opts={}]
 		 */
 		rectangle: function(x, y, w, h, opts = {}) {
-		
+
 			//
 			let ctx = draw.context;
 			ctx.beginPath();
 			ctx.rect(x, y, w, h);
-			
+
 			//
 			let style;
 			if ( opts.healthbar ) {
@@ -428,27 +429,27 @@ let draw = {
 			} else {
 				style = opts.color || draw.color;
 			}
-			
+
 			//
 			if (!opts.fill && !opts.stroke)
 				opts.fill = true;
-			
+
 			//
 			if (opts.fill) {
 				ctx.fillStyle = style;
 				ctx.fill();
 			}
-			
+
 			if (opts.stroke) {
 				ctx.strokeStyle = style;
 				ctx.lineWidth = opts.lineWidth || 1;
 				ctx.stroke();
 			}
-		
+
 		}
-		
+
 	}
-	
+
 }
 
 /**
