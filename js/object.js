@@ -121,19 +121,25 @@ export default class GameObject {
 		return arr;
 	}
 
-	/**
-	 * @param {number}
+	/***************************************************************************
+	 * @param {*} obj
+	 * @return {Object} THe found object, or null if not found.
 	 */
-	static get(value) {
+	static get(obj) {
 
-		if (typeof value === "object" || typeof value === "function")
-			return value;
+		// If obj is already an object/constructor.
+		if (typeof obj === "object" || typeof obj === "function")
+			return obj;
 
-		for (var n = 0; n < GameObject.array.length; n++)
-			if (GameObject.array[n].objectName === value)
+		// Iterate all objects to find the one we want.
+		var n = GameObject.array.length;
+		while (n--) {
+			if (GameObject.array[n].objectName === obj) {
 				return GameObject.array[n];
+			}
+		}
 
-		console.warn("FAIL: ", typeof value, value);
+		// Failed to find an object.
 		return null;
 
 	}

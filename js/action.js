@@ -22,49 +22,56 @@ import Vector2 from "./Vector2";
  * @param {string} varName
  * @param {*} value
  * @param {boolean} relative
- * @param {void}
+ * @param {boolean} global
+ * @return {void}
  */
-function actionSet(varName, value, relative) {
+function set(varName, value, relative, global) {
+	let target = global ? window.global : this;
 	if (relative) {
-		this[varName] += value
+		target[varName] += value
 	} else {
-		this[varName] = value;
+		target[varName] = value;
 	}
 }
 
-/**
+/*******************************************************************************
  * @param {string} varName
  * @param {string} op Operation.
  * @param {value} value Value to check against.
+ * @param {boolean} global
+ * @return {boolean}
  */
-function actionTest(varName, op, value) {
+function test(varName, op, value, global) {
+	let target = global ? window.global : this;
 	switch (op) {
-		case("!=="): return this[varName] !== value;
-		case("==="): return this[varName] === value;
-		case("!="): return this[varName] != value;
-		case("=="): return this[varName] == value;
-		case("<"): return this[varName] < value;
-		case(">"): return this[varName] > value;
-		case("<="): return this[varName] <= value;
-		case(">="): return this[varName] >= value;
+		case("!=="): return target[varName] !== value;
+		case("==="): return target[varName] === value;
+		case("!="): return target[varName] != value;
+		case("=="): return target[varName] == value;
+		case("<"): return target[varName] < value;
+		case(">"): return target[varName] > value;
+		case("<="): return target[varName] <= value;
+		case(">="): return target[varName] >= value;
 		default: return false;
 	}
 }
 
-/**
+/*******************************************************************************
  * Sets the instance's gravity to the given value.
  * @param {number} value The gravity strength.
+ * @return {void}
  */
 function setGravity(value) {
 	this.gravity = value;
 }
 
-/**
+/*******************************************************************************
  * Instantly sets the instance's x and y values to a random position within
  * the current room.
  * @param {number} x
  * @param {number} y
  * @param {boolean} relative
+ * @return {void}
  */
 function actionJump(x, y, relative) {
 	if (relative) {
@@ -76,9 +83,10 @@ function actionJump(x, y, relative) {
 	}
 }
 
-/**
+/*******************************************************************************
  * Instantly sets the instance's x and y values to a random position within
  * the current room.
+ * @return {void}
  */
 function actionJumpRandom() {
 	let x1 = 0, y1 = 0, x2 = 640, y2 = 480;
@@ -183,7 +191,7 @@ function code(code) {
  * Shows the value of the given variable of the instance, in the console.
  * @param {...*} args
  */
-function actionGet(...args) {
+function get(...args) {
 	console.log(this[args].toFixed(2));
 }
 
@@ -272,10 +280,9 @@ export {
 	roomEnter, roomNext, roomPrevious,
 	blockBegin, blockEnd,
 	exitEvent,
-	actionSet        as set,
-	actionGet        as get,
-	actionTest       as test,
-	actionTest,
+	set,
+	get,
+	test,
 	setGravity,
 	actionJump       as jump,
 	actionJumpRandom as jumpRandom,

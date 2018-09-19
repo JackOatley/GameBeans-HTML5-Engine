@@ -1,7 +1,7 @@
-import math from "./math.js";
-import sprite from "./sprite.js";
-import canvas from "./canvas.js";
-import Font from "./font.js";
+import math from "./math";
+import sprite from "./sprite";
+import canvas from "./canvas";
+import Font from "./font";
 
 //
 let draw = {

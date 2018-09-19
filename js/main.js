@@ -142,6 +142,8 @@ function gameDraw() {
 	room.draw(room.current);
 	Camera.updateAll();
 	Instance.drawAll();
+	draw.reset();
+	Instance.drawGuiAll();
 	Transition.drawAll();
 }
 

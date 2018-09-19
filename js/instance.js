@@ -13,6 +13,7 @@ window.global = global;
 let instance = (function() {
 
 	//
+	let uniqueId = 1;
 	let instanceArray = [];
 	let instanceHardLimit = 1000;
 	let doDepthSort = false;
@@ -46,6 +47,7 @@ let instance = (function() {
 	 */
 	function setup(inst, o, x, y) {
 
+		inst.id = uniqueId++;
 		inst.exists = true;
 		inst.speed = 0;
 		inst.object = o;
@@ -57,7 +59,7 @@ let instance = (function() {
 		inst.startY = inst.y;
 		inst.previousX = inst.x;
 		inst.previousY = inst.y;
-		inst.boxCollision = Object.assign({}, inst.boxCollision);
+		inst.boxCollision = {};
 
 		//
 		let spr = sprite.get(inst.sprite);
@@ -473,10 +475,14 @@ let instance = (function() {
 						const args = action.args;
 						let n, newArgs = [];
 						for (n = 0; n < args.length; n++) {
-							switch (args[n]) {
-								case ("self"): newArgs[n] = inst; break;
-								case ("other"): newArgs[n] = otherInst; break;
-								default: newArgs[n] = Compiler.actionExpression.call(inst, args[n]); break
+							if (typeof args[n] === "function") {
+								newArgs[n] = args[n];
+							} else {
+								switch (args[n]) {
+									case ("self"): newArgs[n] = inst; break;
+									case ("other"): newArgs[n] = otherInst; break;
+									default: newArgs[n] = Compiler.actionExpression.call(inst, args[n]); break
+								}
 							}
 						}
 
@@ -541,23 +547,48 @@ let instance = (function() {
 		});
 	}
 
-	/**
-	 *
+	/***************************************************************************
+	 * @return {void}
 	 */
 	function stepAll() {
 		newStep();
 		let arr = instanceArray.slice();
+		arr.forEach(function(inst) { executeEvent(inst, "stepBegin"); });
 		arr.forEach(step);
+		arr.forEach(function(inst) { executeEvent(inst, "stepEnd"); });
 		clearDestroyed();
 	}
 
-	/** */
+	/**
+	 *
+	 */
 	function drawAll() {
 		if (doDepthSort) {
-			instanceArray.sort((a, b) => a.depth - b.depth);
+			instanceArray.sort(sortFunction);
 		}
 		instanceArray.forEach(draw);
 	}
+
+	/**
+	 *
+	 */
+	function drawGuiAll() {
+		instanceArray.forEach(function(inst) {
+			executeEvent(inst, "drawGUI");
+		});
+	}
+
+	/***************************************************************************
+	 * The function used for instance depth ordering.
+	 * @param {Object} a Instance.
+	 * @param {Object} b Instance.
+	 * @return {number} 0, -1 or 1.
+	 */
+	function sortFunction(a, b) {
+ 		return (a.depth === b.depth)
+ 			? a.id - b.id
+ 			: a.depth - b.depth;
+ 	}
 
 	/***************************************************************************
 	 * Remove isntances that have been requested to be destroyed.
@@ -599,6 +630,7 @@ let instance = (function() {
 		setup: setup,
 		stepAll: stepAll,
 		drawAll: drawAll,
+		drawGuiAll: drawGuiAll,
 		executeEventAll: executeEventAll,
 		changeSprite: changeSprite,
 		createMoving: createMoving,

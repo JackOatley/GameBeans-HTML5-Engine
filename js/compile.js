@@ -13,6 +13,7 @@ export default class Compiler {
 
 	/***************************************************************************
 	 * @param {string} exp
+	 * @return {*}
 	 */
 	static actionExpressionEval(exp) {
 
@@ -70,12 +71,12 @@ export default class Compiler {
 		if (Compiler.isBoolean(exp))
 			return (exp === true || exp === "true");// ? "true" : "false";
 
-		if (Compiler.isOperator(exp))
+		if (Compiler.isOperator(exp)
+		||  Compiler.isCss(exp))
 			return "'" + exp + "'";
 
 		if (Compiler.isFunction(exp)
 		||  Compiler.isResource(exp)
-		||  Compiler.isCss(exp)
 		||  (!isActionParam && typeof exp === "string")) {
 			return exp;
 		}
