@@ -1,13 +1,14 @@
-import Generator from "./generator.js";
+import Generator from "./generator";
 
 /**
  * @author Jack Oatley
  */
-export default class Sound {
+class Sound {
 
 	/**
-	 * @param {string} String name for the resource.
-	 * @param {string} A path to an audio source, or a base64 encoded audio.
+	 * @param {string} name name for the resource.
+	 * @param {string} source A path to an audio source, or a base64 encoded audio.
+	 * @return {void}
 	 */
 	constructor(name, source) {
 		this.name = name;
@@ -21,14 +22,32 @@ export default class Sound {
 			test.oncanplaythrough = null;
 		}
 	}
-	
+
+
 	/**
-	 * @param {object} [opts={}] object.
+	 * @return {string}
+	 */
+	get assetType() { return "sound"; }
+
+	/**
+	 * @param {number} number
+	 * @return {void}
+	 */
+	preload(number) {
+		let n = number - this.instances.length;
+		while (n-- > 0) {
+			let newSound = this.instances[0].cloneNode();
+			this.instances.push(newSound);
+		}
+	}
+
+	/**
+	 * @param {Object} [opts={}] object.
 	 */
 	play(opts = {}) {
 		if (Sound.isEnabled) {
-			
-			// find an existing sound instance to play
+
+			// Find an existing sound instance to play.
 			let playSound;
 			for (var i=0, n=this.instances.length; i<n; i++) {
 				let instance = this.instances[i];
@@ -37,49 +56,52 @@ export default class Sound {
 					break;
 				}
 			}
-			
-			// create new instance of sound
+
+			// Create new instance of sound.
 			if (!playSound) {
 				playSound = this.instances[0].cloneNode();
 				this.instances.push(playSound);
+				//console.log("Created sound, " + this.name + ", on demand.");
 			}
-			
+
 			//
 			playSound.onError = (err) => {
 				console.error(soundName, err);
 			}
-			
-			// play the sound
+
+			// Play the sound.
 			let promise = playSound.play();
 			if ( promise !== undefined ) {
 				promise.then( function() {
-					
+
 					// on end event
 					playSound.onended = function() {
-						
+
 						// internal event stuff
 						( ( Number( opts.loop || false ) )
 							? _loop : _end ).call( this );
-						
+
 						// and custom event, if defined
 						if (opts.onEnd) opts.onEnd();
-							
+
 					}
-						
+
 				}).catch((err) => {
 					console.warn(err);
 				});
 			}
-			
+
 			//
 			return playSound;
 		}
-		
+
 		// sound is disabled
 		return null;
 	}
-	
-	/** Stop all instances of the sound from playing. */
+
+	/**
+	 * Stop all instances of the sound from playing.
+	 */
 	stop() {
 		for (var i=0, n=this.instances.length; i<n; i++) {
 			let instance = this.instances[i];
@@ -87,11 +109,11 @@ export default class Sound {
 				_end.call(instance);
 			}
 		}
-	
+
 	}
-	
+
 	/**
-	 *
+	 * @return {boolean}
 	 */
 	static readyAll() {
 		for (var i=0, n=Sound.array.length; i<n; i++) {
@@ -101,14 +123,15 @@ export default class Sound {
 		}
 		return true;
 	}
-	
+
 	/**
-	 *
+	 * @param {boolean} x
+	 * @return {void}
 	 */
 	static enable(x) {
 		Sound.isEnabled = x;
 	}
-	
+
 	/**
 	 *
 	 */
@@ -122,11 +145,10 @@ export default class Sound {
 		window.addConsoleText("#F00", "Unknown sound: "+ name);
 		return null;
 	}
-	
+
 }
 
 Generator.classStaticMatch(Sound);
-Sound.prototype.assetType = "sound";
 Sound.isEnabled = true;
 Sound.names = [];
 Sound.array = [];
@@ -142,3 +164,6 @@ function _end() {
 	this.pause();
 	this.currentTime = 0;
 }
+
+// Export.
+export default Sound;

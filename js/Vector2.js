@@ -1,4 +1,4 @@
-import Generator from "./generator.js";
+import Generator from "./generator";
 
 /**
  * @author Jack Oatley
@@ -6,13 +6,13 @@ import Generator from "./generator.js";
 class Vector2 {
 
 	/**
-	 * @param {Number} x
-	 * @param {Number} y
+	 * @param {number} x
+	 * @param {number} y
 	 */
 	constructor(x, y) {
 		this.set(x, y);
 	}
-	
+
 	/**
 	 *
 	 */
@@ -20,7 +20,7 @@ class Vector2 {
 		this.x = x;
 		this.y = y;
 	}
-	
+
 	/**
 	 *
 	 */
@@ -28,7 +28,7 @@ class Vector2 {
 		this.x = v.x;
 		this.y = v.y;
 	}
-	
+
 	/**
 	 *
 	 */
@@ -36,7 +36,7 @@ class Vector2 {
 		this.x += v.x;
 		this.y += v.y;
 	}
-	
+
 	/**
 	 *
 	 */
@@ -44,7 +44,7 @@ class Vector2 {
 		this.x *= v.x;
 		this.y *= v.y;
 	}
-	
+
 	/**
 	 *
 	 */
@@ -52,7 +52,7 @@ class Vector2 {
 		this.x /= v.x;
 		this.y /= v.y;
 	}
-	
+
 }
 
 Generator.classStaticMatch(Vector2);

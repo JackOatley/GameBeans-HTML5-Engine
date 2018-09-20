@@ -7,7 +7,7 @@ import Generator from "./generator"
 /**
  *
  */
-export default class GameObject {
+class GameObject {
 
 	/**
 	 * @param {string} name
@@ -150,3 +150,5 @@ Generator.classStaticMatch(GameObject);
 GameObject.prototype.assetType = "object";
 GameObject.names = [];
 GameObject.array = [];
+
+export default GameObject;

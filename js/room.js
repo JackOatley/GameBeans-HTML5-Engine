@@ -7,7 +7,7 @@ import draw from "./draw.js";
 /**
  * @author Jack Oatley
  */
-export default class Room {
+class Room {
 
 	/**
 	 * @param {string} name
@@ -27,7 +27,7 @@ export default class Room {
 		if (Room.current === null)
 			Room.current = this;
 	}
-	
+
 	/**
 	 * @param {string} spr
 	 */
@@ -51,7 +51,7 @@ export default class Room {
 	 * @param {object} [opts={}]
 	 */
 	enter(opts = {}) {
-		
+
 		if (opts.transition) {
 			new Transition({
 				prefab: opts.transition,
@@ -59,10 +59,10 @@ export default class Room {
 			});
 			return;
 		}
-		
+
 		// leave room event
 		instance.executeEventAll("roomleave");
-		
+
 		// clear current instances
 		instance.instanceArray.forEach(function(i) {
 			instance.destroy(i, false);
@@ -73,12 +73,12 @@ export default class Room {
 		this.instances.forEach(function(inst) {
 			instance.create(inst.name, inst.x, inst.y);
 		});
-		
+
 		// enter room event
 		instance.executeEventAll("roomenter");
 
 	}
-	
+
 	/**
 	 *
 	 */
@@ -98,19 +98,19 @@ export default class Room {
 			}
 		}
 	}
-	
+
 	/** */
 	static next() {
 		const index = Room.array.indexOf(Room.current);
 		Room.enter(Room.array[index+1]);
 	}
-	
+
 	/** */
 	static previous() {
 		const index = Room.array.indexOf(Room.current);
 		Room.enter(Room.array[index-1]);
 	}
-	
+
 	/**
 	 *
 	 */
@@ -131,3 +131,5 @@ Room.names = [];
 Room.array = [];
 Room.current = null;
 Generator.classStaticMatch(Room);
+
+export default Room;

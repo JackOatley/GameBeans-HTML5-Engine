@@ -4,8 +4,8 @@ import noop from "./utils/noop";
 /**
  *
  */
-export default class Transition {
-	
+class Transition {
+
 	/**
 	* @param {object} opts Options.
 	* @param {string} opts.type
@@ -23,51 +23,51 @@ export default class Transition {
 		this.alpha = 0;
 		this.delta = 1/this.time;
 		Transition.allInstances.push(this);
-		
+
 		// Check transition type exists and log warning otherwise
 		if (!Transition.prefabs.hasOwnProperty(this.type)) {
 			window.addConsoleText("#F00", "Unknown transition type: " + this.type);
 			this.type = "fade";
 		}
 	}
-	
+
 	/** */
 	update() {
 		if (Transition.prefabs.hasOwnProperty(this.type))
 			Transition.prefabs[this.type].update.call(this);
 	}
-	
+
 	/** */
 	draw() {
 		if (Transition.prefabs.hasOwnProperty(this.type))
 			Transition.prefabs[this.type].draw.call(this);
 	}
-	
+
 	/** */
 	destroy() {
 		let x = Transition.allInstances.indexOf(this);
 		Transition.allInstances.splice(x, 1);
 	}
-	
+
 	/** */
 	static create(opts) {
 		return new Transition(opts);
 	}
-	
+
 	/** */
 	static updateAll() {
 		Transition.allInstances.forEach((t) => {
 			t.update();
 		});
 	}
-	
+
 	/** */
 	static drawAll() {
 		Transition.allInstances.forEach((t) => {
 			t.draw();
 		});
 	}
-	
+
 }
 
 //
@@ -97,3 +97,5 @@ Transition.prefabs = {
 	}
 
 }
+
+export default Transition;

@@ -1,13 +1,13 @@
-import Generator from "./generator.js";
-import Grid from "./data/grid.js";
-import draw from "./draw.js";
-import Sprite from "./sprite.js";
+import Generator from "./generator";
+import Grid from "./data/grid";
+import draw from "./draw";
+import Sprite from "./sprite";
 
 /**
  * @author Jack Oatley
  */
-export default class Tilemap {
-	
+class Tilemap {
+
 	/**
 	 * @param {object} [opts={}] Options object to define the Tilemap.
 	 * @param {sprite} [opts.atlas]
@@ -29,12 +29,12 @@ export default class Tilemap {
 		this.mapWidth = opts.mapWidth || 16;
 		this.mapHeight = opts.mapHeight || 16;
 		this.layers = {};
-		
+
 		this.__gap = this.tileSpacing + this.tileOverlay;
 		if (this.textureAtlas)
 			this.__atlas = Sprite.get(this.textureAtlas).images[0].img;
 	}
-	
+
 	/**
 	 * @param {string} layer Name of the player in which to place the tile.
 	 * @param {number} x The X grid position to place this tile.
@@ -47,7 +47,7 @@ export default class Tilemap {
 		}
 		this.layers[layer].set(x, y, index);
 	}
-	
+
 	/**
 	 * @param {object} [opts={}]
 	 * @param {array} [opts.order]
@@ -91,9 +91,11 @@ export default class Tilemap {
 			}
 		}
 	}
-	
+
 }
 
 // Static methods, created via the Generator class
 Generator.classStaticMatch(Tilemap);
 Tilemap.prototype.assetType = "tilemap";
+
+export default Tilemap;

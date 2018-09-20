@@ -4,7 +4,7 @@ import Grid from "./data/grid";
 /**
  * @author Jack Oatley
  */
-export default class Font {
+class Font {
 
 	/**
 	 * @param {object} [opts={}] Options.
@@ -25,7 +25,7 @@ export default class Font {
 		Font.names.push(this.name);
 		Font.array.push(this);
 	}
-	
+
 	/**
 	 * Returns the CSS code that's needed to be applied to the page to use this font in the DOM or on the canvas.
 	 */
@@ -35,7 +35,7 @@ export default class Font {
 			src: url('" + this.source + "') format('truetype');\
 		}";
 	}
-	
+
 	/**
 	 * Applies the CSS code.
 	 */
@@ -44,7 +44,7 @@ export default class Font {
 		style.textContent = this.getCss()
 		document.head.appendChild(style);
 	}
-	
+
 	/**
 	 * @param {object} [opts={}] Options object.
 	 * @param {number} [opts.size=8] Size of the font.
@@ -53,7 +53,7 @@ export default class Font {
 	 * @param {array} [opts.color=[0,0,0,255]] An array containing the RGBA channels respectively.
 	 */
 	convertToBitmapFont(opts = {}) {
-		
+
 		const scale = 3;
 		const size = (opts.size || 8) * scale;
 		const map = opts.map || "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -61,34 +61,34 @@ export default class Font {
 		const cy = cx;
 		const alphaThreshold = opts.alphaThreshold || 150;
 		const color = opts.color || [0, 0, 0, 255];
-		
+
 		const atlas = document.createElement("CANVAS");
 		atlas.width = (size /scale) * map.length;
 		atlas.height = (size / scale);
 		const atlasCtx = atlas.getContext("2d");
 		const pointImageData = atlasCtx.createImageData(1, 1);
 		pointImageData.data.set(color, 0);
-		
+
 		const canvas = document.createElement("CANVAS");
 		canvas.width = canvas.height = size;
-		
+
 		let ctx = canvas.getContext("2d");
 		ctx.font = size + "px " + this.name;
 		console.log(ctx.font);
 		ctx.textAlign = "center";
-		ctx.textBaseline = "middle"; 
-		
+		ctx.textBaseline = "middle";
+
 		let charMap = new Grid(size/scale, size/scale);
 		let lookupTable = {};
 		for (var n=0; n<map.length; n++) {
-			
+
 			ctx.clearRect(0, 0, size, size);
 			charMap.clear(-1);
-			
+
 			let c = map[n];
 			ctx.fillStyle = "#000000";
 			ctx.fillText(c, cx, cy);
-			
+
 			let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 			let data = imageData.data;
 			var p, r, g, b, a;
@@ -98,7 +98,7 @@ export default class Font {
 				let i = x+(size/scale)*y;
 				if (charMap.get(x, y) === -1) charMap.set(x, y, data[p+3]);
 			}
-			
+
 			// Get metrics
 			let metrics = { left: 100, top: 100, right: 0, bottom: 0 };
 			let minY = 100;
@@ -115,7 +115,7 @@ export default class Font {
 					maxY = Math.max(maxY, metrics.bottom);
 				}
 			}
-			
+
 			// Print to atlas
 			for (y=0; y<size/scale; y++)
 			for (x=0; x<size/scale; x++) {
@@ -123,7 +123,7 @@ export default class Font {
 					atlasCtx.putImageData(pointImageData, n*(size/scale)+x, y);
 				}
 			}
-			
+
 			// Tweak metrics into atlas coords and add to lookup table
 			metrics.left += n*(size/scale);
 			metrics.right += n*(size/scale);
@@ -131,41 +131,43 @@ export default class Font {
 			metrics.bottom = size/scale;
 			lookupTable[c] = metrics;
 		}
-		
+
 		// Space is special because it can't actually be measured
 		lookupTable[" "] = {left: -3, top: 0, right: 0, bottom: size/scale}
-		
+
 		this.bitmapFont = {
 			size: size/scale,
 			lookup: lookupTable,
 			image: atlas
 		}
-		
+
 		this.method = "bitmap";
 		console.log(this.bitmapFont);
-		
+
 	}
-	
+
 	/**
 	 * @param {*} value The string name of the font to get.
 	 */
 	static get(value) {
-		
+
 		if (["object", "function"].includes(typeof value))
 		if (typeof value === "object" || typeof value === "function")
 			return value;
-		
+
 		for (var n = 0; n < Font.array.length; n++)
 			if (Font.array[n].name === value)
 				return Font.array[n];
-		
+
 		return null;
-		
+
 	}
-	
+
 }
 
 Generator.classStaticMatch(Font);
 Font.prototype.assetType = "font";
 Font.names = [];
 Font.array = [];
+
+export default Font;
