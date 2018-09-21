@@ -14,6 +14,7 @@ class Sound {
 		this.name = name;
 		this.instances = [new Audio(source)];
 		this.ready = false;
+		this.volume = 1.0;
 		Sound.names.push(name);
 		Sound.array.push(this);
 		let test = this.instances[0];
@@ -25,9 +26,12 @@ class Sound {
 
 
 	/**
+	 * Returns the asset type, this can't/shouldn't be overwitten.
 	 * @return {string}
 	 */
-	get assetType() { return "sound"; }
+	get assetType() {
+		return "sound";
+	}
 
 	/**
 	 * @param {number} number
@@ -70,6 +74,7 @@ class Sound {
 			}
 
 			// Play the sound.
+			playSound.volume = this.volume;
 			let promise = playSound.play();
 			if ( promise !== undefined ) {
 				promise.then( function() {
@@ -78,8 +83,8 @@ class Sound {
 					playSound.onended = function() {
 
 						// internal event stuff
-						( ( Number( opts.loop || false ) )
-							? _loop : _end ).call( this );
+						((Number(opts.loop || false))
+							? _loop : _end).call(this);
 
 						// and custom event, if defined
 						if (opts.onEnd) opts.onEnd();

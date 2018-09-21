@@ -1,81 +1,70 @@
-import color from "./color.js";
-
-//
-let aSprites = [],
-	aLength = 0;
+import Generator from "./generator";
+import Color from "./color";
 
 /**
  *
  */
-let sprite = {
-	
-	//
-	names: [],
-	array: aSprites,
+class Sprite {
 
 	/**
 	 *
 	 */
-	create: function( options = {} ) {
+	constructor(opts = {}) {
 
 		//
 		let atlas, atlasIndex;
-		if ( options.atlas ) {
-			atlasIndex = options.atlasIndex || 0;
-			atlas = options.atlas.images[atlasIndex];
+		if (opts.atlas) {
+			atlasIndex = opts.atlasIndex || 0;
+			atlas = opts.atlas.images[atlasIndex];
 		}
-		
+
 		//
-		let newSprite = {
-			assetType: "sprite",
-			name: options.name || newSpriteName(),
-			originX: options.originX || 0,
-			originY: options.originY || 0,
-			width: 0,
-			height: 0,
-			images: []
-		}
-		
+		this.assetType = "sprite";
+		this.name = opts.name || newSpriteName();
+		this.originX = opts.originX || 0;
+		this.originY = opts.originY || 0;
+		this.width = 0;
+		this.height = 0;
+		this.images = [];
+
 		//
-		if ( options.frames ) {
-			options.frames.forEach( function( frame ) {
-				sprite.addFrame( newSprite, {
+		if (opts.frames) {
+			opts.frames.forEach((frame) => {
+				this.addFrame({
 					source: frame.src
 				});
-			} );
+			});
 		}
-		
-		//
-		sprite.names[aLength] = newSprite.name;
-		aSprites[aLength++] = newSprite;
-		return newSprite;
 
-	},
-	
+		//
+		let length = Sprite.array.length;
+		Sprite.names[length] = this.name;
+		Sprite.array[length++] = this;
+
+	}
+
 	/**
 	 *
 	 */
-	addFrame: function( spr, options = {} ) {
-		
-		spr = sprite.get( spr );
-		
+	addFrame(opts = {}) {
+
 		//
 		let atlas;
-		if ( options.atlas ) {
-			atlas = sprite.get( options.atlas ).images[0].img;
+		if (opts.atlas) {
+			atlas = Sprite.get(opts.atlas).images[0].img;
 		}
-		
+
 		let image = {
 			img: atlas || new Image(),
 			clip: null,
 			ready: false
 		}
-		
+
 		//
-		if ( options.source ) {
-			
-			image.img.onload = function() {
-				
+		if (opts.source) {
+
+			image.img.onload = () => {
+
 				//
 				image.clip = {
 					x: 0,
@@ -83,56 +72,55 @@ let sprite = {
 					w: image.img.width,
 					h: image.img.height
 				}
-				
+
 				//
-				if ( spr.width * spr.height === 0 ) {
-					spr.width = image.clip.w;
-					spr.height = image.clip.h;
+				if (this.width * this.height === 0 ) {
+					this.width = image.clip.w;
+					this.height = image.clip.h;
 				}
-				
+
 				//
 				image.ready = true;
-				
+
 			}
-			image.img.src = options.source || "";
-			
+			image.img.src = opts.source || "";
+
 		}
-		
+
 		//
-		if ( atlas && options.clip ) {
-			
+		if (atlas && opts.clip) {
+
 			//
-			image.clip = options.clip;
-			console.log( image.clip );
-			
+			image.clip = opts.clip;
+
 			//
-			if ( spr.width * spr.height === 0 ) {
-				spr.width = image.clip.w;
-				spr.height = image.clip.h;
+			if (this.width * this.height === 0) {
+				this.width = image.clip.w;
+				this.height = image.clip.h;
 			}
-			
+
 			//
 			image.ready = true;
-			
+
 		}
-		
+
 		//
-		spr.images.push( image );
-		
-	},
-	
+		this.images.push(image);
+
+	}
+
 	/**
 	 *
 	 */
-	cache: function(spr, opts = {}) {
-		
-		spr = sprite.get( spr );
-		spr.images.forEach((frame) => {
-			let canvas = document.createElement( "CANVAS" );
+	cache(opts = {}) {
+
+		//
+		this.images.forEach((frame) => {
+			let canvas = document.createElement("CANVAS");
 			canvas.width = opts.width || frame.img.width;
 			canvas.height = opts.height || frame.img.height;
-			let ctx = canvas.getContext( "2d" );
-			ctx.drawImage( frame.img, 0, 0, canvas.width+1, canvas.height+1 );
+			let ctx = canvas.getContext("2d");
+			ctx.drawImage(frame.img, 0, 0, canvas.width+1, canvas.height+1);
 			frame.__orig = Object.assign({}, frame);
 			frame.clip.x = 0;
 			frame.clip.y = 0;
@@ -140,123 +128,131 @@ let sprite = {
 			frame.clip.h = canvas.height;
 			frame.img = canvas;
 		});
-		
-	},
-	
-	/**
-	 *
-	 */
-	restore: function(spr, options = {}) {
-		spr = sprite.get(spr);
-		spr.images.forEach((frame) => {
-			if (frame.__orig) frame = frame._orig;
-			if (frame.__origSrc) frame.img.src = frame.__origSrc;
-		});
-	},
+
+	}
 
 	/**
 	 *
 	 */
-	setOrigin: function(spr, x, y) {
-		spr = sprite.get(spr);
-		spr.originX = Number(x);
-		spr.originY = Number(y);
-	},
-	
+	restore(options = {}) {
+		this.images.forEach((frame) => {
+			if (frame.__orig) frame = frame._orig;
+			if (frame.__origSrc) frame.img.src = frame.__origSrc;
+		});
+	}
+
 	/**
-	 *
+	 * @param {number} x
+	 * @param {number} y
+	 * @return {void}
 	 */
-	readyAll: function() {
-		
-		for ( var n=0; n<aLength; n++ ) {
-			let spr = aSprites[n];
-			for ( var i=0; i<spr.images.length; i++ ) {
+	setOrigin(x, y) {
+		this.originX = Number(x);
+		this.originY = Number(y);
+	}
+
+	/**
+	 * Tints the sprite to the given color. Effects all frames.
+	 * @param {string} col A CSS color value.
+	 * @return {void}
+	 */
+	tint(col) {
+
+		//
+		this.images.forEach((frame) => {
+
+			// create canvas, draw image
+			let canvas = document.createElement("CANVAS");
+			let ctx = canvas.getContext("2d");
+			canvas.width = this.width;
+			canvas.height = this.height;
+			frame.img = frame.__orig || frame.img;
+			ctx.drawImage(frame.img, 0, 0);
+
+			// get data, do thing, put data back
+			let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+			let color = (typeof col === "object") ? col : Color.hexToRgb(col);
+			pixelDataTint(imageData.data, color);
+			ctx.putImageData(imageData, 0, 0);
+
+			//
+			frame.__orig = frame.img;
+			frame.__origSrc = frame.img.src;
+			frame.img = canvas;
+
+		});
+
+	}
+
+	/**
+	 * @return {boolean}
+	 */
+	static readyAll() {
+
+		for (var n=0; n<Sprite.array.length; n++) {
+			let spr = Sprite.array[n];
+			for (var i=0; i<spr.images.length; i++) {
 				let image = spr.images[i];
-				if ( !image.ready ) {
+				if (!image.ready) {
 					return false;
 				}
 			}
 		}
-		
+
 		return true;
-		
-	},
+
+	}
 
 	/**
-	 *
+	 * @param {*} name String or Object.
+	 * @return {Object}
 	 */
-	tint: function( spr, col ) {
-		
-		if ( typeof spr !== "object" )
-			spr = sprite.get( spr );
-		
-		//
-		spr.images.forEach( function( frame ) {
-			
-			// create canvas, draw image
-			let canvas = document.createElement( "CANVAS" );
-			let ctx = canvas.getContext( "2d" );
-			canvas.width = spr.width;
-			canvas.height = spr.height;
-			ctx.drawImage( frame.img, 0, 0 );
-			
-			// get data, do thing, put data back
-			let imageData = ctx.getImageData( 0, 0, canvas.width, canvas.height );
-			pixelDataTint(imageData.data, (typeof col === "object") ? col : color.hexToRgb(col));
-			ctx.putImageData( imageData, 0, 0 );
-			
-			//
-			frame.__origSrc = frame.img.src;
-			frame.img.src = canvas.toDataURL( "image/png" );
-			
-		} );
-		
-	},
-	
-	/**
-	 *
-	 */
-	get: function(name) {
-		
+	static get(name) {
+
 		if (typeof name === "object")
 			return name;
-		
-		for (var n = 0; n < aLength; n++)
-			if (aSprites[n].name === name)
-				return aSprites[n];
-			
+
+		for (var n = 0; n < Sprite.array.length; n++)
+			if (Sprite.array[n].name === name)
+				return Sprite.array[n];
+
 		return null;
-		
+
 	}
-	
+
 }
 
 /**
  *
  */
 function newSpriteName() {
-	return "Sprite_" + aLength;
+	return "Sprite_" + Sprite.array.length;
 }
 
 /**
  *
  */
-function pixelDataTint( data, rgb ) {
-	
+function pixelDataTint(data, rgb) {
+
 	// cache as much as possible, there could be a lot of pixels
 	let l = data.length,
 		r = rgb.r / 255,
 		g = rgb.g / 255,
 		b = rgb.b / 255;
-	
+
 	//
 	for (var i = 0; i < l; i += 4) {
 		data[i]     = r * data[i]     >> 0;
 		data[i + 1] = g * data[i + 1] >> 0;
 		data[i + 2] = b * data[i + 2] >> 0;
 	}
-	
+
 }
 
 //
-export default sprite;
+Generator.classStaticMatch(Sprite);
+Sprite.names = [];
+Sprite.array = [];
+
+//
+export default Sprite;

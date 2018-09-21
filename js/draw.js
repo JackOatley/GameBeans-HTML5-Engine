@@ -133,16 +133,16 @@ let draw = {
 
 	/**
 	 * Draws the sprite at the given x, y position.
-	 * @param {sprite} sprite
-	 * @param {Number} index
-	 * @param {Number} x
-	 * @param {Number} y
-	 * @param {Number} scaleX
-	 * @param {Number} scaleY
-	 * @param {Number} rotation
+	 * @param {Object} sprite
+	 * @param {number} index
+	 * @param {number} x
+	 * @param {number} y
+	 * @param {number} scaleX
+	 * @param {number} scaleY
+	 * @param {number} rotation
 	 * @param {Object} [opts={}]
-	 * @param {Number} [originX] Overrides sprite's originX property.
-	 * @param {Number} [originY] Overrides sprite's originY property.
+	 * @param {number} [originX] Overrides sprite's originX property.
+	 * @param {number} [originY] Overrides sprite's originY property.
 	 */
 	sprite: function(spr, index, x, y, scaleX, scaleY, rotation, opts = {}) {
 

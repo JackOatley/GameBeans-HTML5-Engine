@@ -18,7 +18,8 @@ import GameObject from "./object";
 import Primitive from "./drawing/primitive";
 import Vector2 from "./Vector2";
 
-/*******************************************************************************
+/**
+ * Set the variable with the given name.
  * @param {string} varName
  * @param {*} value
  * @param {boolean} relative
@@ -34,7 +35,7 @@ function set(varName, value, relative, global) {
 	}
 }
 
-/*******************************************************************************
+/**
  * @param {string} varName
  * @param {string} op Operation.
  * @param {value} value Value to check against.
@@ -56,7 +57,7 @@ function test(varName, op, value, global) {
 	}
 }
 
-/*******************************************************************************
+/**
  * Sets the instance's gravity to the given value.
  * @param {number} value The gravity strength.
  * @return {void}
@@ -65,7 +66,7 @@ function setGravity(value) {
 	this.gravity = value;
 }
 
-/*******************************************************************************
+/**
  * Instantly sets the instance's x and y values to a random position within
  * the current room.
  * @param {number} x
@@ -73,7 +74,7 @@ function setGravity(value) {
  * @param {boolean} relative
  * @return {void}
  */
-function actionJump(x, y, relative) {
+function jump(x, y, relative) {
 	if (relative) {
 		this.x += Number(x);
 		this.y += Number(y);
@@ -83,12 +84,12 @@ function actionJump(x, y, relative) {
 	}
 }
 
-/*******************************************************************************
+/**
  * Instantly sets the instance's x and y values to a random position within
  * the current room.
  * @return {void}
  */
-function actionJumpRandom() {
+function jumpRandom() {
 	let x1 = 0, y1 = 0, x2 = 640, y2 = 480;
 	this.x = Math.floor(Math.random() * (x2 - x1 + 1)) + x1;
 	this.y = Math.floor(Math.random() * (y2 - y1 + 1)) + y1;
@@ -284,8 +285,8 @@ export {
 	get,
 	test,
 	setGravity,
-	actionJump       as jump,
-	actionJumpRandom as jumpRandom,
+	jump,
+	jumpRandom,
 	moveFree,
 	moveDirect,
 	moveSpeedX,
