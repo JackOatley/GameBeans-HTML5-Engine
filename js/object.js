@@ -14,12 +14,15 @@ class GameObject {
 	 * @param {number} sprite
 	 */
 	constructor(name, sprite) {
+
+		// Create new constructor.
 		let obj = function(x, y) {
 			let inst = obj.pool.get(this);
 			instance.setup(inst, obj, x, y);
 			obj.instances.push(inst);
 			return inst;
 		};
+
 		Object.assign(obj, GameObject.prototype);
 		objectVars.set(obj.prototype);
 		obj.objectName = name || "object_" + obj.id;
@@ -29,22 +32,7 @@ class GameObject {
 		GameObject.names.push(obj.objectName);
 		GameObject.array.push(obj);
 		return obj;
-	}
 
-	/**
-	 *
-	 */
-	set(property, value) {
-		this.prototype[property] = value;
-	}
-
-	/**
-	 *
-	 */
-	executeScript() {
-		const closure = function() {
-			eval(this.objectScript);
-		}.call(this);
 	}
 
 	/**
@@ -56,8 +44,6 @@ class GameObject {
 	 * @return {void}
 	 */
 	eventAddAction(event, action, ...args) {
-
-		//console.log(event, action);
 
 		if (typeof event === "object") {
 			Object.keys(event).forEach((key) => {
@@ -109,7 +95,7 @@ class GameObject {
 	}
 
 	/**
-	 *
+	 * @return {Array}
 	 */
 	getAllInstances() {
 		let arr = [];
@@ -121,7 +107,7 @@ class GameObject {
 		return arr;
 	}
 
-	/***************************************************************************
+	/**
 	 * @param {*} obj
 	 * @return {Object} THe found object, or null if not found.
 	 */

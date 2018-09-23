@@ -10,12 +10,12 @@ let events = {
 	collision: "collision_",
 	resize: "resize",
 	keyboard: {
-		...translate( keyValues ),
-		pressed: translate( keyValues, "Pressed" ),
-		released: translate( keyValues, "Released" )
+		...translate(keyValues),
+		pressed: translate(keyValues, "Press"),
+		released: translate(keyValues, "Release")
 	}
 }
-	
+
 /**
  * @param {array} array
  * @param {string} [postfix=""]

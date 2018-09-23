@@ -6,25 +6,18 @@ import global from "./global";
 import draw from "./draw";
 import Camera from "./camera";
 import Transition from "./transition";
+import NOOP from "./utils/noop";
 
 let lastTick = performance.now(),
 	tickLength = 1000 / 60,
-	dt = 0,
 	last = 0;
 
 //
 window.addConsoleText = window.addConsoleText || console.log;
-window._GB_stop = window._GB_stop || (() => {});
+window._GB_stop = window._GB_stop || NOOP;
 
 //
 let main = {
-
-	/**
-	 *
-	 */
-	get dt() {
-		return dt;
-	},
 
 	/**
 	 *
@@ -138,7 +131,7 @@ function gameUpdate() {
  */
 function gameDraw() {
 	draw.reset();
-	Canvas.main.fill("#000000");
+	Canvas.main.fill("#000");
 	room.draw(room.current);
 	Camera.updateAll();
 	Instance.drawAll();

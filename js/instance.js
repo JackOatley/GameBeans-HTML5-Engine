@@ -20,7 +20,7 @@ let instance = (function() {
 	let otherStack = [];
 	let currentEvent = "";
 
-	/***************************************************************************
+	/**
 	 * Create a new instance of an object.
 	 * @param {Object} obj
 	 * @param {number} x
@@ -42,7 +42,7 @@ let instance = (function() {
 
 	}
 
-	/***************************************************************************
+	/**
 	 *
 	 */
 	function setup(inst, o, x, y) {
@@ -77,7 +77,7 @@ let instance = (function() {
 		executeEvent(inst, "create");
 	}
 
-	/***************************************************************************
+	/**
 	 * @param {Object} inst
 	 * @return {void}
 	 */
@@ -166,13 +166,14 @@ let instance = (function() {
 	}
 
 	/**
-	 * @param {object} inst Check the mouse is over this instance.
+	 * @param {Object} inst Check the mouse is over this instance.
+	 * @return {boolean}
 	 */
 	function mouseOn(inst) {
-		return !(inst.boxTop > input.mouse.y/2 - Draw.offsetY
-		|| inst.boxBottom < input.mouse.y/2 - Draw.offsetY
-		|| inst.boxLeft > input.mouse.x/2 - Draw.offsetX
-		|| inst.boxRight < input.mouse.x/2 - Draw.offsetX);
+		return !(inst.boxTop > input.mouse.y - Draw.offsetY
+		|| inst.boxBottom < input.mouse.y - Draw.offsetY
+		|| inst.boxLeft > input.mouse.x - Draw.offsetX
+		|| inst.boxRight < input.mouse.x - Draw.offsetX);
 	}
 
 	/**
@@ -293,8 +294,12 @@ let instance = (function() {
 	function destroy(inst) {
 		executeEvent(inst, "destroy");
 		inst.exists = false;
-		let index = inst.object.instances.indexOf(inst);
-		inst.object.instances.splice(index, 1);
+		let arr = inst.object.instances;
+		let index = arr.indexOf(inst);
+		if (index >= 0) {
+			arr[index] = arr[arr.length-1];
+			arr.length -= 1;
+		}
 	}
 
 	/**
@@ -401,7 +406,7 @@ let instance = (function() {
 
 	}
 
-	/***************************************************************************
+	/**
 	 * Execute a particular event for all current instances.
 	 * @param {string} event The event to execute.
 	 * @param {Object} otherInst
@@ -414,7 +419,7 @@ let instance = (function() {
 		}
 	}
 
-	/***************************************************************************
+	/**
 	 * Execute an event for the given instance only.
 	 * @param {Object} inst
 	 * @param {event} event
@@ -637,7 +642,10 @@ let instance = (function() {
 		destroy: destroy,
 		drawSelf: drawSelf,
 		setDirection: setDirection,
-		setRotation: setRotation
+		setRotation: setRotation,
+		count: count,
+		mouseOn: mouseOn,
+		find: find
 	}
 
 })();

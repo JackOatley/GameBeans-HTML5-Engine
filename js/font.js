@@ -56,7 +56,7 @@ class Font {
 
 		const scale = 3;
 		const size = (opts.size || 8) * scale;
-		const map = opts.map || "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+		const map = opts.map || "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789/\\,.<>{}[]!\"£$%^&*():;@'~#|`";
 		const cx = size * 0.5;
 		const cy = cx;
 		const alphaThreshold = opts.alphaThreshold || 150;
@@ -142,22 +142,25 @@ class Font {
 		}
 
 		this.method = "bitmap";
-		console.log(this.bitmapFont);
 
 	}
 
 	/**
 	 * @param {*} value The string name of the font to get.
+	 * @return {Object}
 	 */
 	static get(value) {
 
-		if (["object", "function"].includes(typeof value))
 		if (typeof value === "object" || typeof value === "function")
 			return value;
 
-		for (var n = 0; n < Font.array.length; n++)
-			if (Font.array[n].name === value)
-				return Font.array[n];
+		let arr = Font.array;
+		let n = arr.length;
+		while (n--) {
+			if (arr[n].name === value) {
+				return arr[n];
+			}
+		}
 
 		return null;
 

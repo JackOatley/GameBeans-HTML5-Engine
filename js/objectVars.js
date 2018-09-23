@@ -1,6 +1,6 @@
 import math from "./math.js";
 import instance from "./instance.js";
- 
+
 //
 let basic = JSON.stringify({
 	sprite: null,
@@ -33,24 +33,28 @@ let basic = JSON.stringify({
 		top: 0,
 		bottom: 0,
 		left: 0,
-		right: 0 
+		right: 0
 	},
 	_depth: 0
 });
- 
+
 //
-let objectVars = {
-	
+let ObjectVars = {
+
 	/**
 	 *
 	 */
 	set: function(proto) {
 		Object.assign(proto, JSON.parse(basic));
-		
+
 		proto.destroy = function() {
 			instance.destroy(this);
 		}
-		
+
+		proto.mouseOn = function() {
+			return instance.mouseOn(this);
+		}
+
 		Object.defineProperty(proto, "depth", {
 			set: function(x) {
 				if (this._depth !== x) {
@@ -60,7 +64,7 @@ let objectVars = {
 			},
 			get: function() { return this._depth; }
 		});
-		
+
 		Object.defineProperty(proto, "speed", {
 			set: function(x) {
 				let y = this.direction * math.DEGTORAD;
@@ -71,7 +75,7 @@ let objectVars = {
 				return math.pointDistance( 0, 0, this.speedX, this.speedY );
 			}
 		} );
-		
+
 		Object.defineProperty(proto, "direction", {
 			set: function(x) {
 				let y = this.speed;
@@ -82,10 +86,10 @@ let objectVars = {
 				return math.pointDirection( 0, 0, this.speedX, this.speedY );
 			}
 		} );
-			
+
 	}
-	
+
 }
 
 //
-export default objectVars;
+export default ObjectVars;
