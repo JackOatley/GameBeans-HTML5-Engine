@@ -1,11 +1,3 @@
-import Font from "./font";
-import global from "./global";
-import object from "./object";
-import room from "./room";
-import Script from "./Script";
-import Sound from "./Sound";
-import sprite from "./sprite";
-
 /**
  * @author Jack Oatley
  */
@@ -50,7 +42,16 @@ export default class Compiler {
 
 	}
 
-	/***************************************************************************
+	/**
+	 * Done it like this so Compiler doesn't have module dependencies.
+	 * @param {Object} eng The GameBeans engine module.
+	 * @return {void}
+	 */
+	static setEngine(eng) {
+		Compiler.engine = eng;
+	}
+
+	/**
 	 * @param {string} exp
 	 * @return {*}
 	 */
@@ -156,7 +157,7 @@ export default class Compiler {
 					y += word;
 				} else {
 					if (word === "fps")
-						y += global.fps;
+						y += "global.fps";
 					else {
 						if (!Compiler.isResource(word)
 						&&  Compiler.isSingleWord(word)
@@ -178,12 +179,12 @@ export default class Compiler {
 
 	/** */
 	static isResource(x) {
-		return object.names.includes(x)
-			|| sprite.names.includes(x)
-			|| Sound.names.includes(x)
-			|| room.names.includes(x)
-			|| Font.names.includes(x)
-			|| Script.names.includes(x);
+		return Compiler.engine.object.names.includes(x)
+			|| Compiler.engine.sprite.names.includes(x)
+			|| Compiler.engine.Sound.names.includes(x)
+			|| Compiler.engine.Room.names.includes(x)
+			|| Compiler.engine.Font.names.includes(x)
+			|| Compiler.engine.Script.names.includes(x);
 	}
 
 	/** */
@@ -224,6 +225,7 @@ export default class Compiler {
 
 }
 
+Compiler.engine = {};
 Compiler.keywords = ["self", "other"];
 Compiler.booleans = [true, false, "true", "false"];
 Compiler.assignmentOperators = ["<", ">", "<=", ">=", "==", "===", "!=", "!=="];
