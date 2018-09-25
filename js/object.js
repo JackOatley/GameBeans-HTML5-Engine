@@ -46,11 +46,13 @@ class GameObject {
 	eventAddAction(event, action, ...args) {
 
 		if (typeof event === "object") {
-			Object.keys(event).forEach((key) => {
-				event[key].forEach((params) => {
-					GameObject.eventAddAction(this, key, ...params);
-				});
-			});
+			for (var key in event) {
+				var a = event[key];
+				var n = a.length;
+				while (n--) {
+					GameObject.eventAddAction(this, key, ...a[n]);
+				}
+			}
 			return;
 		}
 
@@ -101,27 +103,29 @@ class GameObject {
 		let arr = [];
 		instance.instanceArray.forEach(inst => {
 			let name = inst.constructor.objectName;
-			if (name === this.objectName)
+			if (name === this.objectName) {
 				arr.push(inst);
+			}
 		});
 		return arr;
 	}
 
 	/**
 	 * @param {*} obj
-	 * @return {Object} THe found object, or null if not found.
+	 * @return {Object} The found object, or null if not found.
 	 */
 	static get(obj) {
 
 		// If obj is already an object/constructor.
-		if (typeof obj === "object" || typeof obj === "function")
+		if (typeof obj !== "string")
 			return obj;
 
 		// Iterate all objects to find the one we want.
-		var n = GameObject.array.length;
+		var a = GameObject.array;
+		var n = a.length;
 		while (n--) {
-			if (GameObject.array[n].objectName === obj) {
-				return GameObject.array[n];
+			if (a[n].objectName === obj) {
+				return a[n];
 			}
 		}
 
