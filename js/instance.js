@@ -454,10 +454,11 @@ let instance = (function() {
 
 	}
 
-	/***************************************************************************
+	/**
 	 * @param {Object} inst
 	 * @param {Array} actions
 	 * @param {Object} otherInst
+	 * @return {void}
 	 */
 	function executeActions(inst, actions, otherInst) {
 		const steps = [];
@@ -472,56 +473,12 @@ let instance = (function() {
 				// regular action
 				case (""):
 
-					if (!condition)
-						break;
-
-					if (!action.cache) {
-
-						const args = action.args;
-						let n, newArgs = [];
-						for (n = 0; n < args.length; n++) {
-							if (typeof args[n] === "function") {
-								newArgs[n] = args[n];
-							} else {
-								switch (args[n]) {
-									case ("self"): newArgs[n] = inst; break;
-									case ("other"): newArgs[n] = otherInst; break;
-									default: newArgs[n] = Compiler.actionExpression.call(inst, args[n]); break
-								}
-							}
-						}
-
-						// Catch any undefined arguments.
-						if (newArgs.includes(undefined)) {
-							window.addConsoleText("#F00",
-								"[" + inst.objectName + "]"
-								+ " > [" + currentEvent + "]"
-								+ " > [" + action.action.name + "]"
-								+ " Action contains undefined values!");
-							window._GB_stop();
-							return false;
-						}
-
-						//*
-						action.cache = (function() {
-							if (typeof newArgs[0] === "function") {
-								return newArgs[0];
-							}
-							let t = inst;
-							let f = action.action;
-							return eval(`
-								(function() {
-									return f.call(this, ` + newArgs.join(",") + `);
-								})
-							`);
-						})();
-
+					if (condition) {
+						condition = action.cache.call(inst);
+						(condition === undefined)
+							? condition = true
+							: steps[scope] = 0;
 					}
-
-					condition = action.cache.call(inst);
-					(condition === undefined)
-						? condition = true
-						: steps[scope] = 0;
 
 					break;
 
@@ -542,17 +499,20 @@ let instance = (function() {
 	}
 
 	/**
-	 *
+	 * Resets some instance variables/states.
+	 * @return {void}
 	 */
 	function newStep() {
 		let arr = instanceArray.slice();
-		arr.forEach((i) => {
+		let i, n = arr.length;
+		while (n--) {
+			i = arr[n];
 			i.previousX = i.x;
 			i.previousY = i.y;
-		});
+		}
 	}
 
-	/***************************************************************************
+	/**
 	 * @return {void}
 	 */
 	function stepAll() {
@@ -565,7 +525,7 @@ let instance = (function() {
 	}
 
 	/**
-	 *
+	 * @return {void}
 	 */
 	function drawAll() {
 		if (doDepthSort) {
@@ -575,15 +535,16 @@ let instance = (function() {
 	}
 
 	/**
-	 *
+	 * @return {void}
 	 */
 	function drawGuiAll() {
-		instanceArray.forEach(function(inst) {
-			executeEvent(inst, "drawGUI");
-		});
+		var n = instanceArray.length;
+		while (n--) {
+			executeEvent(instanceArray[n], "drawGUI");
+		}
 	}
 
-	/***************************************************************************
+	/**
 	 * The function used for instance depth ordering.
 	 * @param {Object} a Instance.
 	 * @param {Object} b Instance.
@@ -595,14 +556,13 @@ let instance = (function() {
  			: a.depth - b.depth;
  	}
 
-	/***************************************************************************
+	/**
 	 * Remove isntances that have been requested to be destroyed.
 	 * @return {void}
 	 */
 	function clearDestroyed() {
-		let l = instanceArray.length;
-		let n = l;
-		let i;
+		var l = instanceArray.length;
+		var i, n = l;
 		while (i = instanceArray[--n]) {
 			if (!i.exists) {
 				i.object.pool.release(i);
@@ -612,14 +572,13 @@ let instance = (function() {
 		instanceArray.length = l;
 	}
 
-	/***************************************************************************
+	/**
 	 * Returns all instances set as "solid".
 	 * @return {Array}
 	 */
 	function getAllSolid() {
-		let arr = [];
-		let n = instanceArray.length;
-		let i;
+		var arr = [];
+		var i, n = instanceArray.length;
 		while (i = instanceArray[--n]) {
 			if (i.solid) {
 				arr.push(i);
