@@ -96,7 +96,9 @@ function jumpRandom() {
 }
 
 /**
- *
+ * @param {number} speed
+ * @param {number} direction
+ * @return {void}
  */
 function moveFree(speed, direction) {
 	this.speed = speed;
@@ -108,6 +110,7 @@ function moveFree(speed, direction) {
  * the current room.
  * @param {number} x
  * @param {number} y
+ * @return {void}
  */
 function moveDirect(x, y) {
 	this.x += x * main.dt;
@@ -115,15 +118,38 @@ function moveDirect(x, y) {
 }
 
 /**
- *
+ * @param  {type} speed
+ * @return {void}
  */
-function moveSpeedX(speed) { this.speedX = Number(speed); }
-function moveSpeedY(speed) { this.speedY = Number(speed); }
-function moveReverseX() { this.speedX = -this.speedX; }
-function moveReverseY() { this.speedY = -this.speedY; }
+function moveSpeedX(speed) {
+	this.speedX = Number(speed);
+}
+
+/**
+ * @param  {type} speed
+ * @return {void}
+ */
+function moveSpeedY(speed) {
+	this.speedY = Number(speed);
+}
+
+/**
+ * @return {void}
+ */
+function moveReverseX() {
+	this.speedX = -this.speedX;
+}
+
+/**
+ * @return {void}
+ */
+function moveReverseY() {
+	this.speedY = -this.speedY;
+}
 
 /**
  * Wraps the instance back into the room when it leaves.
+ * @return {void}
  */
 function actionWrap() {
 	let width = this.boxRight - this.boxLeft;
@@ -139,6 +165,7 @@ function actionWrap() {
 
 /**
  * Wraps the instance back into the room when it leaves.
+ * @return {void}
  */
 function actionConfine() {
 	let width = this.boxRight - this.boxLeft;
@@ -156,6 +183,7 @@ function actionConfine() {
  * Executes the given function with variable arguments on the instance.
  * @param {function} func
  * @param {...*} args
+ * @return {void}
  */
 function actionFunc(func, ...args) {
 	func.apply(this, args);
@@ -165,32 +193,16 @@ function actionFunc(func, ...args) {
  * Executes the given Script with an array of arguments.
  * @param {script} func
  * @param {array} args
+ * @return {void}
  */
 function script(s, args) {
-	console.log(window[s], args);
 	window[s].apply(this, args);
-}
-
-/**
- * Executes the given function with variable arguments on the instance.
- * @param {string} code
- */
-function code(code) {
-	if (typeof code === "string") {
-		try {
-			eval(code);
-		}
-		catch(err) {
-			console.error(err.message);
-		}
-	} else {
-		console.error("runCode(code); code must be a string!");
-	}
 }
 
 /**
  * Shows the value of the given variable of the instance, in the console.
  * @param {...*} args
+ * @return {void}
  */
 function get(...args) {
 	console.log(this[args].toFixed(2));
@@ -299,7 +311,6 @@ export {
 	actionConfine    as confine,
 	actionFunc       as func,	// DEPRECATE?
 	script,
-	code,
 	message,
 	alert,
 	confirm,
