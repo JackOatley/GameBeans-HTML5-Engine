@@ -3,7 +3,6 @@ import input from "./input";
 import object from "./object";
 import sprite from "./sprite";
 import Draw from "./draw";
-import Compiler from "./compile";
 import global from "./global";
 
 //
