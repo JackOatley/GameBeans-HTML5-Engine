@@ -3,6 +3,7 @@ import sprite from "./sprite";
 import canvas from "./canvas";
 import Font from "./font";
 import Color from "./Color";
+import DrawShapes from "./drawing/DrawShapes";
 
 //
 let draw = {
@@ -279,7 +280,7 @@ let draw = {
 		}
 
 		//
-		let lineHeight = ctx.measureText("M").width * 1.2;
+		let lineHeight = ctx.measureText("Mp").width * 1.2;
 		let lines = text.toString().split("#");
 		for (var i=0; i<lines.length; i++) {
 
@@ -346,123 +347,7 @@ let draw = {
 	/**
 	 *
 	 */
-	shape: {
-
-		/**
-		 * @param {number} x1
-		 * @param {number} y1
-		 * @param {number} x2
-		 * @param {number} y2
-		 * @param {object} [opts={}]
-		 */
-		line: function(x1, y1, x2, y2, opts = {}) {
-			let ctx = draw.context;
-			ctx.strokeStyle = opts.color || draw.color;
-			ctx.beginPath();
-			ctx.moveTo(x1, y1);
-			ctx.lineTo(x2, y2);
-			ctx.stroke();
-		},
-
-		/**
-		 * @param {number} x1
-		 * @param {number} y1
-		 * @param {number} x2
-		 * @param {number} y2
-		 * @param {object} [opts={}]
-		 */
-		ellipse: function(x, y, xr, yr, opts = {}) {
-
-			//
-			let ctx = draw.context;
-			ctx.save();
-			ctx.beginPath();
-			ctx.translate(x-xr, y-yr);
-			ctx.scale(xr, yr);
-			ctx.arc(1, 1, 1, 0, 2 * Math.PI, false);
-			ctx.restore();
-
-			//
-			let style;
-			if (opts.healthbar) {
-				let amount = opts.healthbar.amount || 1;
-				let color = opts.healthbar.color || "#0F0";
-				let background = opts.healthbar.background || "#F00";
-				style = ctx.createLinearGradient( x-xr, 0, x+xr, 0 );
-				style.addColorStop( 0, color );
-				style.addColorStop( amount, color );
-				style.addColorStop( amount, background );
-				style.addColorStop( 1, background );
-			} else {
-				style = opts.color || draw.color;
-			}
-
-			//
-			if (!opts.fill && !opts.stroke)
-				opts.fill = true;
-
-			//
-			if (opts.fill) {
-				ctx.fillStyle = style;
-				ctx.fill();
-			}
-
-			if (opts.stroke) {
-				ctx.strokeStyle = style
-				ctx.lineWidth = opts.lineWidth || 1;
-				ctx.stroke();
-			}
-
-		},
-
-		/**
-		 * @param {number} x
-		 * @param {number} y
-		 * @param {number} w
-		 * @param {number} h
-		 * @param {object} [opts={}]
-		 */
-		rectangle: function(x, y, w, h, opts = {}) {
-
-			//
-			let ctx = draw.context;
-			ctx.beginPath();
-			ctx.rect(x, y, w, h);
-
-			//
-			let style;
-			if ( opts.healthbar ) {
-				let amount = opts.healthbar.amount || 1;
-				let color = opts.healthbar.color || "#0F0";
-				let background = opts.healthbar.background || "#F00";
-				style = ctx.createLinearGradient(x, 0, x+w, 0);
-				style.addColorStop(0, color);
-				style.addColorStop(amount, color);
-				style.addColorStop(amount, background);
-				style.addColorStop(1, background);
-			} else {
-				style = opts.color || draw.color;
-			}
-
-			//
-			if (!opts.fill && !opts.stroke)
-				opts.fill = true;
-
-			//
-			if (opts.fill) {
-				ctx.fillStyle = style;
-				ctx.fill();
-			}
-
-			if (opts.stroke) {
-				ctx.strokeStyle = style;
-				ctx.lineWidth = opts.lineWidth || 1;
-				ctx.stroke();
-			}
-
-		}
-
-	}
+	shape: DrawShapes
 
 }
 
@@ -471,13 +356,14 @@ let draw = {
  */
 function _drawWord(drawX, drawY, word, lookup, ctx, useBitmap, bitmap, scale, drawMethod) {
 	if (useBitmap) {
-		let dx = ~~drawX;
-		for (var cn=0; cn<word.length; cn++) {
-			let metrics = lookup[word[cn]];
-			let sx = Math.floor(metrics.left);
-			let sy = Math.floor(metrics.top);
-			let sw = Math.ceil(metrics.right) - sx;
-			let sh = Math.ceil(metrics.bottom) - sy;
+		var dx = ~~drawX;
+		var len = word.length;
+		for (var cn=0; cn<len; cn++) {
+			var metrics = lookup[word[cn]];
+			var sx = ~~metrics.left;
+			var sy = ~~metrics.top;
+			var sh = Math.ceil(metrics.bottom) - sy;
+			var sw = Math.ceil(metrics.right) - sx;
 			ctx.drawImage(bitmap, sx, sy, sw, sh, dx, drawY, sw*scale, sh*scale);
 			dx += (sw + 1) * scale;
 		}
