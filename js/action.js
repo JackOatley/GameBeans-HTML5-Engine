@@ -6,7 +6,7 @@ import input from "./input";
 import math from "./math";
 import Sprite from "./sprite";
 import Canvas from "./canvas";
-import color from "./color";
+import Color from "./Color";
 import main from "./main";
 import Camera from "./camera";
 import App from "./App";
@@ -227,7 +227,7 @@ let GAME = {
 		debug: instance.drawDebug
 	} ),
 	Canvas: Canvas,
-	color: color,
+	Color: Color,
 	sprite: Sprite,
 	Sound: Sound,
 	Room: Room,

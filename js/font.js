@@ -18,10 +18,13 @@ class Font {
 		this.name = opts.name || "_UNNAMEDFONT";
 		this.source = opts.src || "";
 		this.hasFontFace = false;
-		this.bitmapFont = opts.bitmap || null;
+		this.forceSize = 0;
+		this.bitmapFont = [];//opts.bitmap || null;
 		this.hasBitmapFont = this.bitmap !== null;
 		this.method = opts.method || "normal";
-		if (opts.apply) this.applyCss();
+		if (opts.apply) {
+			this.applyCss();
+		}
 		Font.names.push(this.name);
 		Font.array.push(this);
 	}
@@ -30,10 +33,10 @@ class Font {
 	 * Returns the CSS code that's needed to be applied to the page to use this font in the DOM or on the canvas.
 	 */
 	getCss() {
-		return "@font-face {\
-			font-family: " + this.name + ";\
-			src: url('" + this.source + "') format('truetype');\
-		}";
+		return "@font-face {"
+			+ "font-family: " + this.name + ";"
+			+ "src: url('" + this.source + "') format('truetype');"
+		+ "}";
 	}
 
 	/**
@@ -41,22 +44,22 @@ class Font {
 	 */
 	applyCss() {
 		let style = document.createElement("STYLE");
-		style.textContent = this.getCss()
+		style.textContent = this.getCss();
 		document.head.appendChild(style);
 	}
 
 	/**
-	 * @param {object} [opts={}] Options object.
+	 * @param {Object} [opts={}] Options object.
 	 * @param {number} [opts.size=8] Size of the font.
 	 * @param {string} [opts.map] A string of all the characters to include in the bitmap font.
-	 * @param {int} [opts.alphaThreshold=150] Threshold that dertmines which pixels shall be visible.
-	 * @param {array} [opts.color=[0,0,0,255]] An array containing the RGBA channels respectively.
+	 * @param {number} [opts.alphaThreshold=150] Threshold that dertmines which pixels shall be visible.
+	 * @param {Array} [opts.color=[0,0,0,255]] An array containing the RGBA channels respectively.
 	 */
 	convertToBitmapFont(opts = {}) {
 
 		const scale = 3;
 		const size = (opts.size || 8) * scale;
-		const map = opts.map || "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789/\\,.<>{}[]!\"£$%^&*():;@'~#|`";
+		const map = opts.map || "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789/\\,.<>{}[]!\"£$%^&*():;@'~#|`=+-_";
 		const cx = size * 0.5;
 		const cy = cx;
 		const alphaThreshold = opts.alphaThreshold || 150;
@@ -74,7 +77,6 @@ class Font {
 
 		let ctx = canvas.getContext("2d");
 		ctx.font = size + "px " + this.name;
-		console.log(ctx.font);
 		ctx.textAlign = "center";
 		ctx.textBaseline = "middle";
 
@@ -86,17 +88,19 @@ class Font {
 			charMap.clear(-1);
 
 			let c = map[n];
-			ctx.fillStyle = "#000000";
+			ctx.fillStyle = "#000";
 			ctx.fillText(c, cx, cy);
 
 			let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 			let data = imageData.data;
 			var p, r, g, b, a;
-			for (p=0; p<data.length; p+=4) {
+			for (p=0; p<data.length; p+=4*scale) {
 				let x = ~~(((p/4) % size) / scale);
 				let y = ~~((~~((p/4) / size)) / scale);
 				let i = x+(size/scale)*y;
-				if (charMap.get(x, y) === -1) charMap.set(x, y, data[p+3]);
+				if (charMap.get(x, y) === -1) {
+					charMap.set(x, y, data[p+3]);
+				}
 			}
 
 			// Get metrics
@@ -135,7 +139,9 @@ class Font {
 		// Space is special because it can't actually be measured
 		lookupTable[" "] = {left: -3, top: 0, right: 0, bottom: size/scale}
 
-		this.bitmapFont = {
+		//
+		var key = "" + opts.size + color[0] + color[1] + color[2] + color[3];
+		this.bitmapFont[key] = {
 			size: size/scale,
 			lookup: lookupTable,
 			image: atlas

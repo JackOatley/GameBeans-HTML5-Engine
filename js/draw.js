@@ -2,6 +2,7 @@ import math from "./math";
 import sprite from "./sprite";
 import canvas from "./canvas";
 import Font from "./font";
+import Color from "./Color";
 
 //
 let draw = {
@@ -214,32 +215,45 @@ let draw = {
 	setFont: function(font, size, align, baseline) {
 		font = typeof font === "string" ? font : font.name;
 		draw.font = font;
-		draw.fontSize = size;
-		draw.textAlign = align;
-		draw.textBaseline = baseline;
+		draw.fontSize = size || 16;
+		draw.textAlign = align || "left";
+		draw.textBaseline = baseline || "alphabetic";
 		const ctx = draw.context;
-		ctx.font = size + "px " + font;
-		ctx.textAlign = align;
-		ctx.textBaseline = baseline;
+		ctx.font = draw.fontSize + "px " + font;
+		ctx.textAlign = draw.textAlign;
+		ctx.textBaseline = draw.textBaseline;
 	},
 
 	/**
 	 * @param {string} text
 	 * @param {number} x
 	 * @param {number} y
+	 * @param {Object=} opts
 	 */
 	text: function(text, x, y, opts = {}) {
 
 		x = Number(x);
 		y = Number(y);
 
-		let bitmap, lookup, scale, useBitmap = false;
+		let drawSize, bitmap, lookup, scale, useBitmap = false;
 		let font = Font.get(draw.font);
 		if (font && font.method === "bitmap") {
+
+			drawSize = font.forceSize || draw.fontSize;
+			var color = Color.hexToArray(draw.color);
+			var key = "" + drawSize + color[0] + color[1] + color[2] + color[3];
+
+			if (!font.bitmapFont[key]) {
+				font.convertToBitmapFont({
+					size: drawSize,
+					color: color
+				})
+			}
+
 			useBitmap = true;
-			lookup = font.bitmapFont.lookup
-			bitmap = font.bitmapFont.image;
-			scale = draw.fontSize / font.bitmapFont.size;
+			lookup = font.bitmapFont[key].lookup
+			bitmap = font.bitmapFont[key].image;
+			scale = draw.fontSize / font.bitmapFont[key].size;
 		}
 
 		//
@@ -460,10 +474,10 @@ function _drawWord(drawX, drawY, word, lookup, ctx, useBitmap, bitmap, scale, dr
 		let dx = ~~drawX;
 		for (var cn=0; cn<word.length; cn++) {
 			let metrics = lookup[word[cn]];
-			let sx = metrics.left;
-			let sy = metrics.top;
-			let sw = metrics.right - metrics.left;
-			let sh = metrics.bottom - metrics.top;
+			let sx = Math.floor(metrics.left);
+			let sy = Math.floor(metrics.top);
+			let sw = Math.ceil(metrics.right) - sx;
+			let sh = Math.ceil(metrics.bottom) - sy;
 			ctx.drawImage(bitmap, sx, sy, sw, sh, dx, drawY, sw*scale, sh*scale);
 			dx += (sw + 1) * scale;
 		}

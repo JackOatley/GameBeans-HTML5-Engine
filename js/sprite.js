@@ -1,5 +1,5 @@
 import Generator from "./generator";
-import Color from "./color";
+import Color from "./Color";
 
 /**
  *
@@ -65,7 +65,7 @@ class Sprite {
 
 			image.img.onload = () => {
 
-				//
+				image.ready = true;
 				image.clip = {
 					x: 0,
 					y: 0,
@@ -78,10 +78,6 @@ class Sprite {
 					this.width = image.clip.w;
 					this.height = image.clip.h;
 				}
-
-				//
-				image.ready = true;
-
 			}
 			image.img.src = opts.source || "";
 
@@ -89,19 +85,12 @@ class Sprite {
 
 		//
 		if (atlas && opts.clip) {
-
-			//
+			image.ready = true;
 			image.clip = opts.clip;
-
-			//
 			if (this.width * this.height === 0) {
 				this.width = image.clip.w;
 				this.height = image.clip.h;
 			}
-
-			//
-			image.ready = true;
-
 		}
 
 		//
@@ -189,11 +178,13 @@ class Sprite {
 	 */
 	static readyAll() {
 
-		for (var n=0; n<Sprite.array.length; n++) {
-			let spr = Sprite.array[n];
-			for (var i=0; i<spr.images.length; i++) {
-				let image = spr.images[i];
-				if (!image.ready) {
+		var sa = Sprite.array;
+		var n = sa.length;
+		while (n--) {
+			var ia = sa[n].images;
+			var i = ia.length;
+			while (i--) {
+				if (!ia[i].ready) {
 					return false;
 				}
 			}
@@ -209,12 +200,16 @@ class Sprite {
 	 */
 	static get(name) {
 
-		if (typeof name === "object")
+		if (typeof name === "object") {
 			return name;
+		}
 
-		for (var n = 0; n < Sprite.array.length; n++)
-			if (Sprite.array[n].name === name)
+		var n = Sprite.array.length;
+		while (n--) {
+			if (Sprite.array[n].name === name) {
 				return Sprite.array[n];
+			}
+		}
 
 		return null;
 
@@ -223,30 +218,29 @@ class Sprite {
 }
 
 /**
- *
+ * Generates a new, unused, sprite name.
+ * @return {string}
  */
 function newSpriteName() {
 	return "Sprite_" + Sprite.array.length;
 }
 
 /**
- *
+ * Iterates pixel data and tints (multiplies) it with the given color.
+ * @param {Uint8ClampedArray} data
+ * @param {Object} rgb
+ * @return {void}
  */
 function pixelDataTint(data, rgb) {
-
-	// cache as much as possible, there could be a lot of pixels
-	let l = data.length,
-		r = rgb.r / 255,
-		g = rgb.g / 255,
-		b = rgb.b / 255;
-
-	//
-	for (var i = 0; i < l; i += 4) {
-		data[i]     = r * data[i]     >> 0;
-		data[i + 1] = g * data[i + 1] >> 0;
-		data[i + 2] = b * data[i + 2] >> 0;
+	var r = rgb.r / 255;
+	var g = rgb.g / 255;
+	var b = rgb.b / 255;
+	var i = data.length;
+	while (i -= 4) {
+		data[i] *= r;
+		data[i + 1] *= g;
+		data[i + 2] *= b;
 	}
-
 }
 
 //
