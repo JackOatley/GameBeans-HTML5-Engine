@@ -8,7 +8,6 @@ class Sound {
 	/**
 	 * @param {string} name name for the resource.
 	 * @param {string} source A path to an audio source, or a base64 encoded audio.
-	 * @return {void}
 	 */
 	constructor(name, source) {
 		this.name = name;
@@ -17,11 +16,7 @@ class Sound {
 		this.volume = 1.0;
 		Sound.names.push(name);
 		Sound.array.push(this);
-		let test = this.instances[0];
-		test.oncanplaythrough = () => {
-			this.ready = true;
-			test.oncanplaythrough = null;
-		}
+		this.__test();
 	}
 
 
@@ -38,10 +33,10 @@ class Sound {
 	 * @return {void}
 	 */
 	preload(number) {
-		let n = number - this.instances.length;
+		var a = this.instances;
+		var n = number - a.length;
 		while (n-- > 0) {
-			let newSound = this.instances[0].cloneNode();
-			this.instances.push(newSound);
+			a.push(a[0].cloneNode());
 		}
 	}
 
@@ -52,9 +47,10 @@ class Sound {
 		if (Sound.isEnabled) {
 
 			// Find an existing sound instance to play.
-			let playSound;
-			for (var i=0, n=this.instances.length; i<n; i++) {
-				let instance = this.instances[i];
+			var playSound;
+			var n = this.instances.length;
+			while (n--) {
+				var instance = this.instances[n];
 				if (instance.paused) {
 					playSound = instance;
 					break;
@@ -65,7 +61,6 @@ class Sound {
 			if (!playSound) {
 				playSound = this.instances[0].cloneNode();
 				this.instances.push(playSound);
-				//console.log("Created sound, " + this.name + ", on demand.");
 			}
 
 			//
@@ -76,18 +71,24 @@ class Sound {
 			// Play the sound.
 			playSound.volume = this.volume;
 			let promise = playSound.play();
-			if ( promise !== undefined ) {
-				promise.then( function() {
+			if (promise !== undefined) {
+				promise.then(function() {
 
 					// on end event
 					playSound.onended = function() {
 
 						// internal event stuff
-						((Number(opts.loop || false))
-							? _loop : _end).call(this);
+						this.currentTime = 0;
+						if (Number(opts.loop || false)) {
+							this.play();
+						} else {
+							this.pause();
+						}
 
-						// and custom event, if defined
-						if (opts.onEnd) opts.onEnd();
+						// Custom event, if defined.
+						if (opts.onEnd) {
+							opts.onEnd();
+						}
 
 					}
 
@@ -106,23 +107,42 @@ class Sound {
 
 	/**
 	 * Stop all instances of the sound from playing.
+	 * @return {void}
 	 */
 	stop() {
-		for (var i=0, n=this.instances.length; i<n; i++) {
-			let instance = this.instances[i];
-			if (!instance.paused) {
-				_end.call(instance);
+		var a = this.instances;
+		var n = a.length;
+		while (n--) {
+			var i = a[n];
+			if (!i.paused) {
+				i._end();
 			}
 		}
 
 	}
 
 	/**
+	 * Tests whether the Sound resource has an instance that is ready to play.
+	 * Generates a callback function that sets the resource's "ready" property.
+	 * @return {void}
+	 */
+	__test() {
+		var i = this;
+		let a = this.instances[0];
+		a.oncanplaythrough = function() {
+			i.ready = true;
+			a.oncanplaythrough = null;
+		}
+	}
+
+	/**
 	 * @return {boolean}
 	 */
 	static readyAll() {
-		for (var i=0, n=Sound.array.length; i<n; i++) {
-			if (!Sound.array[i].ready) {
+		var a = Sound.array;
+		var n = a.length;
+		while (n--) {
+			if (!a[n].ready) {
 				return false;
 			}
 		}
@@ -138,17 +158,28 @@ class Sound {
 	}
 
 	/**
-	 *
+	 * Gets the sound resource from the given string.
+	 * If a sound resource is passed, it's returned immedietly.
+	 * @param {*} name Name as string, or object.
+	 * @return {Object}
 	 */
 	static get(name) {
-		if (typeof name === "object") return name;
-		for (var i=0, n=Sound.array.length; i<n; i++) {
-			if (Sound.array[i].name === name) {
-				return Sound.array[i];
+
+		if (typeof name === "object") {
+			return name;
+		}
+
+		var a = Sound.array;
+		var n = a.length;
+		while (n--) {
+			if (a[n].name === name) {
+				return a[n];
 			}
 		}
+
 		window.addConsoleText("#F00", "Unknown sound: "+ name);
 		return null;
+
 	}
 
 }
@@ -157,18 +188,6 @@ Generator.classStaticMatch(Sound);
 Sound.isEnabled = true;
 Sound.names = [];
 Sound.array = [];
-
-//
-function _loop() {
-	this.currentTime = 0;
-	this.play();
-}
-
-//
-function _end() {
-	this.pause();
-	this.currentTime = 0;
-}
 
 // Export.
 export default Sound;

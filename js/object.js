@@ -16,8 +16,8 @@ class GameObject {
 	constructor(name, sprite) {
 
 		// Create new constructor.
-		let obj = function(x, y) {
-			let inst = obj.pool.get(this);
+		var obj = function(x, y) {
+			var inst = obj.pool.get(this);
 			instance.setup(inst, obj, x, y);
 			obj.instances.push(inst);
 			return inst;
@@ -40,49 +40,37 @@ class GameObject {
 	 * @param {*} object Can be an object constructor or integer ID.
 	 * @param {*} event
 	 * @param {*} action
-	 * @param {...*} args
 	 * @return {void}
 	 */
-	eventAddAction(event, action, ...args) {
+	eventAddAction(event, action) {
 
-		if (typeof event === "object") {
-			for (var key in event) {
-				var a = event[key];
-				var n = a.length;
-				while (n--) {
-					GameObject.eventAddAction(this, key, ...a[n]);
-				}
-			}
-			return;
-		}
-
-		if (action !== undefined) {
-
-			// if flow action, get flow tag
-			let flow = "";
-			if (typeof action === "string")
-				flow = action;
-
-			// create a new event if not yet defined
-			if (!this.prototype.events[event]) {
-				this.prototype.events[event] = [];
-				if (event.includes("collision_")) {
-					let index = event.indexOf("_") + 1;
-					let name = event.slice(index, 200);
-					GameObject.addCollisionListener(this, name);
-				}
-			}
-
-			// add action data to event
-			this.prototype.events[event].push({
-				flow: flow,
-				action: action,
-				args: args
-			});
-
-		} else {
+		if (action === undefined) {
 			console.warn("tried to add an undefined action to an event!");
 		}
+
+		// If flow action, get flow tag.
+		let flow = "";
+		if (typeof action === "string") {
+			flow = action;
+		}
+
+		// Create a new event if not yet defined.
+		if (!this.prototype.events[event]) {
+			this.prototype.events[event] = [];
+		}
+
+		// Create collision listeners, if applicable.
+		if (event.includes("collision_")) {
+			let index = event.indexOf("_") + 1;
+			let name = event.slice(index, 200);
+			GameObject.addCollisionListener(this, name);
+		}
+
+		// Add action to event.
+		this.prototype.events[event].push({
+			flow: flow,
+			cache: action
+		});
 
 	}
 
