@@ -141,7 +141,7 @@ class Sprite {
 	}
 
 	/**
-	 * Tints the sprite to the given color. Effects all frames.
+	 * Tints (multiplies) the sprite to the given color. Effects all frames.
 	 * @param {string} col A CSS color value.
 	 * @return {void}
 	 */
@@ -150,7 +150,7 @@ class Sprite {
 		//
 		this.images.forEach((frame) => {
 
-			// create canvas, draw image
+			// Create canvas, draw image.
 			let canvas = document.createElement("CANVAS");
 			let ctx = canvas.getContext("2d");
 			canvas.width = this.width;
@@ -158,13 +158,46 @@ class Sprite {
 			frame.img = frame.__orig || frame.img;
 			ctx.drawImage(frame.img, 0, 0);
 
-			// get data, do thing, put data back
+			// Get data, do thing, put data back.
 			let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 			let color = (typeof col === "object") ? col : Color.hexToRgb(col);
 			pixelDataTint(imageData.data, color);
 			ctx.putImageData(imageData, 0, 0);
 
-			//
+			// Cache old image, then set new one.
+			frame.__orig = frame.img;
+			frame.__origSrc = frame.img.src;
+			frame.img = canvas;
+
+		});
+
+	}
+
+	/**
+	 * Tints (multiplies) the sprite to the given color. Effects all frames.
+	 * @param {string} col A CSS color value.
+	 * @return {void}
+	 */
+	fade(col) {
+
+		//
+		this.images.forEach((frame) => {
+
+			// Create canvas, draw image.
+			let canvas = document.createElement("CANVAS");
+			let ctx = canvas.getContext("2d");
+			canvas.width = this.width;
+			canvas.height = this.height;
+			frame.img = frame.__orig || frame.img;
+			ctx.drawImage(frame.img, 0, 0);
+
+			// Get data, do thing, put data back.
+			let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+			let color = (typeof col === "object") ? col : Color.hexToRgb(col);
+			pixelDataFade(imageData.data, color);
+			ctx.putImageData(imageData, 0, 0);
+
+			// Cache old image, then set new one.
 			frame.__orig = frame.img;
 			frame.__origSrc = frame.img.src;
 			frame.img = canvas;
@@ -240,6 +273,25 @@ function pixelDataTint(data, rgb) {
 		data[i] *= r;
 		data[i + 1] *= g;
 		data[i + 2] *= b;
+	}
+}
+
+/**
+ * Iterates pixel data and tints (multiplies) it with the given color.
+ * @param {Uint8ClampedArray} data
+ * @param {Object} rgba
+ * @return {void}
+ */
+function pixelDataFade(data, rgba) {
+	var r = rgba.r;
+	var g = rgba.g;
+	var b = rgba.b;
+	var a = rgba.a / 255;
+	var i = data.length;
+	while (i -= 4) {
+		data[i] = r * a + data[i] * (1-a);
+		data[i + 1] = g * a + data[i + 1] * (1-a);
+		data[i + 2] = b * a + data[i + 2] * (1-a);
 	}
 }
 
