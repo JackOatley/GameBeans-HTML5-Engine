@@ -74,7 +74,7 @@ class Sprite {
 				}
 
 				//
-				if (this.width * this.height === 0 ) {
+				if (this.width * this.height === 0) {
 					this.width = image.clip.w;
 					this.height = image.clip.h;
 				}
@@ -123,7 +123,7 @@ class Sprite {
 	/**
 	 *
 	 */
-	restore(options = {}) {
+	restore() {
 		this.images.forEach((frame) => {
 			if (frame.__orig) frame = frame._orig;
 			if (frame.__origSrc) frame.img.src = frame.__origSrc;

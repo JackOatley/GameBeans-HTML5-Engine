@@ -47,7 +47,7 @@ class Draw {
 	/** */
 	static reset() {
 		Draw.context.imageSmoothingEnabled = Draw.imageSmoothing;
-		Draw.context.setTransform(...Draw.defaultTransform);
+		Draw.context.setTransform.apply(Draw.context, Draw.defaultTransform);
 		Draw.context.globalAlpha = 1;
 	}
 

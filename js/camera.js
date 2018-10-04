@@ -1,6 +1,6 @@
-import room from "./room.js";
-import draw from "./draw.js";
-import Generator from "./generator.js";
+import room from "./room";
+import draw from "./draw";
+import Generator from "./generator";
 
 /**
  * @author Jack Oatley
