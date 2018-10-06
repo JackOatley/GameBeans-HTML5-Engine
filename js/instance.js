@@ -31,8 +31,8 @@ let instance = (function() {
 		//
 		let o = object.get(obj);
 		if (o === null) {
-			window.addConsoleText("#F00", "No such object as " + obj);
-			window._GB_stop();
+			window.addConsoleText("#F00", "Instance creation failed! No such object as " + obj + ".");
+			//window._GB_stop();
 			return null;
 		}
 
