@@ -1,6 +1,6 @@
 import math from "./math";
 import sprite from "./sprite";
-import canvas from "./canvas";
+import canvas from "./Canvas";
 import Font from "./font";
 import Color from "./Color";
 import DrawShapes from "./drawing/DrawShapes";

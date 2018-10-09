@@ -1,4 +1,4 @@
-import Canvas from "./canvas";
+import Canvas from "./Canvas";
 import room from "./room";
 import input from "./input";
 import Instance from "./instance";

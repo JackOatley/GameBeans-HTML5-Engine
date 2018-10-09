@@ -5,7 +5,7 @@ import instance from "./instance";
 import input from "./input";
 import math from "./math";
 import Sprite from "./sprite";
-import Canvas from "./canvas";
+import Canvas from "./Canvas";
 import Color from "./Color";
 import main from "./main";
 import Camera from "./camera";

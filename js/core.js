@@ -1,6 +1,6 @@
 import App from "./App";
 import main from "./main";
-import canvas from "./canvas";
+import canvas from "./Canvas";
 import Camera from "./camera";
 import Room from "./room";
 import input from "./input";
