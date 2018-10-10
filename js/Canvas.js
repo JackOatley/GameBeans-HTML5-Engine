@@ -19,8 +19,8 @@ class Canvas {
 		var ctx = c.getContext("2d");
 		this.domElement = c;
 		this.context = ctx;
-		this.width = opts.width || 300;
-		this.height = opts.height || 150;
+		this._width = opts.width || 300;
+		this._height = opts.height || 150;
 
 		//
 		c.scale = opts.scale || 1;
@@ -80,14 +80,6 @@ class Canvas {
 	}
 
 	/**
-	 * Gets the Canvas that is currently set as the main game canvas.
-	 * @return {Object}
-	 */
-	static getMain() {
-		return Canvas.main;
-	}
-
-	/**
 	 * @param {string} [color="#000000"] CSS value as a string.
 	 * @return {void}
 	 */
@@ -109,6 +101,18 @@ class Canvas {
 	}
 
 	/**
+	 * Set the RGBA components of a pixel on the canvas as an ArrayBuffer.
+	 * @param {number} x X position of the pixel, must be an integer.
+	 * @param {number} y Y position of the pixel, must be an integer.
+	 * @returns {void}
+	 */
+	setPixel(x, y, data) {
+		var imageData = this.context.getImageData(x, y, 1, 1);
+		imageData.data.set(data);
+		this.context.putImageData(imageData, x, y);
+	}
+
+	/**
 	 * Returns the RGBA components of a pixel on the canvas as an ArrayBuffer.
 	 * @param {number} x X position of the pixel, must be an integer.
 	 * @param {number} y Y position of the pixel, must be an integer.
@@ -116,6 +120,29 @@ class Canvas {
 	 */
 	getPixel(x, y) {
 		return this.context.getImageData(x, y, 1, 1).data;
+	}
+
+	/**
+	 * @return {void}
+	 */
+	setImageData(data) {
+		this.context.putImageData(data, 0, 0);
+	}
+
+	/**
+	 * Returns the entire pixel buffer of the canvas.
+	 * @return {ArrayBuffer}
+	 */
+	getImageData() {
+		return this.context.getImageData(0, 0, this._width, this._height).data;
+	}
+
+	/**
+	 * Gets the Canvas that is currently set as the main game canvas.
+	 * @return {Object}
+	 */
+	static getMain() {
+		return Canvas.main;
 	}
 
 }
