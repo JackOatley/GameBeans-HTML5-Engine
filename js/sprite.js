@@ -1,5 +1,6 @@
-import Generator from "./generator";
+import Canvas from "./Canvas";
 import Color from "./Color";
+import Generator from "./generator";
 
 /**
  *
@@ -20,7 +21,7 @@ class Sprite {
 
 		//
 		this.assetType = "sprite";
-		this.name = opts.name || newSpriteName();
+		this.name = opts.name || Sprite.newName();
 		this.originX = opts.originX || 0;
 		this.originY = opts.originY || 0;
 		this.width = 0;
@@ -44,7 +45,7 @@ class Sprite {
 	}
 
 	/**
-	 *
+	 * @return {void}
 	 */
 	addFrame(opts = {}) {
 
@@ -99,11 +100,9 @@ class Sprite {
 	}
 
 	/**
-	 *
+	 * @return {void}
 	 */
 	cache(opts = {}) {
-
-		//
 		this.images.forEach((frame) => {
 			let canvas = document.createElement("CANVAS");
 			canvas.width = opts.width || frame.img.width;
@@ -117,11 +116,10 @@ class Sprite {
 			frame.clip.h = canvas.height;
 			frame.img = canvas;
 		});
-
 	}
 
 	/**
-	 *
+	 * @return {void}
 	 */
 	restore() {
 		this.images.forEach((frame) => {
@@ -147,20 +145,21 @@ class Sprite {
 	 */
 	tint(col) {
 
-		//
-		this.images.forEach((frame) => {
+		var n = this.images.length;
+		while (n--) {
+			var frame = this.images[n];
 
 			// Create canvas, draw image.
-			let canvas = document.createElement("CANVAS");
-			let ctx = canvas.getContext("2d");
+			var canvas = document.createElement("CANVAS");
+			var ctx = canvas.getContext("2d");
 			canvas.width = this.width;
 			canvas.height = this.height;
 			frame.img = frame.__orig || frame.img;
 			ctx.drawImage(frame.img, 0, 0);
 
 			// Get data, do thing, put data back.
-			let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-			let color = (typeof col === "object") ? col : Color.hexToRgb(col);
+			var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+			var color = (typeof col === "object") ? col : Color.hexToRgb(col);
 			pixelDataTint(imageData.data, color);
 			ctx.putImageData(imageData, 0, 0);
 
@@ -169,7 +168,7 @@ class Sprite {
 			frame.__origSrc = frame.img.src;
 			frame.img = canvas;
 
-		});
+		}
 
 	}
 
@@ -180,8 +179,9 @@ class Sprite {
 	 */
 	fade(col) {
 
-		//
-		this.images.forEach((frame) => {
+		var n = this.images.length;
+		while (n--) {
+			var frame = this.images[n];
 
 			// Create canvas, draw image.
 			let canvas = document.createElement("CANVAS");
@@ -202,7 +202,7 @@ class Sprite {
 			frame.__origSrc = frame.img.src;
 			frame.img = canvas;
 
-		});
+		}
 
 	}
 
@@ -228,6 +228,39 @@ class Sprite {
 	}
 
 	/**
+	 * @param {number} index The index of the frame to draw onto the canvas.
+	 * @return {Object}
+	 */
+	toCanvas(index) {
+		var c = new Canvas({
+			width: this.width,
+			height: this.height
+		})
+		var img = this.images[index].img;
+		c.context.drawImage(img, 0, 0);
+		return c;
+	}
+
+	/**
+	 * Returns the RGBA components of a pixel on the Sprite as an ArrayBuffer.
+	 * @param {number} x X position of the pixel, must be an integer.
+	 * @param {number} y Y position of the pixel, must be an integer.
+	 * @returns {ArrayBuffer} An ArrayBuffer with 4 values (for R, G, B, A).
+	 */
+	getPixel(index, x, y) {
+		var c = this.toCanvas(index);
+		return c.context.getImageData(x, y, 1, 1).data;
+	}
+
+	/**
+	 * Generates a new, unused, sprite name.
+	 * @return {string}
+	 */
+	static newName() {
+		return "sprNewSprite" + Sprite.array.length;
+	}
+
+	/**
 	 * @param {*} name String or Object.
 	 * @return {Object}
 	 */
@@ -248,14 +281,6 @@ class Sprite {
 
 	}
 
-}
-
-/**
- * Generates a new, unused, sprite name.
- * @return {string}
- */
-function newSpriteName() {
-	return "Sprite_" + Sprite.array.length;
 }
 
 /**
@@ -283,15 +308,16 @@ function pixelDataTint(data, rgb) {
  * @return {void}
  */
 function pixelDataFade(data, rgba) {
-	var r = rgba.r;
-	var g = rgba.g;
-	var b = rgba.b;
 	var a = rgba.a / 255;
+	var r = rgba.r * a;
+	var g = rgba.g * a;
+	var b = rgba.b * a;
+	var o = 1 - a;
 	var i = data.length;
 	while (i -= 4) {
-		data[i] = r * a + data[i] * (1-a);
-		data[i + 1] = g * a + data[i + 1] * (1-a);
-		data[i + 2] = b * a + data[i + 2] * (1-a);
+		data[i] = r + data[i] * o;
+		data[i + 1] = g + data[i + 1] * o;
+		data[i + 2] = b + data[i + 2] * o;
 	}
 }
 

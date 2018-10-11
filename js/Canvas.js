@@ -19,8 +19,8 @@ class Canvas {
 		var ctx = c.getContext("2d");
 		this.domElement = c;
 		this.context = ctx;
-		this._width = opts.width || 300;
-		this._height = opts.height || 150;
+		this.width = this._width = opts.width || 300;
+		this.height = this._height = opts.height || 150;
 
 		//
 		c.scale = opts.scale || 1;
@@ -134,7 +134,7 @@ class Canvas {
 	 * @return {ArrayBuffer}
 	 */
 	getImageData() {
-		return this.context.getImageData(0, 0, this._width, this._height).data;
+		return this.context.getImageData(0, 0, this.width, this.height).data;
 	}
 
 	/**
