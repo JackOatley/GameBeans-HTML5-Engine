@@ -207,27 +207,6 @@ class Sprite {
 	}
 
 	/**
-	 * @return {boolean}
-	 */
-	static readyAll() {
-
-		var sa = Sprite.array;
-		var n = sa.length;
-		while (n--) {
-			var ia = sa[n].images;
-			var i = ia.length;
-			while (i--) {
-				if (!ia[i].ready) {
-					return false;
-				}
-			}
-		}
-
-		return true;
-
-	}
-
-	/**
 	 * @param {number} index The index of the frame to draw onto the canvas.
 	 * @return {Object}
 	 */
@@ -250,6 +229,27 @@ class Sprite {
 	getPixel(index, x, y) {
 		var c = this.toCanvas(index);
 		return c.context.getImageData(x, y, 1, 1).data;
+	}
+
+	/**
+	 * @return {boolean}
+	 */
+	static readyAll() {
+
+		var sa = Sprite.array;
+		var n = sa.length;
+		while (n--) {
+			var ia = sa[n].images;
+			var i = ia.length;
+			while (i--) {
+				if (!ia[i].ready) {
+					return false;
+				}
+			}
+		}
+
+		return true;
+
 	}
 
 	/**

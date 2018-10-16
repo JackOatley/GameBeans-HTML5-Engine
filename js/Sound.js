@@ -77,7 +77,7 @@ class Sound {
 					// on end event
 					playSound.onended = function() {
 
-						// internal event stuff
+						// Internal event stuff.
 						this.currentTime = 0;
 						if (Number(opts.loop || false)) {
 							this.play();
@@ -115,7 +115,8 @@ class Sound {
 		while (n--) {
 			var i = a[n];
 			if (!i.paused) {
-				i._end();
+				i.currentTime = 0;
+				i.pause();
 			}
 		}
 
