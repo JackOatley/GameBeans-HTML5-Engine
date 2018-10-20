@@ -1,6 +1,6 @@
 import Generator from "./generator";
 import Grid from "./data/grid";
-import draw from "./draw";
+import Draw from "./draw";
 import Sprite from "./sprite";
 
 /**
@@ -9,8 +9,8 @@ import Sprite from "./sprite";
 class Tilemap {
 
 	/**
-	 * @param {object} [opts={}] Options object to define the Tilemap.
-	 * @param {sprite} [opts.atlas]
+	 * @param {Object} [opts={}] Options object to define the Tilemap.
+	 * @param {Object} [opts.atlas]
 	 * @param {number} [opts.tileWidth]
 	 * @param {number} [opts.tileHeight]
 	 * @param {number} [opts.tileSpacing]
@@ -40,6 +40,7 @@ class Tilemap {
 	 * @param {number} x The X grid position to place this tile.
 	 * @param {number} y The Y grid position to place this tile.
 	 * @param {number} index The tile index.
+	 * @return {void}
 	 */
 	set(layer, x, y, index) {
 		if (!this.layers[layer]) {
@@ -49,12 +50,13 @@ class Tilemap {
 	}
 
 	/**
-	 * @param {object} [opts={}]
-	 * @param {array} [opts.order]
+	 * @param {Object} [opts={}]
+	 * @param {Array} [opts.order]
 	 * @param {number} [opts.left]
 	 * @param {number} [opts.top]
 	 * @param {number} [opts.right]
 	 * @param {number} [opts.bottom]
+	 * @return {void}
 	 */
 	draw(opts) {
 		const atlas = this.__atlas;
@@ -70,7 +72,7 @@ class Tilemap {
 		const startY = ~~(Math.max(0, (opts.top || 0) / th));
 		const endX = Math.ceil(Math.min(this.mapWidth, (opts.right || 0) / tw));
 		const endY = Math.ceil(Math.min(this.mapHeight, (opts.bottom || 0) / th));
-		let x, y, n, layer, tile, iX, iY;
+		var x, y, n, layer, tile, iX, iY;
 		for (n=0; n<order.length; n++) {
 			layer = this.layers[order[n]];
 			for (x=startX; x<endX; x++)
@@ -79,7 +81,7 @@ class Tilemap {
 				if (tile >= 0) {
 					iX = (tile % tsw) * (tw + gap*2) + gap;;
 					iY = ~~(tile / tsw) * (th + gap*2) + gap;
-					draw.context.drawImage(
+					Draw.context.drawImage(
 						atlas,
 						iX - overlay, iY - overlay,
 						renderWidth, renderHeight,
