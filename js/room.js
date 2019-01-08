@@ -1,8 +1,8 @@
-import Generator from "./generator.js";
-import Transition from "./transition.js";
-import instance from "./instance.js";
-import Sprite from "./sprite.js";
-import draw from "./draw.js";
+import Generator from "./generator";
+import Transition from "./transition";
+import instance from "./instance";
+import Sprite from "./sprite";
+import draw from "./draw";
 
 /**
  * @author Jack Oatley
@@ -65,7 +65,9 @@ class Room {
 
 		// clear current instances
 		instance.instanceArray.forEach(function(i) {
-			instance.destroy(i, false);
+			if (!i.persistent) {
+				instance.uninstantiate(i);
+			}
 		});
 
 		// goto new room and create new instances

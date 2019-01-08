@@ -173,10 +173,10 @@ function actionConfine() {
 	let thisRoom = Room.current;
 	let roomW = thisRoom.width;
 	let roomH = thisRoom.height;
-	if (this.boxLeft < 0) this.x = 0;
-	if (this.boxTop < 0) this.y = 0;
-	if (this.boxRight > roomW) this.x = roomW - width;
-	if (this.boxBottom > roomH) this.y = roomH - height;
+	if (this.boxLeft < 0) this.x = this.x - this.boxLeft;
+	if (this.boxTop < 0) this.y = this.y - this.boxTop;
+	if (this.boxRight > roomW) this.x = roomW - width + this.x - this.boxLeft;
+	if (this.boxBottom > roomH) this.y = roomH - height + this.y - this.boxTop;
 }
 
 /**
@@ -196,7 +196,11 @@ function actionFunc(func, ...args) {
  * @return {void}
  */
 function script(s, args) {
-	window[s].apply(this, args);
+	if (typeof s === "string") {
+		window[s].apply(this, args);
+	} else {
+		s.apply(this, args);
+	}
 }
 
 /**

@@ -9,6 +9,7 @@ let basic = JSON.stringify({
 	animationBehavior: "loop",
 	visible: true,
 	solid: false,
+	persistent: false,
 	exists: true,
 	scaleX: 1,
 	scaleY: 1,

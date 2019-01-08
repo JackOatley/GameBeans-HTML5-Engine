@@ -291,7 +291,15 @@ let instance = (function() {
 	 *
 	 */
 	function destroy(inst) {
+		console.log("destroy");
 		executeEvent(inst, "destroy");
+		uninstantiate(inst);
+	}
+
+	/**
+	 *
+	 */
+	function uninstantiate(inst) {
 		inst.exists = false;
 		let arr = inst.object.instances;
 		let index = arr.indexOf(inst);
@@ -339,7 +347,7 @@ let instance = (function() {
 			box.top,
 			box.right - box.left,
 			box.bottom - box.top, {
-				color: "#FF000055"
+				color: "rbga(255,0,0,99)"
 			}
 		);
 	}
@@ -598,6 +606,7 @@ let instance = (function() {
 		changeSprite: changeSprite,
 		createMoving: createMoving,
 		destroy: destroy,
+		uninstantiate: uninstantiate,
 		drawSelf: drawSelf,
 		setDirection: setDirection,
 		setRotation: setRotation,
