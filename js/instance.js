@@ -293,7 +293,8 @@ let instance = (function() {
 	function destroy(inst) {
 		console.log("destroy");
 		executeEvent(inst, "destroy");
-		uninstantiate(inst);
+		inst.exists = false;
+		//uninstantiate(inst);
 	}
 
 	/**
@@ -392,21 +393,19 @@ let instance = (function() {
 		let box1 = inst.boxCollision;
 		arr.forEach(function(targ) {
 
-			// same instance
-			if (inst === targ) {
+			// If target doesn't exist, or is same instance
+			if (!targ.exists || inst === targ)
 				return;
-			}
 
-			// no collision
+			// No collision, boxes do not overlap.
 			let box2 = targ.boxCollision;
 			if (box1.left > box2.right
 			|| box1.right < box2.left
 			|| box1.top > box2.bottom
-			|| box1.bottom < box2.top) {
+			|| box1.bottom < box2.top)
 				return;
-			}
 
-			// execute collision event
+			// Execute collision event.
 			executeEvent(inst, "collision_" + target, targ);
 
 		});
@@ -572,6 +571,7 @@ let instance = (function() {
 		var i, n = l;
 		while (i = instanceArray[--n]) {
 			if (!i.exists) {
+				uninstantiate(i)
 				i.object.pool.release(i);
 				instanceArray[n] = instanceArray[--l];
 			}
