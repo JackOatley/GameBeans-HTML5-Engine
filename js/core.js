@@ -22,7 +22,6 @@ import Vector2 from "./Vector2";
 
 export {
 	App,
-	main,
 	canvas,
 	Camera,
 	Room,
@@ -35,6 +34,7 @@ export {
 	action,
 	instance,
 	draw,
+	main,
 	math,
 	tween,
 	Transition,

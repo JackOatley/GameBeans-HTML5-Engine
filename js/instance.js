@@ -291,10 +291,8 @@ let instance = (function() {
 	 *
 	 */
 	function destroy(inst) {
-		console.log("destroy");
 		executeEvent(inst, "destroy");
 		inst.exists = false;
-		//uninstantiate(inst);
 	}
 
 	/**
@@ -378,9 +376,13 @@ let instance = (function() {
 	}
 
 	/**
-	 *
+	 * @return {void}
 	 */
 	function instanceCollisionInstance(inst, target) {
+
+		//
+		if (!inst.exists)
+			return;
 
 		//
 		let arr;
@@ -469,6 +471,7 @@ let instance = (function() {
 	function executeActions(inst, actions, otherInst) {
 		const steps = [];
 		let condition = true;
+		let executeIfElse = false;
 		let scope = 0;
 
 		for (let a=0; a<actions.length; a++) {
@@ -480,15 +483,29 @@ let instance = (function() {
 				case (""):
 
 					if (condition) {
+						executeIfElse = false;
 						condition = action.cache.call(inst);
-						(condition === undefined)
-							? condition = true
-							: steps[scope] = 0;
+						if (condition === undefined) {
+							condition = true;
+						} else {
+							steps[scope] = 0;
+							if (condition === false) {
+								executeIfElse = true;
+							}
+						}
 					}
 
 					break;
 
 				// control actions
+				case ("ifElse"):
+					if (executeIfElse) {
+						steps[scope] = 0;
+						//executeIfElse = false;
+					} else {
+						condition = false;
+					}
+				break;
 				case ("blockBegin"): scope++; break;
 				case ("blockEnd"): scope--; break;
 				case ("exitEvent"): if (condition) return false;

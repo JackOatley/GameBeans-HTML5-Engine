@@ -50,6 +50,7 @@ class GameObject {
 
 		// If flow action, get flow tag.
 		let flow = "";
+		//console.warn(action);
 		if (typeof action === "string") {
 			flow = action;
 		}

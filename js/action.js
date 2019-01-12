@@ -14,6 +14,7 @@ import Grid from "./data/grid";
 import Tilemap from "./tilemap";
 import tween from "./tween";
 import Transition from "./transition";
+import Font from "./font";
 import GameObject from "./object";
 import Primitive from "./drawing/primitive";
 import Vector2 from "./Vector2";
@@ -214,6 +215,10 @@ function get(...args) {
 
 // Fucntions for use in code.
 let GAME = {
+	App: App,
+	Camera: Camera,
+	Canvas: Canvas,
+	Color: Color,
 	main: {
 		setGameSpeed: main.setGameSpeed
 	},
@@ -226,23 +231,20 @@ let GAME = {
 		count: instance.count,
 		mouseOn: instance.mouseOn
 	},
-	draw: Object.assign( draw, {
+	draw: Object.assign(draw, {
 		self: instance.drawSelf,
 		debug: instance.drawDebug
-	} ),
-	Canvas: Canvas,
-	Color: Color,
+	}),
+	Room: Room,
 	sprite: Sprite,
 	Sound: Sound,
-	Room: Room,
 	input: {
 		keyboard: input.keyboard,
 		mouse: input.mouse,
 		touch: input.touch
 	},
 	math: math,
-	Camera: Camera,
-	App: App,
+	Font: Font,
 	Grid: Grid,
 	Tilemap: Tilemap,
 	tween: tween,
@@ -253,27 +255,28 @@ let GAME = {
 }
 
 //
-let blockBegin            = "blockBegin",
-	blockEnd        	  = "blockEnd",
-	exitEvent        	  = "exitEvent",
-	roomEnter             = Room.enter,
-	roomNext              = Room.next,
-	roomPrevious          = Room.previous,
-	instanceCreate    	  = instance.create,
-	instanceCreateMoving  = instance.createMoving,
-	instanceDestroy       = instance.destroy,
-	changeSprite  		  = instance.changeSprite,
-	instanceSetRotation   = instance.setRotation,
-	instanceSetDirection  = instance.setDirection,
-	message               = (args) => console.log(args),
-	alert                 = function(m) { window.alert(m) },
-	confirm               = function(m) { return window.confirm(m) },
-	drawSetColor          = draw.setColor,
-	drawSetFont           = draw.setFont,
-	drawSetFontSize       = draw.setFontSize,
-	drawText              = draw.text,
-	drawSelf              = instance.drawSelf,
-	drawSprite            = draw.sprite,
+let blockBegin = "blockBegin",
+	blockEnd = "blockEnd",
+	exitEvent = "exitEvent",
+	ifElse = "ifElse",
+	roomEnter = Room.enter,
+	roomNext = Room.next,
+	roomPrevious = Room.previous,
+	instanceCreate = instance.create,
+	instanceCreateMoving = instance.createMoving,
+	instanceDestroy = instance.destroy,
+	changeSprite = instance.changeSprite,
+	instanceSetRotation = instance.setRotation,
+	instanceSetDirection = instance.setDirection,
+	message = args => console.log(args),
+	alert = function(m) { window.alert(m) },
+	confirm = function(m) { return window.confirm(m) },
+	drawSetColor = draw.setColor,
+	drawSetFont = draw.setFont,
+	drawSetFontSize = draw.setFontSize,
+	drawText = draw.text,
+	drawSelf = instance.drawSelf,
+	drawSprite = draw.sprite,
 	soundPlay = function(snd, loop) {Sound.play(snd, {loop: loop})},
 	soundStop = Sound.stop;
 
@@ -295,7 +298,7 @@ export {
 	drawSelf as instanceDrawSelf,
 	drawSprite,
 	roomEnter, roomNext, roomPrevious,
-	blockBegin, blockEnd,
+	blockBegin, blockEnd, ifElse,
 	exitEvent,
 	set,
 	get,
