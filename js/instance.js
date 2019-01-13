@@ -346,7 +346,7 @@ let instance = (function() {
 			box.top,
 			box.right - box.left,
 			box.bottom - box.top, {
-				color: "rbga(255,0,0,99)"
+				color: "rgba(255,0,0,0.5)"
 			}
 		);
 	}
@@ -625,6 +625,7 @@ let instance = (function() {
 		destroy: destroy,
 		uninstantiate: uninstantiate,
 		drawSelf: drawSelf,
+		drawDebug: drawDebug,
 		setDirection: setDirection,
 		setRotation: setRotation,
 		count: count,
