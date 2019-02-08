@@ -454,7 +454,7 @@ let instance = (function() {
 			console.error(err);
 			window.addConsoleText("#F00", "Failed to execute event [" + event + "]" + " of object [" + inst.objectName + "]" + " with error: " + err);
 			window._GB_stop();
-			return false;
+			return;
 		}
 
 		// Restore previous "other" instance.

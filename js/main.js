@@ -38,7 +38,8 @@ let main = {
 			width: room.current.width,
 			height: room.current.height,
 			crisp2D: true,
-			application: true
+			application: true,
+			context: opts.defaultContext || "2d"
 		});
 
 		// selectively enable input methods

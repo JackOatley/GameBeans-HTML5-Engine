@@ -12,11 +12,13 @@ class Canvas {
 	 * @param {bumber} [opts.height=150]
 	 * @param {bumber} [opts.scale=1]
 	 * @param {boolean} [opts.application=false]
-	 * @param {boolean} [opts.script2D=false]
+	 * @param {boolean} [opts.crisp2D=false]
+	 * @param {string} [opts.context="2d"]
 	 */
 	constructor(opts = {}) {
+		var defaultContext = opts.context || "2d";
 		var c = document.createElement("CANVAS");
-		var ctx = c.getContext("2d");
+		var ctx = c.getContext(defaultContext);
 		this.domElement = c;
 		this.context = ctx;
 		this.width = this._width = opts.width || 300;
@@ -80,14 +82,16 @@ class Canvas {
 	}
 
 	/**
-	 * @param {string} [color="#000000"] CSS value as a string.
+	 * @param {string} [color="#000"] CSS value as a string.
 	 * @return {void}
 	 */
 	fill(color) {
 		var c = this.domElement;
 		var ctx = this.context;
-		ctx.fillStyle = color || "#000000";
-		ctx.fillRect(0, 0, c.width / c.scale, c.height / c.scale);
+		if (ctx instanceof CanvasRenderingContext2D) {
+			ctx.fillStyle = color || "#000";
+			ctx.fillRect(0, 0, c.width / c.scale, c.height / c.scale);
+		}
 	}
 
 	/**
@@ -97,7 +101,9 @@ class Canvas {
 	clear() {
 		var c = this.domElement;
 		var ctx = this.context;
-		ctx.clearRect(0, 0, c.width / c.scale, c.height / c.scale);
+		if (ctx instanceof CanvasRenderingContext2D) {
+			ctx.clearRect(0, 0, c.width / c.scale, c.height / c.scale);
+		}
 	}
 
 	/**

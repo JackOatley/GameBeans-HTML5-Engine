@@ -14,14 +14,14 @@ class Draw {
 	static setTarget(target) {
 		Draw.targetStack.push(Draw.target);
 		Draw.target = target;
-		Draw.context = target.domElement.getContext("2d");
+		Draw.context = target.context;
 	}
 
 	/** */
 	static resetTarget() {
 		let target = Draw.targetStack.pop();
 		Draw.target = target;
-		Draw.context = target.domElement.getContext("2d");
+		Draw.context = target.context;
 	}
 
 	/** */
@@ -47,8 +47,10 @@ class Draw {
 	/** */
 	static reset() {
 		Draw.context.imageSmoothingEnabled = Draw.imageSmoothing;
-		Draw.context.setTransform.apply(Draw.context, Draw.defaultTransform);
 		Draw.context.globalAlpha = 1;
+		if (Draw.context instanceof CanvasRenderingContext2D) {
+			Draw.context.setTransform.apply(Draw.context, Draw.defaultTransform);
+		}
 	}
 
 	/**
@@ -100,20 +102,24 @@ class Draw {
 	 */
 	static sprite(spr, index, x, y, scaleX, scaleY, rotation, opts = {}) {
 
+		var ctx = Draw.context;
+		if (!(ctx instanceof CanvasRenderingContext2D)) {
+			window.addConsoleText("#F00", "Sprites are currently only supported in Canvas 2D!");
+			window._GB_stop();
+			return;
+		}
+
 		spr = sprite.get(spr);
 
 		//
-		const ctx = Draw.context;
-		let ox = spr.originX;
-		let oy = spr.originY;
-		if (opts.originX !== undefined) ox = opts.originX;
-		if (opts.originY !== undefined) oy = opts.originY;
+		var ox = (opts.originX !== undefined) ? opts.originX : spr.originX;
+		var oy = (opts.originY !== undefined) ? opts.originY : spr.originY;
 
 		//
 		ctx.save();
-		ctx.translate( x, y );
-		ctx.rotate( rotation * math.DEGTORAD );
-		ctx.scale( scaleX, scaleY );
+		ctx.translate(x, y);
+		ctx.rotate(rotation * math.DEGTORAD);
+		ctx.scale(scaleX, scaleY);
 
 		//
 		index = Math.floor(index || 0) % spr.images.length;
