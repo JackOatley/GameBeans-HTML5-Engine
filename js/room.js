@@ -5,7 +5,7 @@ import Sprite from "./sprite";
 import draw from "./draw";
 
 /**
- * @author Jack Oatley
+ *
  */
 class Room {
 
@@ -30,6 +30,7 @@ class Room {
 
 	/**
 	 * @param {string} spr
+	 * @return {void}
 	 */
 	setBackground(spr) {
 		this.background = spr;
@@ -39,6 +40,7 @@ class Room {
 	 * @param {string} inst Name of the instance to add.
 	 * @param {number} x
 	 * @param {number} y
+	 * @return {void}
 	 */
 	addInstance(inst, x, y) {
 		if (typeof inst === "object") inst = inst.objectName;
@@ -49,6 +51,7 @@ class Room {
 
 	/**
 	 * @param {object} [opts={}]
+	 * @return {void}
 	 */
 	enter(opts = {}) {
 
@@ -88,8 +91,15 @@ class Room {
 		var canvas = draw.target.domElement;
 		var ctx = draw.context;
 		draw.clear(this.backgroundColor);
-		let spr = Sprite.get(this.background);
+		var spr = Sprite.get(this.background);
 		if (spr !== null) {
+
+			if (!(ctx instanceof CanvasRenderingContext2D)) {
+				window.addConsoleText("#F00", "Room background images are currently only supported in Canvas 2D!");
+				window._GB_stop();
+				return;
+			}
+
 			let image = spr.images[0].img;
 			if (this.backgroundMethod === "stretch") {
 				ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
@@ -98,6 +108,7 @@ class Room {
 				ctx.fillStyle = ptrn;
 				ctx.fillRect(0, 0, canvas.width, canvas.height);
 			}
+
 		}
 	}
 

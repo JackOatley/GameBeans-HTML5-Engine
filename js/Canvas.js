@@ -129,6 +129,7 @@ class Canvas {
 	}
 
 	/**
+	 * @param {ImageData} data
 	 * @return {void}
 	 */
 	setImageData(data) {

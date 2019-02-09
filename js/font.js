@@ -104,10 +104,11 @@ class Font {
 			}
 
 			// Get metrics
-			let metrics = { left: 100, top: 100, right: 0, bottom: 0 };
+			let metrics = { left: 10000, top: 10000, right: 0, bottom: 0 };
 			let minY = 100;
 			let maxY = 0;
 			let x, y;
+			let hits = 0;
 			for (y=0; y<size/scale; y++)
 			for (x=0; x<size/scale; x++) {
 				if (charMap.get(x, y) > alphaThreshold) {
@@ -117,7 +118,13 @@ class Font {
 					metrics.bottom = Math.max(metrics.bottom, y+1);
 					minY = Math.min(minY, metrics.top);
 					maxY = Math.max(maxY, metrics.bottom);
+					hits++;
 				}
+			}
+
+			// No visible character.
+			if (hits === 0) {
+				metrics = { left: 0, top: 0, right: 0, bottom: 0 };
 			}
 
 			// Print to atlas
@@ -134,6 +141,7 @@ class Font {
 			metrics.top = 0;
 			metrics.bottom = size/scale;
 			lookupTable[c] = metrics;
+
 		}
 
 		// Space is special because it can't actually be measured

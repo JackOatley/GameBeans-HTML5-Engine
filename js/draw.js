@@ -170,17 +170,16 @@ class Draw {
 	 * @param {number} size
 	 * @param {string} align Horizontal alignment.
 	 * @param {string} baseline Vertical alignment.
+	 * @return {void}
 	 */
 	static setFont(font, size, align, baseline) {
+		var ctx = Draw.context;
 		font = typeof font === "string" ? font : font.name;
 		Draw.font = font;
 		Draw.fontSize = size || 16;
-		Draw.textAlign = align || "left";
-		Draw.textBaseline = baseline || "alphabetic";
-		const ctx = Draw.context;
 		ctx.font = Draw.fontSize + "px " + font;
-		ctx.textAlign = Draw.textAlign;
-		ctx.textBaseline = Draw.textBaseline;
+		ctx.textAlign = Draw.textAlign = align || "left";
+		ctx.textBaseline = Draw.textBaseline = baseline || "alphabetic";
 	}
 
 	/**
@@ -188,6 +187,7 @@ class Draw {
 	 * @param {number} x
 	 * @param {number} y
 	 * @param {Object=} opts
+	 * @return {void}
 	 */
 	static text(text, x, y, opts = {}) {
 
@@ -199,14 +199,14 @@ class Draw {
 		if (font && font.method === "bitmap") {
 
 			drawSize = font.forceSize || Draw.fontSize;
-			var color = Color.hexToArray(Draw.color);
-			var key = "" + drawSize + color[0] + color[1] + color[2] + color[3];
+			var c = Color.hexToArray(Draw.color);
+			var key = "" + drawSize + c[0] + c[1] + c[2] + c[3];
 
 			if (!font.bitmapFont[key]) {
 				font.convertToBitmapFont({
 					size: drawSize,
-					color: color
-				})
+					color: c
+				});
 			}
 
 			useBitmap = true;
@@ -231,10 +231,10 @@ class Draw {
 		let drawX = x;
 		let startN = 0;
 		let endN = text.toString().length;
-		if (opts.pattern) {
-			startN = opts.pattern.start;
-			endN = opts.pattern.end;
-		}
+		//if (opts.pattern) {
+			//startN = opts.pattern.start;
+			//endN = opts.pattern.end;
+		//}
 
 		//
 		let lineHeight = ctx.measureText("Mp").width * 1.2;
@@ -281,19 +281,16 @@ class Draw {
 
 			} else {
 
-				let a = lines[i].slice(0, startN);
-				let b = lines[i].slice(startN, endN);
-				//console.log(b);
-				drawX += ctx.measureText(a).width;
-				_drawWord(~~drawX, y, b, lookup, ctx, useBitmap, bitmap, scale, drawMethod);
-				lineLength = lines[i].length;
+				let t = lines[i];
+				if (ctx.textAlign === "center") {
+					drawX -= ctx.measureText(t).width / 2;
+				}
+				_drawWord(~~drawX, y, t, lookup, ctx, useBitmap, bitmap, scale, drawMethod);
 
 			}
 
 			drawX = x;
 			y += lineHeight;
-			startN -= lineLength;
-			endN -= lineLength;
 
 		}
 
