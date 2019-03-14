@@ -5,6 +5,8 @@ import sprite from "./sprite";
 import Draw from "./draw";
 import global from "./global";
 
+const INSTANCE_HARD_LIMIT = 10000;
+
 //
 window.global = global;
 
@@ -14,7 +16,6 @@ let instance = (function() {
 	//
 	let uniqueId = 1;
 	let instanceArray = [];
-	let instanceHardLimit = 1000;
 	let doDepthSort = false;
 	let otherStack = [];
 	let currentEvent = "";
@@ -28,7 +29,6 @@ let instance = (function() {
 	 */
 	function create(obj, x, y) {
 
-		//
 		let o = object.get(obj);
 		if (o === null) {
 			window.addConsoleText("#F00", "Instance creation failed! No such object as " + obj + ".");
@@ -36,9 +36,27 @@ let instance = (function() {
 			return null;
 		}
 
-		//
+		if (instanceArray.length >= INSTANCE_HARD_LIMIT) {
+			window.addConsoleText("#F00", "instance number hard limit reached:", INSTANCE_HARD_LIMIT);
+			return null;
+		}
+
 		return new o(x, y);
 
+	}
+
+	/**
+	 * @param {object} obj
+	 * @param {number} x
+	 * @param {number} y
+	 * @param {number} speed
+	 * @param {number} direction
+	 */
+	function createMoving(obj, x, y, speed, direction) {
+		let newInst = create(obj, x, y);
+		newInst.speed = speed;
+		newInst.direction = direction;
+		return newInst;
 	}
 
 	/**
@@ -92,27 +110,6 @@ let instance = (function() {
 	}
 
 	/**
-	 * @param {object} obj
-	 * @param {number} x
-	 * @param {number} y
-	 * @param {number} speed
-	 * @param {number} direction
-	 */
-	function createMoving(obj, x, y, speed, direction) {
-
-		if (instanceArray.length >= instanceHardLimit) {
-			console.warn("instance number hard limit reached:", instanceHardLimit);
-			return;
-		}
-
-		let newInst = create(obj, x, y);
-		newInst.speed = speed;
-		newInst.direction = direction;
-		return newInst;
-
-	}
-
-	/**
 	 *
 	 */
 	function find(obj, n) {
@@ -128,18 +125,30 @@ let instance = (function() {
 		return null;
 	}
 
-	/**
-	 *
-	 */
+	/** */
 	function findRandom(obj) {
 		if (typeof obj === "function") obj = obj.objectName;
 		let n = math.randomInt(0, count(obj) - 1);
 		return find(obj, n);
 	}
 
-	/**
-	 *
-	 */
+	/** */
+	function nearest(x, y, obj) {
+		let all = object.get(obj).getAllInstances();
+		if (all.length === 0) { return null; }
+		if (all.length === 1) { return all[0]; }
+		let nrst, dist = 1e9, newDist;
+		all.forEach(inst => {
+			newDist = math.pointDistance(x, y, inst.x, inst.y);
+			if (newDist < dist) {
+				nrst = inst;
+				dist = newDist;
+			}
+		});
+		return nrst;
+	}
+
+	/** */
 	function count(objectName) {
 		let c=0;
 		instanceArray.forEach((inst) => {
@@ -162,6 +171,12 @@ let instance = (function() {
 	 */
 	function setDirection(direction, relative) {
 		this.direction = (relative) ? this.direction + direction : direction;
+	}
+
+	/** */
+	function moveTowardsPoint(inst, x, y, spd) {
+		inst.direction = math.pointDirection(inst.x, inst.y, x, y);
+		inst.speed = spd;
 	}
 
 	/**
@@ -212,15 +227,15 @@ let instance = (function() {
 				let type = typeof behavior;
 
 				//
-				if ( type === "string" ) {
+				if (type === "string") {
 
 					//
-					if ( behavior === "loop" ) {
+					if (behavior === "loop") {
 						inst.index -= length;
 					}
 
 					//
-					else if ( behavior === "stop" ) {
+					else if (behavior === "stop") {
 						inst.index = length - 1;
 						inst.imageSpeed = 0;
 					}
@@ -228,8 +243,8 @@ let instance = (function() {
 				}
 
 				//
-				else if ( type === "function" ) {
-					behavior.call( inst );
+				else if (type === "function") {
+					behavior.call(inst);
 				}
 
 			}
@@ -244,18 +259,18 @@ let instance = (function() {
 
 		// if the instance is already falling at terminal velocity then we no longer apply gravity
 		let gravVector = {
-			x: math.lengthDirX( inst.terminal, inst.gravityDirection ),
-			y: math.lengthDirY( inst.terminal, inst.gravityDirection )
+			x: math.lengthDirX(inst.terminal, inst.gravityDirection),
+			y: math.lengthDirY(inst.terminal, inst.gravityDirection)
 		};
 
-		if ( gravVector.x > 0 && inst.speedX <= gravVector.x
-		||   gravVector.x < 0 && inst.speedX >= gravVector.x ) {
-			inst.speedX += math.lengthDirX( inst.gravity, inst.gravityDirection );
+		if (gravVector.x > 0 && inst.speedX <= gravVector.x
+		|| gravVector.x < 0 && inst.speedX >= gravVector.x) {
+			inst.speedX += math.lengthDirX(inst.gravity, inst.gravityDirection);
 		}
 
-		if ( gravVector.y > 0 && inst.speedY <= gravVector.y
-		||   gravVector.y < 0 && inst.speedY >= gravVector.y ) {
-			inst.speedY += math.lengthDirY( inst.gravity, inst.gravityDirection );
+		if (gravVector.y > 0 && inst.speedY <= gravVector.y
+		|| gravVector.y < 0 && inst.speedY >= gravVector.y) {
+			inst.speedY += math.lengthDirY(inst.gravity, inst.gravityDirection);
 		}
 
 		// move instance
@@ -628,6 +643,8 @@ let instance = (function() {
 		drawDebug: drawDebug,
 		setDirection: setDirection,
 		setRotation: setRotation,
+		moveTowardsPoint: moveTowardsPoint,
+		nearest: nearest,
 		count: count,
 		mouseOn: mouseOn,
 		find: find

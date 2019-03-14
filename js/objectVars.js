@@ -48,6 +48,10 @@ let ObjectVars = {
 	set: function(proto) {
 		Object.assign(proto, JSON.parse(basic));
 
+		proto.moveTowardsPoint = function(x, y, spd) {
+			instance.moveTowardsPoint(this, x, y, spd)
+		}
+		
 		proto.destroy = function() {
 			instance.destroy(this);
 		}

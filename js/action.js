@@ -225,6 +225,8 @@ let GAME = {
 	instance: {
 		create: instance.create,
 		createMoving: instance.createMoving,
+		moveTowardsPoint: instance.moveTowardsPoint,
+		nearest: instance.nearest,
 		destroy: instance.destroy,
 		find: instance.find,
 		findRandom: instance.findRandom,
