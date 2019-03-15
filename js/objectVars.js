@@ -48,10 +48,26 @@ let ObjectVars = {
 	set: function(proto) {
 		Object.assign(proto, JSON.parse(basic));
 
-		proto.moveTowardsPoint = function(x, y, spd) {
-			instance.moveTowardsPoint(this, x, y, spd)
+		proto.nearest = function(obj) {
+			return instance.nearest(this.x, this.y, obj);
 		}
-		
+
+		proto.furthest = function(obj) {
+			return instance.furthest(this.x, this.y, obj);
+		}
+
+		proto.moveTowardsPoint = function(x, y, spd) {
+			instance.moveTowardsPoint(this, x, y, spd);
+		}
+
+		proto.stepTowardsPoint = function(x, y, spd) {
+			instance.stepTowardsPoint(this, x, y, spd);
+		}
+
+		proto.distanceToPoint = function(x, y) {
+			return instance.distanceToPoint(this, x, y);
+		}
+
 		proto.destroy = function() {
 			instance.destroy(this);
 		}

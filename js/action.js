@@ -222,17 +222,7 @@ let GAME = {
 	main: {
 		setGameSpeed: main.setGameSpeed
 	},
-	instance: {
-		create: instance.create,
-		createMoving: instance.createMoving,
-		moveTowardsPoint: instance.moveTowardsPoint,
-		nearest: instance.nearest,
-		destroy: instance.destroy,
-		find: instance.find,
-		findRandom: instance.findRandom,
-		count: instance.count,
-		mouseOn: instance.mouseOn
-	},
+	instance: instance,
 	draw: Object.assign(draw, {
 		self: instance.drawSelf,
 		debug: instance.drawDebug

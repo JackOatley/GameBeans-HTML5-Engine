@@ -3,17 +3,17 @@
  */
 
 let math = {
- 
+
 	// constances
 	PI: Math.PI,
 	RADTODEG: 180 / Math.PI,
 	DEGTORAD: Math.PI / 180,
-		
+
 	// copied functions
 	cos: Math.cos,
 	sin: Math.sin,
 	sign: Math.sign,
-		
+
 	/**
 	 *
 	 */
@@ -30,28 +30,22 @@ let math = {
 		return value[Math.floor( Math.random() * value.length )];
 	},
 	
-	/**
-	 *
-	 */
+	/** */
 	lengthDir: (l, d) => {
 		d *= math.DEGTORAD;
 		return [Math.cos(d) * l, Math.sin(d) * l];
 	},
 
-	/**
-	 *
-	 */
+	/** */
 	lengthDirX: function(l, d) {
 		return Math.cos(d * math.DEGTORAD) * l;
 	},
 
-	/**
-	 *
-	 */
+	/** */
 	lengthDirY: function(l, d) {
 		return Math.sin(d * math.DEGTORAD) * l;
 	},
-	 
+
 	/**
 	 * @param {number} x1
 	 * @param {number} y1
@@ -78,19 +72,19 @@ let math = {
 	 *
 	 */
 	angleDifference: function( angle1, angle2 ) {
-		
+
 		let diff = ( angle2 - angle1 ) % 360;
-		
+
 		if ( diff <= -180 ) {
 			diff += 360;
 		} else if ( diff > 180 ) {
 			diff -= 360;
 		}
-		
+
 		return diff;
-		
+
 	}
-	
+
 }
 
 //
