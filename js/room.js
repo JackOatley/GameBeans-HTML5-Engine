@@ -78,6 +78,7 @@ class Room {
 		this.instances.forEach(function(inst) {
 			instance.create(inst.name, inst.x, inst.y);
 		});
+		instance.doDepthSort = true;
 
 		// enter room event
 		instance.executeEventAll("roomenter");

@@ -432,9 +432,8 @@ function updateAnimation(inst) {
 
 /** */
 function addToArray(inst) {
-	let i = instanceArray.length;
-	while (i--) {
-		if (inst.depth <= instanceArray[i].depth) {
+	for (var i=0; i<instanceArray.length; i++) {
+		if (inst.depth > instanceArray[i].depth) {
 			instanceArray.splice(i, 0, inst);
 			return;
 		}

@@ -8,9 +8,7 @@ import DrawShapes from "./drawing/DrawShapes";
 //
 class Draw {
 
-	/**
-	 *
-	 */
+	/** */
 	static setTarget(target) {
 		Draw.targetStack.push(Draw.target);
 		Draw.target = target;
@@ -53,9 +51,7 @@ class Draw {
 		}
 	}
 
-	/**
-	 *
-	 */
+	/** */
 	static setImageSmoothing(enable) {
 		Draw.imageSmoothing = enable;
 	}
@@ -282,7 +278,7 @@ class Draw {
 			} else {
 
 				let t = lines[i];
-				if (ctx.textAlign === "center") {
+				if (useBitmap && ctx.textAlign === "center") {
 					drawX -= ctx.measureText(t).width / 2;
 				}
 				_drawWord(~~drawX, y, t, lookup, ctx, useBitmap, bitmap, scale, drawMethod);
