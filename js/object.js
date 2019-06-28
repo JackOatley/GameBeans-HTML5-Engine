@@ -36,6 +36,14 @@ class GameObject {
 	}
 
 	/**
+	 * @param {number} index
+	 * @return {Object}
+	 */
+	find(index) {
+		return instance.find(this, index);
+	}
+
+	/**
 	 * Add an action with variable parameters to an event of an object.
 	 * @param {*} object Can be an object constructor or integer ID.
 	 * @param {*} event

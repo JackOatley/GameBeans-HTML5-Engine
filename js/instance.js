@@ -120,7 +120,16 @@ class instance {
 
 	/** Find nearest instance of obj to point. */
 	static nearest(x, y, obj) {
-		let all = object.get(obj).getAllInstances();
+
+		var all = [];
+		if (!Array.isArray(obj)) {
+			all.push(...(object.get(obj).getAllInstances()));
+		} else {
+			obj.forEach(o => {
+				all.push(...(object.get(o).getAllInstances()));
+			});
+		}
+
 		if (all.length === 0) { return null; }
 		if (all.length === 1) { return all[0]; }
 		let nrst, dist = 1e9, newDist;
@@ -324,7 +333,7 @@ class instance {
 	/** */
 	static drawAll() {
 		if (doDepthSort) {
-			instanceArray.sort(instance.sortFunction);
+			instanceArray.sort(sortFunction);
 		}
 		instanceArray.forEach(instance.draw);
 	}
