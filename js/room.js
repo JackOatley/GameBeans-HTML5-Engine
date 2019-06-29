@@ -19,6 +19,9 @@ class Room {
 		this.width = Number(width);
 		this.height = Number(height);
 		this.background = null;
+		this.backgroundFrame = 0;
+		this.backgroundAnimate = false;
+		this.backgroundAnimateSpeed = 1;
 		this.backgroundMethod = "no-repeat";
 		this.backgroundColor = "#FF0000";
 		this.instances = [];
@@ -86,7 +89,7 @@ class Room {
 	}
 
 	/**
-	 *
+	 * @return {void}
 	 */
 	draw() {
 		var canvas = draw.target.domElement;
@@ -101,10 +104,40 @@ class Room {
 				return;
 			}
 
-			let image = spr.images[0].img;
-			if (this.backgroundMethod === "stretch") {
+			const frame = this.backgroundFrame;
+			const animate = this.backgroundAnimate;
+			let index = frame;
+			if (animate) {
+				this.backgroundFrame += this.backgroundAnimateSpeed;
+				index = ~~(this.backgroundFrame % spr.images.length);
+			}
+
+			const image = spr.images[index].img;
+
+			if (this.backgroundMethod === "stretch" ) {
 				ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
-			} else {
+			}
+
+			// Iso patterns.
+			else if (this.backgroundMethod.indexOf("iso-") !== -1) {
+				let pattern = this.backgroundMethod.replace("iso-", "");
+
+				// First.
+				let ptrn = ctx.createPattern(image, pattern);
+				ctx.fillStyle = ptrn;
+				ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+				// Second.
+				ctx.fillStyle = ptrn;
+				ctx.rect(0, 0, canvas.width, canvas.height);
+				ctx.save();
+				ctx.translate(spr.width/2, spr.height/2);
+				ctx.fill();
+				ctx.restore();
+			}
+
+			// Regular patterns.
+			else {
 				let ptrn = ctx.createPattern(image, this.backgroundMethod);
 				ctx.fillStyle = ptrn;
 				ctx.fillRect(0, 0, canvas.width, canvas.height);
