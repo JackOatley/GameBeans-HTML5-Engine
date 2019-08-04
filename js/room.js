@@ -123,12 +123,10 @@ class Room {
 				let pattern = this.backgroundMethod.replace("iso-", "");
 
 				// First.
-				let ptrn = ctx.createPattern(image, pattern);
-				ctx.fillStyle = ptrn;
+				ctx.fillStyle = ctx.createPattern(image, pattern);
 				ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 				// Second.
-				ctx.fillStyle = ptrn;
 				ctx.rect(0, 0, canvas.width, canvas.height);
 				ctx.save();
 				ctx.translate(spr.width/2, spr.height/2);
@@ -138,8 +136,7 @@ class Room {
 
 			// Regular patterns.
 			else {
-				let ptrn = ctx.createPattern(image, this.backgroundMethod);
-				ctx.fillStyle = ptrn;
+				ctx.fillStyle = ctx.createPattern(image, this.backgroundMethod);
 				ctx.fillRect(0, 0, canvas.width, canvas.height);
 			}
 

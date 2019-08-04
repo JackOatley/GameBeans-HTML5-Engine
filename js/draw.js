@@ -95,8 +95,13 @@ class Draw {
 	 * @param {Object} [opts={}]
 	 * @param {number} [originX] Overrides sprite's originX property.
 	 * @param {number} [originY] Overrides sprite's originY property.
+	 * @return {void}
 	 */
 	static sprite(spr, index, x, y, scaleX, scaleY, rotation, opts = {}) {
+
+		if (!spr) {
+			return;
+		}
 
 		var ctx = Draw.context;
 		if (!(ctx instanceof CanvasRenderingContext2D)) {
@@ -233,7 +238,7 @@ class Draw {
 		//}
 
 		//
-		let lineHeight = ctx.measureText("Mp").width * 1.2;
+		let lineHeight = Draw.lineHeight || ctx.measureText("Mp").width * 1.2;
 		let lines = text.toString().split("#");
 		for (var i=0; i<lines.length; i++) {
 
@@ -299,6 +304,7 @@ class Draw {
 Draw.color = "#FFFFFF";
 Draw.font = "Arial";
 Draw.fontSize = 30;
+Draw.lineHeight = 0;
 Draw.textAlign = "start";
 Draw.textBaseline = "alphabetic";
 Draw.target = null;

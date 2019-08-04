@@ -58,7 +58,8 @@ class Font {
 	convertToBitmapFont(opts = {}) {
 
 		const scale = 3;
-		const size = (opts.size || 8) * scale;
+		const psize = (opts.size || 8) * scale;
+		const size = (1 + (opts.size || 8)) * scale;
 		const map = opts.map || "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789/\\,.<>{}[]!\"£$%^&*():;@'~#|`=+-_";
 		const cx = size * 0.5;
 		const cy = cx;
@@ -73,10 +74,11 @@ class Font {
 		pointImageData.data.set(color, 0);
 
 		const canvas = document.createElement("CANVAS");
-		canvas.width = canvas.height = size;
+		canvas.width = size;
+		canvas.height = size;
 
 		let ctx = canvas.getContext("2d");
-		ctx.font = size + "px " + this.name;
+		ctx.font = psize + "px " + this.name;
 		ctx.textAlign = "center";
 		ctx.textBaseline = "middle";
 
@@ -149,8 +151,9 @@ class Font {
 
 		//
 		var key = "" + opts.size + color[0] + color[1] + color[2] + color[3];
+		console.log(key);
 		this.bitmapFont[key] = {
-			size: size/scale,
+			size: psize/scale,
 			lookup: lookupTable,
 			image: atlas
 		}
