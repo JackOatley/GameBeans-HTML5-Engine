@@ -60,7 +60,7 @@ class Font {
 		const scale = 3;
 		const psize = (opts.size || 8) * scale;
 		const size = (1 + (opts.size || 8)) * scale;
-		const map = opts.map || "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789/\\,.<>{}[]!\"£$%^&*():;@'~#|`=+-_";
+		const map = opts.map || "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789/\\,.<>{}[]!\"£$%^&*():;@'~#|`=+-_?";
 		const cx = size * 0.5;
 		const cy = cx;
 		const alphaThreshold = opts.alphaThreshold || 150;

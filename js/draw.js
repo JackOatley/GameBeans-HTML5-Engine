@@ -342,6 +342,7 @@ function _drawWord(drawX, drawY, word, lookup, ctx, useBitmap, bitmap, scale, dr
 		var len = word.length;
 		for (var cn=0; cn<len; cn++) {
 			var metrics = lookup[word[cn]];
+			if (!metrics) continue;
 			var sx = ~~metrics.left;
 			var sy = ~~metrics.top;
 			var sh = Math.ceil(metrics.bottom) - sy;
