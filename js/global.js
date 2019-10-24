@@ -1,6 +1,8 @@
 
 let global = {
-	fps: 0
+	dt: 0,
+	fps: 0,
+	fpsNow: 0
 }
 
 export default global;

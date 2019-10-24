@@ -8,16 +8,18 @@ import Camera from "./camera";
 import Transition from "./transition";
 import NOOP from "./utils/noop";
 
-let lastTick = performance.now(),
-	tickLength = 1000 / 60,
-	last = 0;
+var fpsFrames = 0;
+var fpsTime = 0;
+var lastTick = performance.now();
+var tickLength = 1000 / 60;
+var last = 0;
 
 //
 window.addConsoleText = window.addConsoleText || console.log;
 window._GB_stop = window._GB_stop || NOOP;
 
 //
-let main = {
+var main = {
 
 	/**
 	 *
@@ -70,16 +72,23 @@ function tick(timestamp) {
 
 	try {
 
-		// exit game with Esc key
-		if (window._GB_stop && input.triggerEvents.includes("EscapePressed"))
+		// Exit game with Esc key.
+		if (window._GB_stop && input.triggerEvents.includes("EscapePress"))
 			window._GB_stop();
 
 		// request the next frame
 		window.requestAnimationFrame(tick);
 		let nextTick = lastTick + tickLength;
 		let numTicks = 0;
-		global.fps = 1000 / (timestamp - last);
+		global.fpsNow = 1000 / (timestamp - last);
 		global.dt = timestamp - last;
+		fpsFrames += 1;
+		fpsTime += global.dt;
+		while (fpsTime >= 1000) {
+			global.fps = fpsFrames;
+			fpsFrames = 0;
+			fpsTime -= 1000;
+		}
 		last = timestamp;
 
 		//
@@ -128,7 +137,7 @@ function gameUpdate() {
 }
 
 /**
- *
+ * @return {void}
  */
 function gameDraw() {
 	draw.reset();
