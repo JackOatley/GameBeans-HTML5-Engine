@@ -384,7 +384,11 @@ function updatePosition(inst) {
 
 }
 
-/** Update the instance's bounding box. */
+/**
+ * Update the instance's bounding box.
+ * @param {Object} i Instance.
+ * @return {void}
+ */
 function updateBoundingBox(i) {
 	let spr = sprite.get(i.sprite);
 	if (spr === null) return;
@@ -394,7 +398,11 @@ function updateBoundingBox(i) {
 	i.boxRight = i.boxLeft + spr.width * i.scaleX;
 }
 
-/** Update the instance's collision box. */
+/**
+ * Update the instance's collision box.
+ * @param {Object} i Instance.
+ * @return {void}
+ */
 function updateCollisionBox(i) {
 	let box = i.boxCollision;
 	box.top = i.y - box.y * i.scaleY;
@@ -403,7 +411,11 @@ function updateCollisionBox(i) {
 	box.right = box.left + box.width * i.scaleX;
 }
 
-/** Update the instance's animation. */
+/**
+ * Update the instance's animation.
+ * @param {Object} inst Instance.
+ * @return {void}
+ */
 function updateAnimation(inst) {
 
 	inst.index += inst.imageSpeed;
@@ -439,7 +451,10 @@ function updateAnimation(inst) {
 
 }
 
-/** */
+/**
+ * @param {Object} inst Instance.
+ * @return {void}
+ */
 function addToArray(inst) {
 	for (var i=0; i<instanceArray.length; i++) {
 		if (inst.depth > instanceArray[i].depth) {
@@ -450,7 +465,10 @@ function addToArray(inst) {
 	instanceArray.push(inst);
 }
 
-/** Returns all instances set as "solid". */
+/**
+ * Returns all instances set as "solid".
+ * @return {Array<Object>}
+ */
 function getAllSolid() {
 	var arr = [];
 	var i, n = instanceArray.length;
@@ -462,7 +480,10 @@ function getAllSolid() {
 	return arr;
 }
 
-/** Remove isntances that have been requested to be destroyed. */
+/**
+ * Remove isntances that have been requested to be destroyed.
+ * @return {void}
+ */
 function clearDestroyed() {
 	var l = instanceArray.length;
 	var i, n = l;
@@ -477,7 +498,7 @@ function clearDestroyed() {
 }
 
 /**
- * The function used for instance depth ordering.
+ * The function used for instance depth ordering. Sorts by ID is depth same.
  * @param {Object} a Instance.
  * @param {Object} b Instance.
  * @return {number} 0, -1 or 1.
@@ -486,7 +507,10 @@ function sortFunction(a, b) {
 	return (a.depth === b.depth) ? a.id - b.id : a.depth - b.depth;
 }
 
-/** */
+/**
+ * @param {Object} inst Instance.
+ * @return {void}
+ */
 function instanceExecuteListeners(inst) {
 	inst.listeners.forEach((listener) => {
 		switch (listener.type) {
@@ -572,13 +596,14 @@ function instanceCollisionInstance(inst, target) {
  */
 function executeActions(inst, actions, otherInst) {
 	const steps = [];
-	let condition = true;
-	let executeIfElse = false;
-	let scope = 0;
-	let len = actions.length;
-	for (let a=0; a<len; a++) {
+	var condition = true;
+	var executeIfElse = false;
+	var scope = 0;
+	var len = actions.length;
 
-		let action = actions[a];
+	for (var a=0; a<len; a++) {
+
+		var action = actions[a];
 		switch (action.flow) {
 
 			// regular action
