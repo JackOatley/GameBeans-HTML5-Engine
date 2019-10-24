@@ -127,10 +127,9 @@ class Room {
 				ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 				// Second.
-				ctx.rect(0, 0, canvas.width, canvas.height);
 				ctx.save();
 				ctx.translate(spr.width/2, spr.height/2);
-				ctx.fill();
+				ctx.fillRect(-spr.width/2, -spr.height/2, canvas.width, canvas.height);
 				ctx.restore();
 			}
 
