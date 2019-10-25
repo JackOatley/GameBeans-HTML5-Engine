@@ -151,7 +151,7 @@ function gameDraw() {
 }
 
 /**
- *
+ * @return {void}
  */
 function handleResizeEvent() {
 	Instance.executeEventAll("resize");

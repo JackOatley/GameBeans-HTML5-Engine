@@ -11,11 +11,11 @@ const INSTANCE_HARD_LIMIT = 10000;
 window.global = global;
 
 //
-let uniqueId = 1;
-let instanceArray = [];
-let doDepthSort = false;
-let otherStack = [];
-let currentEvent = "";
+const instanceArray = [];
+const otherStack = [];
+var uniqueId = 1;
+var doDepthSort = false;
+var currentEvent = "";
 
 //
 class instance {
@@ -25,17 +25,17 @@ class instance {
 
 	/**
 	 * Create a new instance of an object.
-	 * @param {Object} obj
+	 * @param {string|Object} obj
 	 * @param {number} x
 	 * @param {number} y
-	 * @return {Object}
+	 * @return {?Object}
 	 */
 	static create(obj, x, y) {
 
-		let o = object.get(obj);
+		var o = object.get(obj);
+
 		if (o === null) {
 			window.addConsoleText("#F00", "Instance creation failed! No such object as " + obj + ".");
-			//window._GB_stop();
 			return null;
 		}
 
@@ -97,7 +97,12 @@ class instance {
 		executeEvent(inst, "create");
 	}
 
-	/** */
+	/**
+	 * Finds instance n of the given object.
+	 * @param {Object} obj
+	 * @param {number} n
+	 * @return {?Object}
+	 */
 	static find(obj, n) {
 		if (typeof obj === "function") obj = obj.objectName;
 		let i, c=0, inst;
@@ -118,7 +123,13 @@ class instance {
 		return find(obj, n);
 	}
 
-	/** Find nearest instance of obj to point. */
+	/**
+	 * Find the nearest instance of an object to a point.
+	 * @param {number} x
+	 * @param {number} y
+	 * @param {string|Object} obj
+	 * @param {?Object}
+	 */
 	static nearest(x, y, obj) {
 
 		var all = [];
@@ -143,7 +154,13 @@ class instance {
 		return nrst;
 	}
 
-	/** Find furthest instance of obj to point. */
+	/**
+	 * Find the furthest instance of an object from a point.
+	 * @param {number} x
+	 * @param {number} y
+	 * @param {string|Object} obj
+	 * @param {?Object}
+	 */
 	static furthest(x, y, obj) {
 		let all = object.get(obj).getAllInstances();
 		if (all.length === 0) { return null; }
@@ -159,18 +176,24 @@ class instance {
 		return frst;
 	}
 
-	/** */
-	static count(objectName) {
-		let c=0;
-		instanceArray.forEach((inst) => {
-			c += (inst.objectName === objectName);
-		});
+	/**
+	 * Returns the number of instances of a given object.
+	 * @param {string|Object} obj
+	 * @return {number}
+	 */
+	static count(obj) {
+		const name = object.get(obj).objectName;
+		var c = 0;
+		for (var n=instanceArray.length-1; n>0; n--) {
+			c += (instanceArray[n].objectName === name);
+		}
 		return c;
 	}
 
 	/**
 	 * @param {number} rotation
 	 * @param {boolean} relative
+	 * @return {void}
 	 */
 	static setRotation(rotation, relative) {
 		this.rotation = (relative) ? this.rotation + rotation : rotation;
@@ -179,6 +202,7 @@ class instance {
 	/**
 	 * @param {number} rotation
 	 * @param {boolean} relative
+	 * @return {void}
 	 */
 	static setDirection(direction, relative) {
 		this.direction = (relative) ? this.direction + direction : direction;
@@ -228,7 +252,11 @@ class instance {
 		return instance.pointOn(input.mouse.x, input.mouse.y, inst);
 	}
 
-	/** Execute step event. */
+	/**
+	 * Execute step event.
+	 * @param {Object} inst
+	 * @return {void}
+	 */
 	static step(inst) {
 
 		// Step events.
