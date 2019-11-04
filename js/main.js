@@ -13,6 +13,7 @@ var fpsTime = 0;
 var lastTick = performance.now();
 var tickLength = 1000 / 60;
 var last = 0;
+var frameRequest = null;
 
 //
 window.addConsoleText = window.addConsoleText || console.log;
@@ -36,7 +37,7 @@ var main = {
 		}
 
 		//
-		let canv = new Canvas({
+		var canv = new Canvas({
 			width: room.current.width,
 			height: room.current.height,
 			crisp2D: true,
@@ -57,7 +58,17 @@ var main = {
 	},
 
 	/**
-	 *
+	 * @return {void}
+	 */
+	stop: function() {
+		if (frameRequest) {
+			window.cancelAnimationFrame(frameRequest);
+		}
+	},
+
+	/**
+	 * @param {number} speed
+	 * @return {void}
 	 */
 	setGameSpeed: function(speed) {
 		tickLength = 1000 / speed;
@@ -77,7 +88,7 @@ function tick(timestamp) {
 			window._GB_stop();
 
 		// request the next frame
-		window.requestAnimationFrame(tick);
+		frameRequest = window.requestAnimationFrame(tick);
 		let nextTick = lastTick + tickLength;
 		let numTicks = 0;
 		global.fpsNow = 1000 / (timestamp - last);

@@ -211,6 +211,17 @@ class Input {
 
 	}
 
+	/**
+	 *
+	 */
+	static clear() {
+		Object.keys(__keyboard.down).forEach((key) => {
+			__keyboard.down[key] = false;
+			__keyboard.press[key] = false;
+			__keyboard.release[key] = false;
+		});
+	}
+
 }
 
 Input.element = document;

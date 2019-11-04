@@ -82,6 +82,15 @@ class Canvas {
 	}
 
 	/**
+	 *
+	 */
+	unsetMain() {
+		this.domElement.remove();
+		Canvas.main = null;
+		Canvas.dom = null;
+	}
+
+	/**
 	 * @param {string} [color="#000"] CSS value as a string.
 	 * @return {void}
 	 */

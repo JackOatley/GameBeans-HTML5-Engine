@@ -75,11 +75,22 @@ class Camera {
 		draw.transform.translate(-this.left, -this.top);
 	}
 
+	/**
+	 *
+	 */
+	destroy() {
+		var index = Camera.array.indexOf(this);
+		if (index > -1) {
+			Camera.array.splice(index, 1);
+		}
+	}
+
 }
 
 Camera.array = [];
 
 Camera.create = Generator.functionFromConstructor(Camera);
 Camera.updateAll = Generator.arrayExecute(Camera.array, Camera.prototype.update);
+Camera.destroyAll = Generator.arrayExecute(Camera.array, Camera.prototype.destroy);
 
 export default Camera;
