@@ -52,6 +52,7 @@ var main = {
 		if (opts.hideCursor) canv.domElement.style.cursor = "none";
 
 		//
+		this.stop();
 		room.enter(room.current);
 		tick(performance.now());
 
@@ -153,9 +154,7 @@ function gameUpdate() {
 function gameDraw() {
 	draw.reset();
 	Canvas.main.fill("#000");
-	room.draw(room.current);
 	Camera.updateAll();
-	Instance.drawAll();
 	draw.reset();
 	Instance.drawGuiAll();
 	Transition.drawAll();

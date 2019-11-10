@@ -9,7 +9,7 @@ import Canvas from "./Canvas";
 import Color from "./Color";
 import main from "./main";
 import Camera from "./camera";
-import App from "./App";
+import * as App from "./App";
 import Grid from "./data/grid";
 import Tilemap from "./tilemap";
 import tween from "./tween";

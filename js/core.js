@@ -1,4 +1,4 @@
-import App from "./App";
+import * as App from "./App";
 import main from "./main";
 import canvas from "./Canvas";
 import Camera from "./camera";

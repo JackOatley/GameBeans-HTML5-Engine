@@ -1,6 +1,7 @@
-import room from "./room";
-import draw from "./draw";
-import Generator from "./generator";
+import room from "./room.js";
+import draw from "./draw.js";
+import Generator from "./generator.js";
+import Instance from "./instance.js";
 
 /**
  * @author Jack Oatley
@@ -19,25 +20,28 @@ class Camera {
 	 * @param {number} [gridLocked]
 	 */
 	constructor(opts = {}) {
-		this.x = 0,
-		this.y = 0,
-		this.angle = 0,
-		this.width = room.current.width,
-		this.height = room.current.height,
-		this.follow = null,
-		this.gridLocked = false,
-		this.left = 0,
-		this.right = 0,
-		this.top = 0,
-		this.bottom = 0
+		this.x = 0;
+		this.y = 0;
+		this.angle = 0;
+		this.width = room.current.width;
+		this.height = room.current.height;
+		this.follow = null;
+		this.gridLocked = false;
+		this.left = 0;
+		this.right = 0;
+		this.top = 0;
+		this.bottom = 0;
 		Object.assign(this, opts);
 		Camera.array.push(this);
 	}
 
 	/**
 	 * Update the Camera.
+	 * @return {void}
 	 */
 	update() {
+
+		//
 		if (this.follow) {
 
 			// if single instance, put into array
@@ -72,11 +76,18 @@ class Camera {
 		this.bottom = this.y + this.height * 0.5;
 
 		// apply camera
+		draw.transform.scale(room.current.width/this.width, room.current.height/this.height);
 		draw.transform.translate(-this.left, -this.top);
+
+		// Draw for this camera.
+		Camera.currentlyDrawing = this;
+		room.draw(room.current);
+		Instance.drawAll();
+
 	}
 
 	/**
-	 *
+	 * @return {void}
 	 */
 	destroy() {
 		var index = Camera.array.indexOf(this);
@@ -88,6 +99,7 @@ class Camera {
 }
 
 Camera.array = [];
+Camera.currentlyDrawing = null;
 
 Camera.create = Generator.functionFromConstructor(Camera);
 Camera.updateAll = Generator.arrayExecute(Camera.array, Camera.prototype.update);

@@ -1,8 +1,9 @@
-import Generator from "./generator";
-import Transition from "./transition";
-import instance from "./instance";
-import Sprite from "./sprite";
-import draw from "./draw";
+import Camera from "./camera.js";
+import Generator from "./generator.js";
+import Transition from "./transition.js";
+import instance from "./instance.js";
+import Sprite from "./sprite.js";
+import draw from "./draw.js";
 
 /**
  *
@@ -19,6 +20,8 @@ class Room {
 		this.width = Number(width);
 		this.height = Number(height);
 		this.background = null;
+		this.backgroundX = 0;
+		this.backgroundY = 0;
 		this.backgroundFrame = 0;
 		this.backgroundAnimate = false;
 		this.backgroundAnimateSpeed = 1;
@@ -92,10 +95,13 @@ class Room {
 	 * @return {void}
 	 */
 	draw() {
+
+		draw.clear(this.backgroundColor);
+
 		var canvas = draw.target.domElement;
 		var ctx = draw.context;
-		draw.clear(this.backgroundColor);
 		var spr = Sprite.get(this.background);
+
 		if (spr !== null) {
 
 			if (!(ctx instanceof CanvasRenderingContext2D)) {
@@ -120,16 +126,22 @@ class Room {
 
 			// Iso patterns.
 			else if (this.backgroundMethod.indexOf("iso-") !== -1) {
+
 				let pattern = this.backgroundMethod.replace("iso-", "");
+				let xpos = Camera.currentlyDrawing.left - this.backgroundX;
+				let ypos = Camera.currentlyDrawing.top - this.backgroundY;
+				let camWidth = Camera.currentlyDrawing.width;
+				let camHeight = Camera.currentlyDrawing.height;
 
 				// First.
+				ctx.save();
+				ctx.translate(this.backgroundX, this.backgroundY);
 				ctx.fillStyle = ctx.createPattern(image, pattern);
-				ctx.fillRect(0, 0, canvas.width, canvas.height);
+				ctx.fillRect(xpos, ypos, camWidth, camHeight);
 
 				// Second.
-				ctx.save();
 				ctx.translate(spr.width/2, spr.height/2);
-				ctx.fillRect(-spr.width/2, -spr.height/2, canvas.width, canvas.height);
+				ctx.fillRect(xpos-spr.width/2, ypos-spr.height/2, camWidth, camHeight);
 				ctx.restore();
 			}
 
@@ -142,25 +154,30 @@ class Room {
 		}
 	}
 
-	/** */
+	/**
+	 * @return {void}
+	 */
 	static next() {
 		const index = Room.array.indexOf(Room.current);
 		Room.enter(Room.array[index+1]);
 	}
 
-	/** */
+	/**
+	 * @return {void}
+	 */
 	static previous() {
 		const index = Room.array.indexOf(Room.current);
 		Room.enter(Room.array[index-1]);
 	}
 
 	/**
-	 *
+	 * @param {Object|string} obj
+	 * @return {?Object}
 	 */
-	static get(name) {
-		if (typeof name === "object") return name;
+	static get(obj) {
+		if (typeof obj === "object") return obj;
 		for (var n=0; n<Room.array.length; n++) {
-			if ( Room.array[n]["name"] === name ) {
+			if ( Room.array[n]["name"] === obj ) {
 				return Room.array[n];
 			}
 		}
