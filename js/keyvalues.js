@@ -1,7 +1,7 @@
 /**
  * @module keyvalues
  */
- 
+
 let values = [
 	"ArrowUp",
 	"ArrowDown",
@@ -17,6 +17,12 @@ let values = [
 	"ControlRight",
 	"AltLeft",
 	"AltRight",
+	"Insert",
+	"Home",
+	"PageUp",
+	"Delete",
+	"End",
+	"PageDown",
 	"KeyA",
 	"KeyB",
 	"KeyC",
