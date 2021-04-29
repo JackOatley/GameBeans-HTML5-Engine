@@ -70,15 +70,15 @@ class Draw {
 		}
 
 		// RGB / RGBA
-		if ("r" in c && "g" in c && "b" in c) {
-			var a = "a" in c ? c.a : 1;
+		if (c.r !== undefined && c.g !== undefined && c.b !== undefined) {
+			var a = (c.a !== undefined) || 1;
 			Draw.color = "rgba("+c.r+","+c.g+","+c.b+","+a+")";
 		}
 
 		// HSL / HSLA
-		else if ("h" in c && "s" in c && "l" in c) {
-			var a = "a" in c ? c.a : 1;
-			Draw.color = "hsla("+c.r+","+c.g+","+c.b+","+a+")";
+		else if (c.h !== undefined && c.s !== undefined && c.l !== undefined) {
+			var a = (c.a !== undefined) || 1;
+			Draw.color = "hsla("+c.h+","+c.s+"%,"+c.l+"%,"+a+")";
 		}
 
 	}

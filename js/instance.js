@@ -100,10 +100,10 @@ class instance {
 	/**
 	 * Finds instance n of the given object.
 	 * @param {Object} obj
-	 * @param {number} n
+	 * @param {number=} n
 	 * @return {?Object}
 	 */
-	static find(obj, n) {
+	static find(obj, n=0) {
 		if (typeof obj === "function") obj = obj.objectName;
 		let i, c=0, inst;
 		for (i=0; i<instanceArray.length; i++) {
@@ -222,9 +222,23 @@ class instance {
 		inst.y += vec[1];
 	}
 
-	/** */
+	/**
+	 * @param {object} inst
+	 * @param {number} x
+	 * @param {number} y
+	 * @return {number}
+	 */
 	static distanceToPoint(inst, x, y) {
 		return math.pointDistance(inst.x, inst.y, x, y);
+	}
+
+	/**
+	 * @param {object} inst1
+	 * @param {object} inst2
+	 * @return {number}
+	 */
+	static distanceToInstance(inst1, inst2) {
+		return math.pointDistance(inst1.x, inst1.y, inst2.x, inst2.y);
 	}
 
 	/** */

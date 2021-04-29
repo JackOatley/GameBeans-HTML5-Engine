@@ -90,8 +90,6 @@ function tick(timestamp) {
 
 		// request the next frame
 		frameRequest = window.requestAnimationFrame(tick);
-		let nextTick = lastTick + tickLength;
-		let numTicks = 0;
 		global.fpsNow = 1000 / (timestamp - last);
 		global.dt = timestamp - last;
 		fpsFrames += 1;
@@ -104,22 +102,10 @@ function tick(timestamp) {
 		last = timestamp;
 
 		//
-		if ( timestamp > nextTick ) {
-			let timeSinceTick = timestamp - lastTick;
-			let maxTicks = Math.floor(timeSinceTick / tickLength);
-			lastTick = lastTick + tickLength * maxTicks;
-			numTicks = Math.min(maxTicks, 60);
-		}
-
-		//
 		input.getTriggerEvents();
-		queueUpdates(numTicks);
+		gameUpdate();
 		gameDraw();
-
-		//
-		if (numTicks) {
-			input.update();
-		}
+		input.update();
 
 	} catch (err) {
 		console.error(err);
@@ -127,16 +113,6 @@ function tick(timestamp) {
 		window._GB_stop();
 	}
 
-}
-
-/**
- * @param {number} ticks
- * @return {void}
- */
-function queueUpdates(ticks) {
-	while (ticks--) {
-		gameUpdate();
-	}
 }
 
 /**
@@ -153,8 +129,12 @@ function gameUpdate() {
  */
 function gameDraw() {
 	draw.reset();
-	Canvas.main.fill("#000");
-	Camera.updateAll();
+	room.current.draw();
+	if (Camera.array.length) {
+		Camera.updateAll();
+	} else {
+		Instance.drawAll();
+	}
 	draw.reset();
 	Instance.drawGuiAll();
 	Transition.drawAll();

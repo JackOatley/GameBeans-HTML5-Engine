@@ -68,6 +68,10 @@ let ObjectVars = {
 			return instance.distanceToPoint(this, x, y);
 		}
 
+		proto.distanceToInstance = function(inst) {
+			return instance.distanceToInstance(this, inst);
+		}
+
 		proto.destroy = function() {
 			instance.destroy(this);
 		}

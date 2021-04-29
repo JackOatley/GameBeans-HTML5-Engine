@@ -15,8 +15,13 @@ class GameObject {
 	 */
 	constructor(name, sprite) {
 
-		// Create new constructor.
-		var obj = function(x, y) {
+		/**
+		 * Create new constructor.
+		 * @param {number=} x
+		 * @param {number=} y
+		 * @return {!Object}
+		 */
+		var obj = function(x = 0, y = 0) {
 			var inst = obj.pool.get(this);
 			instance.setup(inst, obj, x, y);
 			obj.instances.push(inst);
@@ -36,11 +41,18 @@ class GameObject {
 	}
 
 	/**
-	 * @param {number} index
-	 * @return {Object}
+	 * @param {number=} index
+	 * @return {?Object}
 	 */
-	find(index) {
+	find(index=0) {
 		return instance.find(this, index);
+	}
+
+	/**
+	 * @return {!number}
+	 */
+	count() {
+		return instance.count(this);
 	}
 
 	/**

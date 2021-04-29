@@ -70,10 +70,10 @@ class Camera {
 		}
 
 		// update bounds
-		this.left = this.x - this.width * 0.5;
-		this.right = this.x + this.width * 0.5;
-		this.top = this.y - this.height * 0.5;
-		this.bottom = this.y + this.height * 0.5;
+		this.left = this.x - this.width / 2;
+		this.right = this.x + this.width / 2;
+		this.top = this.y - this.height / 2;
+		this.bottom = this.y + this.height / 2;
 
 		// apply camera
 		draw.transform.scale(room.current.width/this.width, room.current.height/this.height);
