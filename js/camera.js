@@ -91,9 +91,8 @@ class Camera {
 	 */
 	destroy() {
 		var index = Camera.array.indexOf(this);
-		if (index > -1) {
-			Camera.array.splice(index, 1);
-		}
+		if (index < 0) return;
+		Camera.array.splice(index, 1);
 	}
 
 }

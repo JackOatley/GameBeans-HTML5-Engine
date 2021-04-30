@@ -17,19 +17,19 @@ let math = {
 	/**
 	 *
 	 */
-	randomInt: function( min, max ) {
-		min = Math.ceil( min );
-		max = Math.floor( max );
-		return Math.floor( Math.random() * ( max - min + 1 ) ) + min;
+	randomInt: function(min, max) {
+		min = Math.ceil(min);
+		max = Math.floor(max);
+		return Math.floor(Math.random() * (max - min + 1)) + min;
 	},
 
 	/**
 	 *
 	 */
-	choose: function( ...value ) {
+	choose: function( ...value) {
 		return value[Math.floor( Math.random() * value.length )];
 	},
-	
+
 	/** */
 	lengthDir: (l, d) => {
 		d *= math.DEGTORAD;
@@ -64,20 +64,20 @@ let math = {
 	 * @param {number} x2
 	 * @param {number} y2
 	 */
-	pointDirection: function( x1, y1, x2, y2 ) {
-		return ( ( Math.atan2( y2 - y1, x2 - x1 ) * math.RADTODEG ) + 360 ) % 360;
+	pointDirection: function(x1, y1, x2, y2) {
+		return ((Math.atan2(y2 - y1, x2 - x1) * math.RADTODEG) + 360) % 360;
 	},
 
 	/**
 	 *
 	 */
-	angleDifference: function( angle1, angle2 ) {
+	angleDifference: function(angle1, angle2) {
 
-		let diff = ( angle2 - angle1 ) % 360;
+		let diff = (angle2 - angle1) % 360;
 
-		if ( diff <= -180 ) {
+		if (diff <= -180) {
 			diff += 360;
-		} else if ( diff > 180 ) {
+		} else if (diff > 180) {
 			diff -= 360;
 		}
 

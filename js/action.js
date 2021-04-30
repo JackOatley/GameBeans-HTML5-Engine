@@ -29,11 +29,8 @@ import Vector2 from "./Vector2";
  */
 function set(varName, value, relative, global) {
 	let target = global ? window.global : this;
-	if (relative) {
-		target[varName] += value
-	} else {
-		target[varName] = value;
-	}
+	if (relative) return target[varName] += value;
+	target[varName] = value;
 }
 
 /**
@@ -76,13 +73,9 @@ function setGravity(value) {
  * @return {void}
  */
 function jump(x, y, relative) {
-	if (relative) {
-		this.x += Number(x);
-		this.y += Number(y);
-	} else {
-		this.x = Number(x);
-		this.y = Number(y);
-	}
+	if (!relative) return [this.x, this.y] [Number(x), Number(y)];
+	this.x += Number(x);
+	this.y += Number(y);
 }
 
 /**
@@ -153,11 +146,10 @@ function moveReverseY() {
  * @return {void}
  */
 function actionWrap() {
-	let width = this.boxRight - this.boxLeft;
-	let height = this.boxBottom - this.boxTop;
-	let thisRoom = Room.current;
-	let roomW = thisRoom.width;
-	let roomH = thisRoom.height;
+	const width = this.boxRight - this.boxLeft;
+	const height = this.boxBottom - this.boxTop;
+	const roomW = Room.current.width;
+	const roomH = Room.current.height;
 	if (this.boxRight < 0) this.x += roomW + width;
 	if (this.boxBottom < 0) this.y += roomH + height;
 	if (this.boxLeft > roomW) this.x -= roomW + width;
@@ -197,11 +189,8 @@ function actionFunc(func, ...args) {
  * @return {void}
  */
 function script(s, args) {
-	if (typeof s === "string") {
-		window[s].apply(this, args);
-	} else {
-		s.apply(this, args);
-	}
+	if (typeof s === "string") return window[s].apply(this, args);
+	s.apply(this, args);
 }
 
 /**

@@ -62,9 +62,7 @@ var main = {
 	 * @return {void}
 	 */
 	stop: function() {
-		if (frameRequest) {
-			window.cancelAnimationFrame(frameRequest);
-		}
+		if (frameRequest) window.cancelAnimationFrame(frameRequest);
 	},
 
 	/**

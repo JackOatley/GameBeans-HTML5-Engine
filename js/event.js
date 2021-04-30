@@ -22,9 +22,7 @@ let events = {
  */
 function translate(array, postfix = "") {
 	let obj = {};
-	array.forEach((name) => {
-		obj[name] = name + postfix;
-	});
+	array.forEach((name) => obj[name] = name + postfix);
 	return obj;
 }
 

@@ -50,9 +50,7 @@ class Room {
 	 */
 	addInstance(inst, x, y) {
 		if (typeof inst === "object") inst = inst.objectName;
-		this.instances.push({
-			name: inst, x: x, y: y
-		});
+		this.instances.push({name: inst, x: x, y: y});
 	}
 
 	/**
@@ -62,11 +60,10 @@ class Room {
 	enter(opts = {}) {
 
 		if (opts.transition) {
-			new Transition({
+			return new Transition({
 				prefab: opts.transition,
 				callback: Room.enter.bind(null, this)
 			});
-			return;
 		}
 
 		// leave room event
@@ -74,9 +71,7 @@ class Room {
 
 		// clear current instances
 		instance.instanceArray.forEach(function(i) {
-			if (!i.persistent) {
-				instance.uninstantiate(i);
-			}
+			if (!i.persistent) instance.uninstantiate(i);
 		});
 
 		// goto new room and create new instances
