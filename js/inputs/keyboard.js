@@ -1,6 +1,7 @@
+import keyValues from "../keyvalues.js";
 
 // Keyboard object
-const keyboard = {
+export const keyboard = {
 	press: {},
 	down: {},
 	release: {}

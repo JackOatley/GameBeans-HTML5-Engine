@@ -1,5 +1,6 @@
+import Canvas from "../Canvas.js";
 
-const mouse = {
+export const mouse = {
 	press: [false, false, false],
 	down: [false, false, false],
 	release: [false, false, false],

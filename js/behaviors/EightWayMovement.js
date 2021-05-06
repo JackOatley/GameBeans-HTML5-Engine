@@ -15,10 +15,10 @@ export function EightWayMovement(speed, keys) {
 
 		// Get direction
 		let x = 0, y = 0;
-		if (GB.input.keyboard.down[keys[0]]) y -= 1;
-		if (GB.input.keyboard.down[keys[1]]) x -= 1;
-		if (GB.input.keyboard.down[keys[2]]) y += 1;
-		if (GB.input.keyboard.down[keys[3]]) x += 1;
+		if (GB.input.keyboard.keyboard.down[keys[0]]) y -= 1;
+		if (GB.input.keyboard.keyboard.down[keys[1]]) x -= 1;
+		if (GB.input.keyboard.keyboard.down[keys[2]]) y += 1;
+		if (GB.input.keyboard.keyboard.down[keys[3]]) x += 1;
 
 		// Apply
 		if (x !== 0 || y !== 0) {

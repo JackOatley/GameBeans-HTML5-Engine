@@ -1,4 +1,3 @@
-import Canvas from "../Canvas.js";
 import keyValues from "../keyvalues.js";
 import * as keyboard from "./keyboard.js";
 import * as mouse from "./mouse.js";
@@ -34,26 +33,26 @@ class Input {
 		triggers.length = 0;
 
 		// Keyboard events.
-		Object.keys(__keyboard.down).forEach((key) => {
+		Object.keys(keyboard.keyboard.down).forEach((key) => {
 			if (keyValues.includes(key)) {
-				if (__keyboard.down[key]) triggers.push(key);
-				if (__keyboard.press[key]) triggers.push(key + "Press");
-				if (__keyboard.release[key]) triggers.push(key + "Release");
+				if (keyboard.keyboard.down[key]) triggers.push(key);
+				if (keyboard.keyboard.press[key]) triggers.push(key + "Press");
+				if (keyboard.keyboard.release[key]) triggers.push(key + "Release");
 			} else {
 				console.warn( "input key not supported: ", key );
-				delete __keyboard.down[key];
+				delete keyboard.keyboard.down[key];
 			}
 		});
 
 		// Mouse events.
 		for(var n=0; n<3; n++) {
-			if (__mouse.down[n]) triggers.push(__mouseMap[n] + "Down");
-			if (__mouse.press[n]) triggers.push(__mouseMap[n] + "Press");
-			if (__mouse.release[n]) triggers.push(__mouseMap[n] + "Release");
+			if (mouse.mouse.down[n]) triggers.push(__mouseMap[n] + "Down");
+			if (mouse.mouse.press[n]) triggers.push(__mouseMap[n] + "Press");
+			if (mouse.mouse.release[n]) triggers.push(__mouseMap[n] + "Release");
 		}
 
-		if (__mouse.wheelUp) triggers.push("WheelUp");
-		if (__mouse.wheelDown) triggers.push("WheelDown");
+		if (mouse.mouse.wheelUp) triggers.push("WheelUp");
+		if (mouse.mouse.wheelDown) triggers.push("WheelDown");
 
 	}
 

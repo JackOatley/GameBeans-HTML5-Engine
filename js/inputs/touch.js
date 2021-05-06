@@ -1,6 +1,6 @@
 
 // Touch object
-const touch = {
+export const touch = {
 	start: [],
 	held: [],
 	move: [],
@@ -36,10 +36,10 @@ export function init() {
 		touch.y[0] = touches[0].pageY;
 	}
 
-	Input.element.addEventListener("touchstart", handleTouchStart);
-	Input.element.addEventListener("touchend", handleTouchEnd);
-	Input.element.addEventListener("touchcancel", handleTouchEnd);
-	Input.element.addEventListener("touchmove", handleTouchMove);
+	document.addEventListener("touchstart", handleTouchStart);
+	document.addEventListener("touchend", handleTouchEnd);
+	document.addEventListener("touchcancel", handleTouchEnd);
+	document.addEventListener("touchmove", handleTouchMove);
 
 }
 
