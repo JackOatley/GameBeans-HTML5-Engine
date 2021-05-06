@@ -1,4 +1,4 @@
-import math from "./math.js";
+import * as math from "./math.js";
 import instance from "./instance.js";
 
 //

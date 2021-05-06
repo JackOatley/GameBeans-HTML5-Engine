@@ -12,7 +12,7 @@ import event from "./event.js";
 import * as action from "./action.js";
 import instance from "./instance.js";
 import draw from "./draw.js";
-import math from "./math.js";
+import * as math from "./math.js";
 import tween from "./tween.js";
 import Transition from "./transition.js";
 import Primitive from "./drawing/primitive.js";

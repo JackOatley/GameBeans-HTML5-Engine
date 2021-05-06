@@ -1,4 +1,4 @@
-import math from "./math.js";
+import * as math from "./math.js";
 import input from "./inputs/input.js";
 import object from "./object.js";
 import sprite from "./sprite.js";

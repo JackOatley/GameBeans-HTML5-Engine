@@ -1,4 +1,4 @@
-import math from "./math.js";
+import * as math from "./math.js";
 import sprite from "./sprite.js";
 import canvas from "./Canvas.js";
 import Font from "./font.js";
