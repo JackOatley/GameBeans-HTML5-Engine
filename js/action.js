@@ -2,7 +2,7 @@ import Room from "./room.js";
 import Sound from "./Sound.js";
 import draw from "./draw.js";
 import instance from "./instance.js";
-import input from "./input.js";
+import input from "./inputs/input.js";
 import math from "./math.js";
 import Sprite from "./sprite.js";
 import Canvas from "./Canvas.js";

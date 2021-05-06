@@ -1,5 +1,5 @@
 import math from "./math.js";
-import input from "./input.js";
+import input from "./inputs/input.js";
 import object from "./object.js";
 import sprite from "./sprite.js";
 import Draw from "./draw.js";

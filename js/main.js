@@ -1,6 +1,6 @@
 import Canvas from "./Canvas.js";
 import room from "./room.js";
-import input from "./input.js";
+import input from "./inputs/input.js";
 import Instance from "./instance.js";
 import global from "./global.js";
 import draw from "./draw.js";

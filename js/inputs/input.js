@@ -1,8 +1,8 @@
-import Canvas from "./Canvas.js";
-import keyValues from "./keyvalues.js";
-import * as keyboard from "./inputs/keyboard.js";
-import * as mouse from "./inputs/mouse.js";
-import * as touch from "./inputs/touch.js";
+import Canvas from "../Canvas.js";
+import keyValues from "../keyvalues.js";
+import * as keyboard from "./keyboard.js";
+import * as mouse from "./mouse.js";
+import * as touch from "./touch.js";
 
 // Mouse object
 let __mouseMap = ["Left", "Middle", "Right"];

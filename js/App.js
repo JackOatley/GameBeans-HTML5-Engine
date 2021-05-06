@@ -2,7 +2,7 @@ import Canvas from "./Canvas.js";
 import main from "./main.js";
 import Draw from "./draw.js";
 import instance from "./instance.js";
-import Input from "./input.js";
+import Input from "./inputs/input.js";
 import Camera from "./camera.js";
 
 /**
