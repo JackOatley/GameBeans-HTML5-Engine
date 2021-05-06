@@ -1,7 +1,7 @@
-import Draw from "./../draw";
-import sprite from "./../sprite";
-import Generator from "./../generator";
-import NOOP from "./../utils/noop";
+import Draw from "./../draw.js";
+import sprite from "./../sprite.js";
+import Generator from "./../generator.js";
+import NOOP from "./../utils/noop.js";
 
 /** */
 class Primitive {

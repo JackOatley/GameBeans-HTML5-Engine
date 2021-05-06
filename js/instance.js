@@ -1,9 +1,9 @@
-import math from "./math";
-import input from "./input";
-import object from "./object";
-import sprite from "./sprite";
-import Draw from "./draw";
-import global from "./global";
+import math from "./math.js";
+import input from "./input.js";
+import object from "./object.js";
+import sprite from "./sprite.js";
+import Draw from "./draw.js";
+import global from "./global.js";
 
 const INSTANCE_HARD_LIMIT = 10000;
 

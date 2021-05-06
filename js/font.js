@@ -1,5 +1,5 @@
-import Generator from "./generator";
-import Grid from "./data/grid";
+import Generator from "./generator.js";
+import Grid from "./data/grid.js";
 
 /**
  * @author Jack Oatley

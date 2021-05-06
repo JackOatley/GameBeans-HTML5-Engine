@@ -1,5 +1,5 @@
-import Canvas from "./Canvas";
-import keyValues from "./keyvalues";
+import Canvas from "./Canvas.js";
+import keyValues from "./keyvalues.js";
 
 // Mouse object
 let __mouseMap = ["Left", "Middle", "Right"];

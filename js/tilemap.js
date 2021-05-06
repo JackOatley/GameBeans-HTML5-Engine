@@ -1,7 +1,7 @@
-import Generator from "./generator";
-import Grid from "./data/grid";
-import Draw from "./draw";
-import Sprite from "./sprite";
+import Generator from "./generator.js";
+import Grid from "./data/grid.js";
+import Draw from "./draw.js";
+import Sprite from "./sprite.js";
 
 /**
  * @author Jack Oatley

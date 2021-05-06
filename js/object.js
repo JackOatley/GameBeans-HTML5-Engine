@@ -1,8 +1,8 @@
-import event from "./event";
-import instance from "./instance";
-import objectVars from "./objectVars";
-import Pool from "./utils/pool";
-import Generator from "./generator"
+import event from "./event.js";
+import instance from "./instance.js";
+import objectVars from "./objectVars.js";
+import Pool from "./utils/pool.js";
+import Generator from "./generator.js"
 
 /**
  *
@@ -28,7 +28,9 @@ class GameObject {
 			return inst;
 		};
 
-		Object.assign(obj, GameObject.prototype);
+		//Object.assign(obj, GameObject.prototype);
+		obj.eventAddAction = this.eventAddAction;
+
 		objectVars.set(obj.prototype);
 		obj.objectName = name || "object_" + obj.id;
 		obj.prototype.sprite = sprite || null;

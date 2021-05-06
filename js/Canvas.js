@@ -1,5 +1,5 @@
-import draw from "./draw";
-import Generator from "./generator";
+import draw from "./draw.js";
+import Generator from "./generator.js";
 
 /**
  *

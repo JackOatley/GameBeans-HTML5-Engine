@@ -1,5 +1,5 @@
-import draw from "./draw";
-import noop from "./utils/noop";
+import draw from "./draw.js";
+import noop from "./utils/noop.js";
 
 /**
  *

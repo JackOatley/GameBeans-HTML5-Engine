@@ -97,56 +97,56 @@ class Room {
 		var ctx = draw.context;
 		var spr = Sprite.get(this.background);
 
-		if (spr !== null) {
+		if (spr === null) return;
 
-			if (!(ctx instanceof CanvasRenderingContext2D)) {
-				window.addConsoleText("#F00", "Room background images are currently only supported in Canvas 2D!");
-				window._GB_stop();
-				return;
-			}
-
-			const frame = this.backgroundFrame;
-			const animate = this.backgroundAnimate;
-			let index = frame;
-			if (animate) {
-				this.backgroundFrame += this.backgroundAnimateSpeed;
-				index = ~~(this.backgroundFrame % spr.images.length);
-			}
-
-			const image = spr.images[index].img;
-
-			if (this.backgroundMethod === "stretch" ) {
-				ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
-			}
-
-			// Iso patterns.
-			else if (this.backgroundMethod.indexOf("iso-") !== -1) {
-
-				let pattern = this.backgroundMethod.replace("iso-", "");
-				let xpos = Camera.currentlyDrawing.left - this.backgroundX;
-				let ypos = Camera.currentlyDrawing.top - this.backgroundY;
-				let camWidth = Camera.currentlyDrawing.width;
-				let camHeight = Camera.currentlyDrawing.height;
-
-				// First.
-				ctx.save();
-				ctx.translate(this.backgroundX, this.backgroundY);
-				ctx.fillStyle = ctx.createPattern(image, pattern);
-				ctx.fillRect(xpos, ypos, camWidth, camHeight);
-
-				// Second.
-				ctx.translate(spr.width/2, spr.height/2);
-				ctx.fillRect(xpos-spr.width/2, ypos-spr.height/2, camWidth, camHeight);
-				ctx.restore();
-			}
-
-			// Regular patterns.
-			else {
-				ctx.fillStyle = ctx.createPattern(image, this.backgroundMethod);
-				ctx.fillRect(0, 0, canvas.width, canvas.height);
-			}
-
+		if (!(ctx instanceof CanvasRenderingContext2D)) {
+			window.addConsoleText("#F00", "Room background images are currently only supported in Canvas 2D!");
+			window._GB_stop();
+			return;
 		}
+
+		const frame = this.backgroundFrame;
+		const animate = this.backgroundAnimate;
+		let index = frame;
+		if (animate) {
+			this.backgroundFrame += this.backgroundAnimateSpeed;
+			index = ~~(this.backgroundFrame % spr.images.length);
+		}
+
+		const image = spr.images[index].img;
+
+		if (this.backgroundMethod === "stretch" ) {
+			ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+			return;
+		}
+
+		// Iso patterns.
+		if (this.backgroundMethod.indexOf("iso-") !== -1) {
+
+			let pattern = this.backgroundMethod.replace("iso-", "");
+			let xpos = Camera.currentlyDrawing.left - this.backgroundX;
+			let ypos = Camera.currentlyDrawing.top - this.backgroundY;
+			let camWidth = Camera.currentlyDrawing.width;
+			let camHeight = Camera.currentlyDrawing.height;
+
+			// First.
+			ctx.save();
+			ctx.translate(this.backgroundX, this.backgroundY);
+			ctx.fillStyle = ctx.createPattern(image, pattern);
+			ctx.fillRect(xpos, ypos, camWidth, camHeight);
+
+			// Second.
+			ctx.translate(spr.width/2, spr.height/2);
+			ctx.fillRect(xpos-spr.width/2, ypos-spr.height/2, camWidth, camHeight);
+			ctx.restore();
+
+			return;
+		}
+
+		// Regular patterns.
+		ctx.fillStyle = ctx.createPattern(image, this.backgroundMethod);
+		ctx.fillRect(0, 0, canvas.width, canvas.height);
+
 	}
 
 	/**

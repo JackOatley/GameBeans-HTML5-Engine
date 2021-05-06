@@ -1,9 +1,9 @@
-import math from "./math";
-import sprite from "./sprite";
-import canvas from "./Canvas";
-import Font from "./font";
-import Color from "./Color";
-import DrawShapes from "./drawing/DrawShapes";
+import math from "./math.js";
+import sprite from "./sprite.js";
+import canvas from "./Canvas.js";
+import Font from "./font.js";
+import Color from "./Color.js";
+import DrawShapes from "./drawing/DrawShapes.js";
 
 //
 class Draw {

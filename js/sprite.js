@@ -1,6 +1,6 @@
-import Canvas from "./Canvas";
-import Color from "./Color";
-import Generator from "./generator";
+import Canvas from "./Canvas.js";
+import Color from "./Color.js";
+import Generator from "./generator.js";
 
 /**
  *

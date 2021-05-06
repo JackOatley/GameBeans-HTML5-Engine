@@ -1,23 +1,23 @@
-import Room from "./room";
-import Sound from "./Sound";
-import draw from "./draw";
-import instance from "./instance";
-import input from "./input";
-import math from "./math";
-import Sprite from "./sprite";
-import Canvas from "./Canvas";
-import Color from "./Color";
-import main from "./main";
-import Camera from "./camera";
-import * as App from "./App";
-import Grid from "./data/grid";
-import Tilemap from "./tilemap";
-import tween from "./tween";
-import Transition from "./transition";
-import Font from "./font";
-import GameObject from "./object";
-import Primitive from "./drawing/primitive";
-import Vector2 from "./Vector2";
+import Room from "./room.js";
+import Sound from "./Sound.js";
+import draw from "./draw.js";
+import instance from "./instance.js";
+import input from "./input.js";
+import math from "./math.js";
+import Sprite from "./sprite.js";
+import Canvas from "./Canvas.js";
+import Color from "./Color.js";
+import main from "./main.js";
+import Camera from "./camera.js";
+import * as App from "./App.js";
+import Grid from "./data/grid.js";
+import Tilemap from "./tilemap.js";
+import tween from "./tween.js";
+import Transition from "./transition.js";
+import Font from "./font.js";
+import GameObject from "./object.js";
+import Primitive from "./drawing/primitive.js";
+import Vector2 from "./Vector2.js";
 
 /**
  * Set the variable with the given name.

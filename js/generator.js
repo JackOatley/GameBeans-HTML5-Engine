@@ -2,7 +2,7 @@
  * @author Jack Oatley
  */
 export default class Generator {
-	
+
 	/**
 	 * If class has a static "get" method it is used in functions created from
 	 * prototype methods. If there is a "get" method on the prototype it is not
@@ -15,11 +15,14 @@ export default class Generator {
 	static classStaticMatch(c) {
 		c.create = Generator.functionFromConstructor(c);
 		const get = c.get;
-		for (var m in c.prototype) {
-			c[m] = Generator.functionFromMethod(c.prototype[m], get);
-		}
+		const methodNames = Object.getOwnPropertyNames(c.prototype);
+		methodNames.forEach(name => {
+			if (name !== "constructor") {
+				c[name] = Generator.functionFromMethod(c.prototype[name], get);
+			}
+		});
 	}
-	
+
 	/**
 	 * @param {function} c Constructor function.
 	 */
@@ -37,7 +40,7 @@ export default class Generator {
 		else
 			return (...a) => m.call(...a);
 	}
-	
+
 	/**
 	 * @param {array} a An array of instances of constructor with the following method.
 	 * @param {function} m The method to execute for each instance in the array.
@@ -45,5 +48,5 @@ export default class Generator {
 	static arrayExecute(a, m) {
 		return (...p) => a.forEach(i => m.call(i, ...p));
 	}
-	
+
 }

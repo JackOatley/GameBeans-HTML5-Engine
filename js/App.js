@@ -1,4 +1,4 @@
-import Canvas from "./Canvas";
+import Canvas from "./Canvas.js";
 import main from "./main.js";
 import Draw from "./draw.js";
 import instance from "./instance.js";
