@@ -7,9 +7,9 @@ export function FourWayMovement(speed, keys) {
 		case ("WASD"): keys = ["KeyW", "KeyA", "KeyS", "KeyD"]; break;
 	}
 
-	this.eventAddAction("create", function() {
-		console.log("Created...", speed, keys);
-	});
+	//this.eventAddAction("create", function() {
+		//console.log("Created...", speed, keys);
+	//});
 
 	this.eventAddAction("step", function() {
 
