@@ -144,8 +144,11 @@ class Room {
 		}
 
 		// Regular patterns.
+		ctx.save();
+		ctx.translate(this.backgroundX, this.backgroundY);
 		ctx.fillStyle = ctx.createPattern(image, this.backgroundMethod);
-		ctx.fillRect(0, 0, canvas.width, canvas.height);
+		ctx.fillRect(-this.backgroundX, -this.backgroundY, canvas.width, canvas.height);
+		ctx.restore();
 
 	}
 
