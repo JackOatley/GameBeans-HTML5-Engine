@@ -639,7 +639,7 @@ function instanceCollisionInstance(inst, target) {
 function executeActions(inst, actions, otherInst) {
 	const steps = [];
 	var condition = true;
-	var executeIfElse = false;
+	var executeIfElse = [false];
 	var scope = 0;
 	var len = actions.length;
 
@@ -650,27 +650,26 @@ function executeActions(inst, actions, otherInst) {
 
 			// regular action
 			case (""):
-
-				if (condition) {
-					executeIfElse = false;
-					condition = action.cache.call(inst);
-					if (condition === undefined) {
-						condition = true;
-					} else {
-						steps[scope] = 0;
-						if (condition === false) {
-							executeIfElse = true;
-						}
+				if (!condition) break;
+				const newCondition = action.cache.call(inst);
+				if (newCondition === true || newCondition === false)  {
+					executeIfElse[scope] = false;
+					condition = newCondition;
+					steps[scope] = 0;
+					if (condition === false) {
+						executeIfElse[scope] = true;
 					}
 				}
-
 				break;
 
 			// control actions
 			case ("ifElse"):
-				(executeIfElse)
-					? steps[scope] = 0
-					: condition = false;
+				if (executeIfElse[scope]) {
+					steps[scope] = 0;
+					condition = true;
+				} else {
+					condition = false;
+				}
 			break;
 			case ("blockBegin"): scope++; break;
 			case ("blockEnd"): scope--; break;
