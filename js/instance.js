@@ -56,7 +56,7 @@ class instance {
 	 * @param {number} direction
 	 */
 	static createMoving(obj, x, y, speed, direction) {
-		let newInst = instance.create(obj, x, y);
+		const newInst = instance.create(obj, x, y);
 		newInst.speed = speed;
 		newInst.direction = direction;
 		return newInst;
@@ -206,6 +206,12 @@ class instance {
 	 */
 	static setDirection(direction, relative) {
 		this.direction = (relative) ? this.direction + direction : direction;
+	}
+
+	/** */
+	static moveFree(speed, direction) {
+		this.speed = speed;
+		this.direction = direction;
 	}
 
 	/** Start moving in the direction of a given point. */
@@ -432,8 +438,8 @@ function updatePosition(inst) {
  * @return {void}
  */
 function updateBoundingBox(i) {
-	let spr = sprite.get(i.sprite);
-	if (spr === null) return;
+	const spr = sprite.get(i.sprite);
+	if (!spr) return;
 	i.boxTop = i.y - spr.originY * i.scaleY;
 	i.boxLeft = i.x - spr.originX * i.scaleX;
 	i.boxBottom = i.boxTop + spr.height * i.scaleY;
@@ -446,7 +452,7 @@ function updateBoundingBox(i) {
  * @return {void}
  */
 function updateCollisionBox(i) {
-	let box = i.boxCollision;
+	const box = i.boxCollision;
 	box.top = i.y - box.y * i.scaleY;
 	box.left = i.x - box.x * i.scaleX;
 	box.bottom = box.top + box.height * i.scaleY;
@@ -498,7 +504,8 @@ function updateAnimation(inst) {
  * @return {void}
  */
 function addToArray(inst) {
-	for (var i=0; i<instanceArray.length; i++) {
+	const length = instanceArray.length;
+	for (var i=0; i<length; i++) {
 		if (inst.depth > instanceArray[i].depth) {
 			instanceArray.splice(i, 0, inst);
 			return;
@@ -545,9 +552,8 @@ function clearDestroyed() {
  * @param {Object} b Instance.
  * @return {number} 0, -1 or 1.
  */
-function sortFunction(a, b) {
-	return (a.depth === b.depth) ? a.id - b.id : a.depth - b.depth;
-}
+const sortFunction = (a, b) =>
+	(a.depth === b.depth) ? a.id - b.id : a.depth - b.depth;
 
 /**
  * @param {Object} inst Instance.
@@ -555,10 +561,8 @@ function sortFunction(a, b) {
  */
 function instanceExecuteListeners(inst) {
 	inst.listeners.forEach((listener) => {
-		switch (listener.type) {
-			case ("collision"):
-				instanceCollisionInstance(inst, listener.target);
-				break;
+		if (listener.type === "collision") {
+			instanceCollisionInstance(inst, listener.target);
 		}
 	});
 }

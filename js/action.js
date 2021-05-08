@@ -28,9 +28,23 @@ import Vector2 from "./Vector2.js";
  * @return {void}
  */
 function set(varName, value, relative, global) {
-	let target = global ? window.global : this;
+	const target = global ? window.global : this;
 	if (relative) return target[varName] += value;
 	target[varName] = value;
+}
+
+/**
+ * Set the variable with the given name.
+ * @param {string} varName
+ * @param {*} value
+ * @param {boolean} relative
+ * @param {boolean} global
+ * @return {void}
+ */
+function setProperty(object, property, value, relative) {
+	//console.log(object, property);
+	if (relative) return object[property] += value;
+	object[property] = value;
 }
 
 /**
@@ -87,16 +101,6 @@ function jumpRandom() {
 	let x1 = 0, y1 = 0, x2 = 640, y2 = 480;
 	this.x = Math.floor(Math.random() * (x2 - x1 + 1)) + x1;
 	this.y = Math.floor(Math.random() * (y2 - y1 + 1)) + y1;
-}
-
-/**
- * @param {number} speed
- * @param {number} direction
- * @return {void}
- */
-function moveFree(speed, direction) {
-	this.speed = speed;
-	this.direction = direction;
 }
 
 /**
@@ -245,6 +249,7 @@ let blockBegin = "blockBegin",
 	roomPrevious = Room.previous,
 	instanceCreate = instance.create,
 	instanceCreateMoving = instance.createMoving,
+	moveFree = instance.moveFree,
 	instanceDestroy = instance.destroy,
 	changeSprite = instance.changeSprite,
 	instanceSetRotation = instance.setRotation,
@@ -287,6 +292,7 @@ export {
 	exitEvent,
 	set,
 	get,
+	setProperty,
 	test,
 	setGravity,
 	jump,
