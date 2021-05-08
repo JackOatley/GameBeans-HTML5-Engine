@@ -10,14 +10,14 @@ import Camera from "./camera.js";
  * @param {string} cursor Same as the CSS cursor property.
  * See {@link https://developer.mozilla.org/en-US/docs/Web/CSS/cursor}
  */
-export function setCursor(cursor) {
+export const setCursor = cursor => {
 	Canvas.main.style.cursor = cursor;
 }
 
 /**
  * @return {void}
  */
-export function restart() {
+export const restart = () => {
 	Canvas.main.unsetMain();
 	Canvas.array = [];
 	Canvas.main = null;

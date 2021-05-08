@@ -21,11 +21,7 @@ import Vector2 from "./Vector2.js";
 
 /**
  * Set the variable with the given name.
- * @param {string} varName
- * @param {*} value
- * @param {boolean} relative
- * @param {boolean} global
- * @return {void}
+ * @type {function(string, *, boolean, boolean):void}
  */
 function set(varName, value, relative, global) {
 	const target = global ? window.global : this;
@@ -35,24 +31,16 @@ function set(varName, value, relative, global) {
 
 /**
  * Set the variable with the given name.
- * @param {string} varName
- * @param {*} value
- * @param {boolean} relative
- * @param {boolean} global
- * @return {void}
+ * @type {function(Object, string, *, boolean):void}
  */
 function setProperty(object, property, value, relative) {
-	//console.log(object, property);
 	if (relative) return object[property] += value;
 	object[property] = value;
 }
 
 /**
- * @param {string} varName
- * @param {string} op Operation.
- * @param {value} value Value to check against.
- * @param {boolean} global
- * @return {boolean}
+ * Intended to be equivalent to an if statement.
+ * @type {function(string, string, *, boolean):boolean}
  */
 function test(varName, op, value, global) {
 	let target = global ? window.global : this;
@@ -71,8 +59,7 @@ function test(varName, op, value, global) {
 
 /**
  * Sets the instance's gravity to the given value.
- * @param {number} value The gravity strength.
- * @return {void}
+ * @type {function(number):void}
  */
 function setGravity(value) {
 	this.gravity = value;
@@ -81,10 +68,7 @@ function setGravity(value) {
 /**
  * Instantly sets the instance's x and y values to a random position within
  * the current room.
- * @param {number} x
- * @param {number} y
- * @param {boolean} relative
- * @return {void}
+ * @type {function(number, number, boolean):void}
  */
 function jump(x, y, relative) {
 	if (!relative) return [this.x, this.y] [Number(x), Number(y)];
@@ -95,20 +79,18 @@ function jump(x, y, relative) {
 /**
  * Instantly sets the instance's x and y values to a random position within
  * the current room.
- * @return {void}
+ * @type {function():number}
  */
 function jumpRandom() {
-	let x1 = 0, y1 = 0, x2 = 640, y2 = 480;
-	this.x = Math.floor(Math.random() * (x2 - x1 + 1)) + x1;
-	this.y = Math.floor(Math.random() * (y2 - y1 + 1)) + y1;
+	const x1 = 0, y1 = 0, x2 = Room.current.width, y2 = Room.current.height;
+	this.x = Math.floor(Math.random() * (x2 - x1)) + x1;
+	this.y = Math.floor(Math.random() * (y2 - y1)) + y1;
 }
 
 /**
  * Instantly sets the instance's x and y values to a random position within
  * the current room.
- * @param {number} x
- * @param {number} y
- * @return {void}
+ * @type {function(number, number):void}
  */
 function moveDirect(x, y) {
 	this.x += x * main.dt;
@@ -116,30 +98,28 @@ function moveDirect(x, y) {
 }
 
 /**
- * @param  {type} speed
- * @return {void}
+ * @type {function(number):void}
  */
 function moveSpeedX(speed) {
 	this.speedX = Number(speed);
 }
 
 /**
- * @param  {type} speed
- * @return {void}
+ * @type {function(number):void}
  */
 function moveSpeedY(speed) {
 	this.speedY = Number(speed);
 }
 
 /**
- * @return {void}
+ * @type {function():void}
  */
 function moveReverseX() {
 	this.speedX = -this.speedX;
 }
 
 /**
- * @return {void}
+ * @type {function():void}
  */
 function moveReverseY() {
 	this.speedY = -this.speedY;
@@ -147,7 +127,7 @@ function moveReverseY() {
 
 /**
  * Wraps the instance back into the room when it leaves.
- * @return {void}
+ * @type {function():void}
  */
 function actionWrap() {
 	const width = this.boxRight - this.boxLeft;
@@ -162,14 +142,14 @@ function actionWrap() {
 
 /**
  * Wraps the instance back into the room when it leaves.
- * @return {void}
+ * @type {function():void}
  */
 function actionConfine() {
-	let width = this.boxRight - this.boxLeft;
-	let height = this.boxBottom - this.boxTop;
-	let thisRoom = Room.current;
-	let roomW = thisRoom.width;
-	let roomH = thisRoom.height;
+	const width = this.boxRight - this.boxLeft;
+	const height = this.boxBottom - this.boxTop;
+	const thisRoom = Room.current;
+	const roomW = thisRoom.width;
+	const roomH = thisRoom.height;
 	if (this.boxLeft < 0) this.x = this.x - this.boxLeft;
 	if (this.boxTop < 0) this.y = this.y - this.boxTop;
 	if (this.boxRight > roomW) this.x = roomW - width + this.x - this.boxLeft;
@@ -178,9 +158,7 @@ function actionConfine() {
 
 /**
  * Executes the given function with variable arguments on the instance.
- * @param {function} func
- * @param {...*} args
- * @return {void}
+ * @type {function(function, ...*):void}
  */
 function actionFunc(func, ...args) {
 	func.apply(this, args);
@@ -188,9 +166,7 @@ function actionFunc(func, ...args) {
 
 /**
  * Executes the given Script with an array of arguments.
- * @param {script} func
- * @param {array} args
- * @return {void}
+ * @type {function(string, Array):void}
  */
 function script(s, args) {
 	if (typeof s === "string") return window[s].apply(this, args);
@@ -199,8 +175,7 @@ function script(s, args) {
 
 /**
  * Shows the value of the given variable of the instance, in the console.
- * @param {...*} args
- * @return {void}
+ * @type {function(...*):void}
  */
 function get(...args) {
 	console.log(this[args].toFixed(2));
@@ -224,9 +199,9 @@ let GAME = {
 	sprite: Sprite,
 	Sound: Sound,
 	input: {
-		keyboard: input.keyboard,
-		mouse: input.mouse,
-		touch: input.touch
+		keyboard: input.keyboard.keyboard,
+		mouse: input.mouse.mouse,
+		touch: input.touch.touch
 	},
 	math: math,
 	Font: Font,
@@ -244,6 +219,7 @@ let blockBegin = "blockBegin",
 	blockEnd = "blockEnd",
 	exitEvent = "exitEvent",
 	ifElse = "ifElse",
+	chance = math.chance,
 	roomEnter = Room.enter,
 	roomNext = Room.next,
 	roomPrevious = Room.previous,
@@ -255,8 +231,8 @@ let blockBegin = "blockBegin",
 	instanceSetRotation = instance.setRotation,
 	instanceSetDirection = instance.setDirection,
 	message = args => console.log(args),
-	alert = function(m) { window.alert(m) },
-	confirm = function(m) { return window.confirm(m) },
+	alert = (m) => window.alert(m),
+	confirm = (m) => window.confirm(m),
 	drawSetColor = draw.setColor,
 	drawSetFont = draw.setFont,
 	drawSetFontSize = draw.setFontSize,
@@ -265,11 +241,12 @@ let blockBegin = "blockBegin",
 	drawEllipse = draw.shape.ellipse,
 	drawSelf = instance.drawSelf,
 	drawSprite = draw.sprite,
-	soundPlay = function(snd, loop) {Sound.play(snd, {loop: loop})},
+	soundPlay = (snd, loop) => Sound.play(snd, {loop: loop}),
 	soundStop = Sound.stop;
 
 //
 export {
+	chance,
 	instanceCreate,
 	instanceCreateMoving,
 	instanceDestroy,
