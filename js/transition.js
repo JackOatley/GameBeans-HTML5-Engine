@@ -1,5 +1,5 @@
 import draw from "./draw.js";
-import noop from "./utils/noop.js";
+import { NOOP } from "./constants.js";
 
 /**
  *
@@ -17,7 +17,7 @@ class Transition {
 		this.type = opts.type || "fade";
 		this.time = opts.time || 60;
 		this.color = opts.color || "#000000";
-		this.callback = opts.callback || noop;
+		this.callback = opts.callback || NOOP;
 		if (opts.prefab) Object.assign(this, opts.prefab);
 		this.direction = 1;
 		this.alpha = 0;

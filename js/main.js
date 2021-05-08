@@ -6,7 +6,7 @@ import global from "./global.js";
 import draw from "./draw.js";
 import Camera from "./camera.js";
 import Transition from "./transition.js";
-import NOOP from "./utils/noop.js";
+import { NOOP } from "./constants.js";
 
 var fpsFrames = 0;
 var fpsTime = 0;

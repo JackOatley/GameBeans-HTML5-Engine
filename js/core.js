@@ -1,3 +1,4 @@
+export * from "./constants.js";
 import * as App from "./App.js";
 import main from "./main.js";
 import canvas from "./Canvas.js";

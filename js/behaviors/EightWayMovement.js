@@ -1,29 +1,25 @@
-import * as GB from "./../core.js";
+import { ARROW_KEYS, WASD_KEYS, input, math } from "./../core.js";
 
 export function EightWayMovement(speed, keys) {
 
 	switch (keys) {
-		case ("Arrows"): keys = ["ArrowUp", "ArrowLeft", "ArrowDown", "ArrowRight"]; break;
-		case ("WASD"): keys = ["KeyW", "KeyA", "KeyS", "KeyD"]; break;
+		case ("Arrows"): keys = ARROW_KEYS; break;
+		case ("WASD"): keys = WASD_KEYS; break;
 	}
-
-	//this.eventAddAction("create", function() {
-		//console.log("Created...", speed, keys);
-	//});
 
 	this.eventAddAction("step", function() {
 
 		// Get direction
 		let x = 0, y = 0;
-		if (GB.input.keyboard.keyboard.down[keys[0]]) y -= 1;
-		if (GB.input.keyboard.keyboard.down[keys[1]]) x -= 1;
-		if (GB.input.keyboard.keyboard.down[keys[2]]) y += 1;
-		if (GB.input.keyboard.keyboard.down[keys[3]]) x += 1;
+		if (input.keyboard.keyboard.down[keys[0]]) y -= 1;
+		if (input.keyboard.keyboard.down[keys[1]]) x -= 1;
+		if (input.keyboard.keyboard.down[keys[2]]) y += 1;
+		if (input.keyboard.keyboard.down[keys[3]]) x += 1;
 
 		// Apply
 		if (x !== 0 || y !== 0) {
-			const dir = GB.math.pointDirection(0, 0, x, y);
-			[x, y] = GB.math.lengthDir(speed, dir);
+			const dir = math.pointDirection(0, 0, x, y);
+			[x, y] = math.lengthDir(speed, dir);
 			this.x += x;
 			this.y += y;
 		}
