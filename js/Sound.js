@@ -44,65 +44,58 @@ class Sound {
 	 * @param {Object} [opts={}] object.
 	 */
 	play(opts = {}) {
-		if (Sound.isEnabled) {
+		if (!Sound.isEnabled) return null;
 
-			// Find an existing sound instance to play.
-			var playSound;
-			var n = this.instances.length;
-			while (n--) {
-				var instance = this.instances[n];
-				if (instance.paused) {
-					playSound = instance;
-					break;
-				}
+		// Find an existing sound instance to play.
+		var playSound;
+		var n = this.instances.length;
+		while (n--) {
+			var instance = this.instances[n];
+			if (instance.paused) {
+				playSound = instance;
+				break;
 			}
-
-			// Create new instance of sound.
-			if (!playSound) {
-				playSound = this.instances[0].cloneNode();
-				this.instances.push(playSound);
-			}
-
-			//
-			playSound.onError = (err) => {
-				console.error(soundName, err);
-			}
-
-			// Play the sound.
-			playSound.volume = this.volume;
-			let promise = playSound.play();
-			if (promise !== undefined) {
-				promise.then(function() {
-
-					// on end event
-					playSound.onended = function() {
-
-						// Internal event stuff.
-						this.currentTime = 0;
-						if (Number(opts.loop || false)) {
-							this.play();
-						} else {
-							this.pause();
-						}
-
-						// Custom event, if defined.
-						if (opts.onEnd) {
-							opts.onEnd();
-						}
-
-					}
-
-				}).catch((err) => {
-					console.warn(err);
-				});
-			}
-
-			//
-			return playSound;
 		}
 
-		// sound is disabled
-		return null;
+		// If no free instance was found.
+		if (!playSound) return null;
+
+		//
+		playSound.onError = (err) => {
+			console.error(soundName, err);
+		}
+
+		// Play the sound.
+		playSound.volume = this.volume;
+		let promise = playSound.play();
+		if (promise !== undefined) {
+			promise.then(function() {
+
+				// on end event
+				playSound.onended = function() {
+
+					// Internal event stuff.
+					this.currentTime = 0;
+					if (Number(opts.loop || false)) {
+						this.play();
+					} else {
+						this.pause();
+					}
+
+					// Custom event, if defined.
+					if (opts.onEnd) {
+						opts.onEnd();
+					}
+
+				}
+
+			}).catch((err) => {
+				console.warn(err);
+			});
+		}
+
+		//
+		return playSound;
 	}
 
 	/**
