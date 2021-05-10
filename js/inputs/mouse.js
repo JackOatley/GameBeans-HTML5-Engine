@@ -1,16 +1,14 @@
 import Canvas from "../Canvas.js";
 
-export const mouse = {
-	press: [false, false, false],
-	down: [false, false, false],
-	release: [false, false, false],
-	wheelUp: false,
-	wheelDown: false,
-	rawX: 0,
-	rawY: 0,
-	x: 0,
-	y: 0
-}
+export const press = [false, false, false];
+export const down = [false, false, false];
+export const release = [false, false, false];
+export let wheelUp = false;
+export let wheelDown = false;
+export let rawX = 0;
+export let rawY = 0;
+export let x = 0;
+export let y = 0;
 
 /**
  *
@@ -19,16 +17,16 @@ export const init = () => {
 
 	document.addEventListener("mousedown", e => {
 		e.preventDefault();
-		if (!mouse.press[e.button]) window.focus();
-		mouse.press[e.button] = true;
-		mouse.down[e.button] = true;
+		if (!press[e.button]) window.focus();
+		press[e.button] = true;
+		down[e.button] = true;
 	});
 
 	document.addEventListener("mouseup", e => {
 		e.preventDefault();
-		mouse.press[e.button] = false;
-		mouse.release[e.button] = true;
-		mouse.down[e.button] = false;
+		press[e.button] = false;
+		release[e.button] = true;
+		down[e.button] = false;
 	});
 
 	document.addEventListener("mousemove", e => {
@@ -36,17 +34,17 @@ export const init = () => {
 		const rect = canv.getBoundingClientRect();
 		const hs = canv.width / rect.width;
 		const vs = canv.height / rect.height;
-		mouse.rawX = ~~(e.clientX - rect.left);
-		mouse.rawY = ~~(e.clientY - rect.top);
-		mouse.x = ~~(mouse.rawX * hs);
-		mouse.y = ~~(mouse.rawY * vs);
+		rawX = ~~(e.clientX - rect.left);
+		rawY = ~~(e.clientY - rect.top);
+		x = ~~(rawX * hs);
+		y = ~~(rawY * vs);
 	});
 
 	document.addEventListener("mousewheel", e => {
 		e.preventDefault();
 		const delta = Math.sign(e.wheelDelta);
-		mouse.wheelUp = delta > 0;
-		mouse.wheelDown = delta < 0;
+		wheelUp = delta > 0;
+		wheelDown = delta < 0;
 	}, { passive: false });
 
 }
@@ -55,10 +53,10 @@ export const init = () => {
  *
  */
 export const update = () => {
-	mouse.wheelUp = false;
-	mouse.wheelDown = false;
-	for (let n = 0; n < mouse.down.length; n++) {
-		mouse.press[n] = false;
-		mouse.release[n] = false;
+	wheelUp = false;
+	wheelDown = false;
+	for (let n = 0; n < down.length; n++) {
+		press[n] = false;
+		release[n] = false;
 	}
 }

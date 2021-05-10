@@ -270,7 +270,7 @@ class instance {
 
 	/** */
 	static mouseOn(inst) {
-		return instance.pointOn(input.mouse.mouse.x, input.mouse.mouse.y, inst);
+		return instance.pointOn(input.mouse.x, input.mouse.y, inst);
 	}
 
 	/**

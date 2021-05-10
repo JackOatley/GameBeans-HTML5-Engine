@@ -217,7 +217,7 @@ let GAME = {
 	Sound: Sound,
 	input: {
 		keyboard: input.keyboard.keyboard,
-		mouse: input.mouse.mouse,
+		mouse: input.mouse,
 		touch: input.touch.touch
 	},
 	math: math,

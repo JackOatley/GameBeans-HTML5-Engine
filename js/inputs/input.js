@@ -4,7 +4,7 @@ import * as mouse from "./mouse.js";
 import * as touch from "./touch.js";
 
 // Mouse object
-let __mouseMap = ["Left", "Middle", "Right"];
+const mouseMap = ["Left", "Middle", "Right"];
 
 /**
  * @author Jack Oatley
@@ -46,13 +46,13 @@ class Input {
 
 		// Mouse events.
 		for(var n=0; n<3; n++) {
-			if (mouse.mouse.down[n]) triggers.push(__mouseMap[n] + "Down");
-			if (mouse.mouse.press[n]) triggers.push(__mouseMap[n] + "Press");
-			if (mouse.mouse.release[n]) triggers.push(__mouseMap[n] + "Release");
+			if (mouse.down[n]) triggers.push(mouseMap[n] + "Down");
+			if (mouse.press[n]) triggers.push(mouseMap[n] + "Press");
+			if (mouse.release[n]) triggers.push(mouseMap[n] + "Release");
 		}
 
-		if (mouse.mouse.wheelUp) triggers.push("WheelUp");
-		if (mouse.mouse.wheelDown) triggers.push("WheelDown");
+		if (mouse.wheelUp) triggers.push("WheelUp");
+		if (mouse.wheelDown) triggers.push("WheelDown");
 
 	}
 
