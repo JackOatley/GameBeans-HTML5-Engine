@@ -3,7 +3,7 @@ import Generator from "./generator.js";
 import Transition from "./transition.js";
 import instance from "./instance.js";
 import Sprite from "./sprite.js";
-import draw from "./draw.js";
+import * as draw from "./draw.js";
 
 /**
  *

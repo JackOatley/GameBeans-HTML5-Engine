@@ -1,4 +1,4 @@
-import Draw from "../draw.js";
+import * as Draw from "../draw.js";
 import sprite from "../sprite.js";
 import Generator from "../generator.js";
 import { NOOP } from "../constants.js";

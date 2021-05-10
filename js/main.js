@@ -3,7 +3,7 @@ import room from "./room.js";
 import input from "./inputs/input.js";
 import Instance from "./instance.js";
 import global from "./global.js";
-import draw from "./draw.js";
+import * as draw from "./draw.js";
 import Camera from "./camera.js";
 import Transition from "./transition.js";
 import { NOOP } from "./constants.js";
@@ -20,7 +20,7 @@ window.addConsoleText = window.addConsoleText || console.log;
 window._GB_stop = window._GB_stop || NOOP;
 
 //
-var main = {
+const main = {
 
 	/**
 	 *

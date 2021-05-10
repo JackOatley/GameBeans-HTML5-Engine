@@ -1,4 +1,4 @@
-import Draw from "../draw.js";
+import * as Draw from "../draw.js";
 
 /**
  * @param {number} x1

@@ -1,5 +1,5 @@
 import room from "./room.js";
-import draw from "./draw.js";
+import * as draw from "./draw.js";
 import Generator from "./generator.js";
 import Instance from "./instance.js";
 

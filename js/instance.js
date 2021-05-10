@@ -2,7 +2,7 @@ import * as math from "./math.js";
 import input from "./inputs/input.js";
 import object from "./object.js";
 import sprite from "./sprite.js";
-import Draw from "./draw.js";
+import * as Draw from "./draw.js";
 import global from "./global.js";
 
 const INSTANCE_HARD_LIMIT = 10000;
@@ -261,6 +261,7 @@ class instance {
 
 	/** Returns whether the given point is over the given instance. */
 	static pointOn(x, y, inst) {
+		//console.log(x, Draw.offsetX, x - Draw.offsetX);
 		return !(inst.boxTop > y - Draw.offsetY
 		|| inst.boxBottom < y - Draw.offsetY
 		|| inst.boxLeft > x - Draw.offsetX
@@ -269,7 +270,7 @@ class instance {
 
 	/** */
 	static mouseOn(inst) {
-		return instance.pointOn(input.mouse.x, input.mouse.y, inst);
+		return instance.pointOn(input.mouse.mouse.x, input.mouse.mouse.y, inst);
 	}
 
 	/**
@@ -327,7 +328,7 @@ class instance {
 	 */
 	static drawSelf(inst, opts) {
 		if (inst.sprite === null) return;
-		Draw.sprite(
+		Draw.drawSprite(
 			inst.sprite,
 			inst.index,
 			inst.x, inst.y,

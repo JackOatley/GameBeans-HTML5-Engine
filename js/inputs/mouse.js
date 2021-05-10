@@ -15,23 +15,23 @@ export const mouse = {
 /**
  *
  */
-export function init() {
+export const init = () => {
 
-	function handleMouseDown(e) {
+	document.addEventListener("mousedown", e => {
 		e.preventDefault();
 		if (!mouse.press[e.button]) window.focus();
 		mouse.press[e.button] = true;
 		mouse.down[e.button] = true;
-	}
+	});
 
-	function handleMouseUp(e) {
+	document.addEventListener("mouseup", e => {
 		e.preventDefault();
 		mouse.press[e.button] = false;
 		mouse.release[e.button] = true;
 		mouse.down[e.button] = false;
-	}
+	});
 
-	function handleMouseMove(e) {
+	document.addEventListener("mousemove", e => {
 		const canv = Canvas.main.domElement;
 		const rect = canv.getBoundingClientRect();
 		const hs = canv.width / rect.width;
@@ -40,29 +40,25 @@ export function init() {
 		mouse.rawY = ~~(e.clientY - rect.top);
 		mouse.x = ~~(mouse.rawX * hs);
 		mouse.y = ~~(mouse.rawY * vs);
-	}
+	});
 
-	function handleMouseWheel(e) {
+	document.addEventListener("mousewheel", e => {
 		e.preventDefault();
 		const delta = Math.sign(e.wheelDelta);
 		mouse.wheelUp = delta > 0;
 		mouse.wheelDown = delta < 0;
-	}
+	}, { passive: false });
 
-	document.addEventListener("mousedown", handleMouseDown);
-	document.addEventListener("mouseup", handleMouseUp);
-	document.addEventListener("mousemove", handleMouseMove);
-	document.addEventListener("mousewheel", handleMouseWheel);
 }
 
 /**
  *
  */
-export function update() {
+export const update = () => {
 	mouse.wheelUp = false;
 	mouse.wheelDown = false;
-	Object.keys(mouse.down).forEach((button) => {
-		mouse.press[button] = false;
-		mouse.release[button] = false;
-	});
+	for (let n = 0; n < mouse.down.length; n++) {
+		mouse.press[n] = false;
+		mouse.release[n] = false;
+	}
 }

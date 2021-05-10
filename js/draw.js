@@ -5,331 +5,315 @@ import Font from "./font.js";
 import Color from "./Color.js";
 import DrawShapes from "./drawing/DrawShapes.js";
 
-//
-class Draw {
+export const shape = DrawShapes;
 
-	/** */
-	static setTarget(target) {
-		Draw.targetStack.push(Draw.target);
-		Draw.target = target;
-		Draw.context = target.context;
+export let target = null;
+export let context = null;
+export let offsetX = 0;
+export let offsetY = 0;
+
+let color = "#FFFFFF";
+let font = "Arial";
+let fontSize = 30;
+let lineHeight = 0;
+let textAlign = "start";
+let textBaseline = "alphabetic";
+let defaultTransform = [1, 0, 0, 1, 0, 0];
+let targetStack = [];
+let imageSmoothing = false;
+
+/** */
+export function setTarget(newTarget) {
+	targetStack.push(target);
+	target = newTarget;
+	context = target.context;
+}
+
+/** */
+export function resetTarget() {
+	let newTarget = targetStack.pop();
+	target = newTarget;
+	context = target.context;
+}
+
+/** */
+export function getTarget() {
+	return target;
+}
+
+/**
+ * @type {function{}:CanvasRenderingContext2D}
+ */
+export const getContext = () => context;
+
+/** */
+export function clear(col) {
+	canvas.fill(target, col);
+}
+
+/** */
+export function save() {
+	context.save();
+}
+
+/** */
+export function restore() {
+	context.restore();
+}
+
+/** */
+export function reset() {
+	context.imageSmoothingEnabled = imageSmoothing;
+	context.globalAlpha = 1;
+	if (context instanceof CanvasRenderingContext2D) {
+		context.setTransform.apply(context, defaultTransform);
+	}
+}
+
+/** */
+export function setImageSmoothing(enable) {
+	imageSmoothing = enable;
+}
+
+/**
+ * Can be a number, a hex-value or an object containing R,
+ * G, B and optionally A properties or H, S, L and optionally A properties.
+ * @type {function(*):void}
+ */
+export function setColor(c) {
+
+	// quick exit if c is already a CSS color value
+	if (typeof c === "string") {
+		color = c;
+		return;
 	}
 
-	/** */
-	static resetTarget() {
-		let target = Draw.targetStack.pop();
-		Draw.target = target;
-		Draw.context = target.context;
+	// RGB / RGBA
+	if (c.r !== undefined && c.g !== undefined && c.b !== undefined) {
+		var a = (c.a !== undefined) || 1;
+		color = "rgba("+c.r+","+c.g+","+c.b+","+a+")";
 	}
 
-	/** */
-	static getTarget() {
-		return Draw.target;
-	}
-
-	/** */
-	static clear(col) {
-		canvas.fill(Draw.target, col);
-	}
-
-	/** */
-	static save() {
-		Draw.context.save();
-	}
-
-	/** */
-	static restore() {
-		Draw.context.restore();
-	}
-
-	/** */
-	static reset() {
-		Draw.context.imageSmoothingEnabled = Draw.imageSmoothing;
-		Draw.context.globalAlpha = 1;
-		if (Draw.context instanceof CanvasRenderingContext2D) {
-			Draw.context.setTransform.apply(Draw.context, Draw.defaultTransform);
-		}
-	}
-
-	/** */
-	static setImageSmoothing(enable) {
-		Draw.imageSmoothing = enable;
-	}
-
-	/**
-	 * @param {*} c Can be a number, a hex-value or an object containing R,
-	 * G, B and optionally A properties or H, S, L and optionally A properties.
-	 * @return {void}
-	 */
-	static setColor(c) {
-
-		// quick exit if c is already a CSS color value
-		if (typeof c === "string") {
-			Draw.color = c;
-			return;
-		}
-
-		// RGB / RGBA
-		if (c.r !== undefined && c.g !== undefined && c.b !== undefined) {
-			var a = (c.a !== undefined) || 1;
-			Draw.color = "rgba("+c.r+","+c.g+","+c.b+","+a+")";
-		}
-
-		// HSL / HSLA
-		else if (c.h !== undefined && c.s !== undefined && c.l !== undefined) {
-			var a = (c.a !== undefined) || 1;
-			Draw.color = "hsla("+c.h+","+c.s+"%,"+c.l+"%,"+a+")";
-		}
-
-	}
-
-	/**
-	 * Draws the sprite at the given x, y position.
-	 * @param {Object} sprite
-	 * @param {number} index
-	 * @param {number} x
-	 * @param {number} y
-	 * @param {number} scaleX
-	 * @param {number} scaleY
-	 * @param {number} rotation
-	 * @param {Object} [opts={}]
-	 * @param {number} [originX] Overrides sprite's originX property.
-	 * @param {number} [originY] Overrides sprite's originY property.
-	 * @return {void}
-	 */
-	static sprite(spr, index, x, y, scaleX, scaleY, rotation, opts = {}) {
-
-		if (!spr) {
-			return;
-		}
-
-		var ctx = Draw.context;
-		if (!(ctx instanceof CanvasRenderingContext2D)) {
-			window.addConsoleText("#F00", "Sprites are currently only supported in Canvas 2D!");
-			window._GB_stop();
-			return;
-		}
-
-		spr = sprite.get(spr);
-
-		//
-		var ox = (opts.originX !== undefined) ? opts.originX : spr.originX;
-		var oy = (opts.originY !== undefined) ? opts.originY : spr.originY;
-
-		//
-		ctx.save();
-		ctx.translate(x, y);
-		ctx.rotate(rotation * math.DEGTORAD);
-		ctx.scale(scaleX, scaleY);
-
-		//
-		index = Math.floor(index || 0) % spr.images.length;
-
-		//
-		let frame = spr.images[index];
-		let img = frame.img;
-		ctx.drawImage(
-			img, frame.clip.x, frame.clip.y,
-			frame.clip.w, frame.clip.h,
-			-ox, -oy,
-			spr.width, spr.height
-		);
-
-		//
-		ctx.restore();
-	}
-
-	/**
-	 * Draws the sprite at the given x, y position.
-	 * @param {sprite} sprite
-	 * @param {number} x
-	 * @param {number} y
-	 * @param {number} w
-	 * @param {number} h
-	 */
-	static spriteTiled(spr, index, x, y, w, h) {
-		spr = sprite.get(spr);
-		let dx, dy, rx, ry;
-		for (rx=0, dx=x; rx<w; rx++, dx+=spr.width)
-		for (ry=0, dy=y; ry<h; ry++, dy+=spr.height) {
-			drawSprite(spr, index, dx, dy, 1, 1, 0);
-		}
-	}
-
-	/**
-	 * Draws a canvas at the given position.
-	 * @param {canvas} canvas The canvas to draw.
-	 * @param {number} x The X position to draw at.
-	 * @param {number} y The Y position to draw at.
-	 */
-	static canvas(canv, x, y) {
-		Draw.context.drawImage(canv.domElement, x, y);
-	}
-
-	/**
-	 * @param {string} font
-	 * @param {number} size
-	 * @param {string} align Horizontal alignment.
-	 * @param {string} baseline Vertical alignment.
-	 * @return {void}
-	 */
-	static setFont(font, size, align, baseline) {
-		var ctx = Draw.context;
-		font = typeof font === "string" ? font : font.name;
-		Draw.font = font;
-		Draw.fontSize = size || 16;
-		ctx.font = Draw.fontSize + "px " + font;
-		ctx.textAlign = Draw.textAlign = align || "left";
-		ctx.textBaseline = Draw.textBaseline = baseline || "alphabetic";
-	}
-
-	/**
-	 * @param {string} text
-	 * @param {number} x
-	 * @param {number} y
-	 * @param {Object=} opts
-	 * @return {void}
-	 */
-	static text(text, x, y, opts = {}) {
-
-		x = Number(x);
-		y = Number(y);
-
-		let drawSize, bitmap, lookup, scale, useBitmap = false;
-		let font = Font.get(Draw.font);
-		if (font && font.method === "bitmap") {
-
-			drawSize = font.forceSize || Draw.fontSize;
-			var c = Color.hexToArray(Draw.color);
-			var key = "" + drawSize + c[0] + c[1] + c[2] + c[3];
-
-			if (!font.bitmapFont[key]) {
-				font.convertToBitmapFont({
-					size: drawSize,
-					color: c
-				});
-			}
-
-			useBitmap = true;
-			lookup = font.bitmapFont[key].lookup
-			bitmap = font.bitmapFont[key].image;
-			scale = Draw.fontSize / font.bitmapFont[key].size;
-		}
-
-		//
-		let ctx = Draw.context;
-		let drawMethod = "fillText";
-		if (opts.stroke) {
-			ctx.strokeStyle = opts.strokeColor || Draw.color;
-			ctx.lineWidth = opts.lineWidth || 2;
-			drawMethod = "strokeText";
-		} else {
-			ctx.fillStyle = Draw.color;
-		}
-
-		//
-		let lineLength;
-		let drawX = x;
-		let startN = 0;
-		let endN = text.toString().length;
-		//if (opts.pattern) {
-			//startN = opts.pattern.start;
-			//endN = opts.pattern.end;
-		//}
-
-		//
-		let lineHeight = Draw.lineHeight || ctx.measureText("Mp").width * 1.2;
-		let lines = text.toString().split("#");
-		for (var i=0; i<lines.length; i++) {
-
-			if (opts.maxWidth) {
-				var words = lines[i].split(' ');
-				var line = '';
-
-				for(var n=0; n<words.length; n++) {
-
-					var testLine = line + words[n] + ' ';
-					var metrics = ctx.measureText(testLine);
-					var testWidth = metrics.width;
-					if (testWidth > opts.maxWidth && n > 0) {
-
-						let a = line.slice(0, startN);
-						let b = line.slice(startN, endN);
-						//drawX += Draw.measureText(a).width;
-						drawX += ctx.measureText(a).width;
-						if ( 0 < endN ) {
-							_drawWord(drawX, y, b, lookup, ctx, useBitmap, bitmap, scale, drawMethod);
-						}
-						lineLength = testLine.length;
-						startN -= lineLength;
-						endN -= lineLength;
-
-
-						line = words[n] + ' ';
-						y += lineHeight;
-						drawX = x;
-					} else {
-						line = testLine;
-					}
-
-				}
-
-				let a = line.slice(0, startN);
-				let b = line.slice(startN, endN);
-				drawX += ctx.measureText(a).width;
-				_drawWord(drawX, y, b, lookup, ctx, useBitmap, bitmap, scale, drawMethod);
-				lineLength = line.length;
-
-			} else {
-
-				let t = lines[i];
-				if (useBitmap && ctx.textAlign === "center") {
-					drawX -= ctx.measureText(t).width / 2;
-				}
-				_drawWord(~~drawX, y, t, lookup, ctx, useBitmap, bitmap, scale, drawMethod);
-
-			}
-
-			drawX = x;
-			y += lineHeight;
-
-		}
-
-
-
+	// HSL / HSLA
+	else if (c.h !== undefined && c.s !== undefined && c.l !== undefined) {
+		var a = (c.a !== undefined) || 1;
+		color = "hsla("+c.h+","+c.s+"%,"+c.l+"%,"+a+")";
 	}
 
 }
 
-Draw.color = "#FFFFFF";
-Draw.font = "Arial";
-Draw.fontSize = 30;
-Draw.lineHeight = 0;
-Draw.textAlign = "start";
-Draw.textBaseline = "alphabetic";
-Draw.target = null;
-Draw.context = null;
-Draw.defaultTransform = [1, 0, 0, 1, 0, 0];
-Draw.targetStack = [];
-Draw.imageSmoothing = false;
-Draw.offsetX = 0;
-Draw.offsetY = 0;
-Draw.shape = DrawShapes;
+/**
+ * Draws the sprite at the given x, y position.
+ * @type {function(Object, number, number, number, number, number, number, Object):void}
+ */
+export function drawSprite(spr, index, x, y, scaleX, scaleY, rotation, opts = {}) {
 
-Draw.transform = {
+	if (!spr) {
+		return;
+	}
 
-	scale: function(x, y) {
-		Draw.context.scale(x, y);
+	var ctx = context;
+	if (!(ctx instanceof CanvasRenderingContext2D)) {
+		window.addConsoleText("#F00", "Sprites are currently only supported in Canvas 2D!");
+		window._GB_stop();
+		return;
+	}
+
+	spr = sprite.get(spr);
+
+	//
+	var ox = (opts.originX !== undefined) ? opts.originX : spr.originX;
+	var oy = (opts.originY !== undefined) ? opts.originY : spr.originY;
+
+	//
+	ctx.save();
+	ctx.translate(x, y);
+	ctx.rotate(rotation * math.DEGTORAD);
+	ctx.scale(scaleX, scaleY);
+
+	//
+	index = Math.floor(index || 0) % spr.images.length;
+
+	//
+	let frame = spr.images[index];
+	let img = frame.img;
+	ctx.drawImage(
+		img, frame.clip.x, frame.clip.y,
+		frame.clip.w, frame.clip.h,
+		-ox, -oy,
+		spr.width, spr.height
+	);
+
+	//
+	ctx.restore();
+}
+
+/**
+ * @type {function(Object, number, number, number, number, number):void}
+ */
+export function lives(spr, x, y, number, order, seperation) {
+	const [xd, yd] = order ? [0, seperation] : [seperation, 0];
+	for (let n = 0; n < number; n++) {
+		drawSprite(spr, 0, x + xd * n, y + yd * n, 1, 1, 0);
+	}
+}
+
+/**
+ * Draws the sprite at the given x, y position.
+ * @type {function(Object, number, number, number, number, number):void}
+ */
+export function spriteTiled(spr, index, x, y, w, h) {
+	spr = sprite.get(spr);
+	for (let rx=0, dx=x; rx<w; rx++, dx+=spr.width)
+	for (let ry=0, dy=y; ry<h; ry++, dy+=spr.height) {
+		drawSprite(spr, index, dx, dy, 1, 1, 0);
+	}
+}
+
+/**
+ * Draws a canvas at the given position.
+ * @type {function(HTMLCanvasElement, number, number):void}
+ */
+export function drawCanvas(canv, x, y) {
+	context.drawImage(canv.domElement, x, y);
+}
+
+/**
+ * @type {function(string, number, string, string):void}
+ */
+export function setFont(font, size, align, baseline) {
+	font = typeof font === "string" ? font : font.name;
+	font = font;
+	fontSize = size || 16;
+	context.font = fontSize + "px " + font;
+	context.textAlign = textAlign = align || "left";
+	context.textBaseline = textBaseline = baseline || "alphabetic";
+}
+
+/**
+ * @type {function(string, number, number, Object=):void}
+ */
+export function text(str, x, y, opts = {}) {
+
+	x = Number(x);
+	y = Number(y);
+
+	let drawSize, bitmap, lookup, scale, useBitmap = false;
+	let fontActual = Font.get(font);
+	if (fontActual && fontActual.method === "bitmap") {
+
+		drawSize = fontActual.forceSize || fontSize;
+		var c = Color.hexToArray(color);
+		var key = "" + drawSize + c[0] + c[1] + c[2] + c[3];
+
+		if (!fontActual.bitmapFont[key]) {
+			fontActual.convertToBitmapFont({
+				size: drawSize,
+				color: c
+			});
+		}
+
+		useBitmap = true;
+		lookup = fontActual.bitmapFont[key].lookup
+		bitmap = fontActual.bitmapFont[key].image;
+		scale = fontSize / fontActual.bitmapFont[key].size;
+	}
+
+	//
+	let drawMethod = "fillText";
+	if (opts.stroke) {
+		context.strokeStyle = opts.strokeColor || color;
+		context.lineWidth = opts.lineWidth || 2;
+		drawMethod = "strokeText";
+	} else {
+		context.fillStyle = color;
+	}
+
+	//
+	let lineLength;
+	let drawX = x;
+	let startN = 0;
+	let endN = str.toString().length;
+	//if (opts.pattern) {
+		//startN = opts.pattern.start;
+		//endN = opts.pattern.end;
+	//}
+
+	//
+	let lineHeightActual = lineHeight || context.measureText("Mp").width * 1.2;
+	let lines = str.toString().split("#");
+	for (var i=0; i<lines.length; i++) {
+
+		if (opts.maxWidth) {
+			var words = lines[i].split(' ');
+			var line = '';
+
+			for(var n=0; n<words.length; n++) {
+
+				var testLine = line + words[n] + ' ';
+				var metrics = context.measureText(testLine);
+				var testWidth = metrics.width;
+				if (testWidth > opts.maxWidth && n > 0) {
+
+					let a = line.slice(0, startN);
+					let b = line.slice(startN, endN);
+					drawX += context.measureText(a).width;
+					if ( 0 < endN ) {
+						_drawWord(drawX, y, b, lookup, context, useBitmap, bitmap, scale, drawMethod);
+					}
+					lineLength = testLine.length;
+					startN -= lineLength;
+					endN -= lineLength;
+
+
+					line = words[n] + ' ';
+					y += lineHeightActual;
+					drawX = x;
+				} else {
+					line = testLine;
+				}
+
+			}
+
+			let a = line.slice(0, startN);
+			let b = line.slice(startN, endN);
+			drawX += context.measureText(a).width;
+			_drawWord(drawX, y, b, lookup, context, useBitmap, bitmap, scale, drawMethod);
+			lineLength = line.length;
+
+		} else {
+
+			let t = lines[i];
+			if (useBitmap && context.textAlign === "center") {
+				drawX -= context.measureText(t).width / 2;
+			}
+			_drawWord(~~drawX, y, t, lookup, context, useBitmap, bitmap, scale, drawMethod);
+
+		}
+
+		drawX = x;
+		y += lineHeightActual;
+
+	}
+
+
+
+}
+
+export const transform = {
+
+	scale: (x, y) => {
+		context.scale(x, y);
 	},
 
-	rotate: function(rot) {
-		Draw.context.rotate(rot * math.DEGTORAD);
+	rotate: (rot) => {
+		context.rotate(rot * math.DEGTORAD);
 	},
 
-	translate: function(x, y) {
-		Draw.offsetX = x;
-		Draw.offsetY = y;
-		Draw.context.translate(x, y);
+	translate: (x, y) => {
+		offsetX = x;
+		offsetY = y;
+		context.translate(x, y);
 	}
 }
 
@@ -354,6 +338,3 @@ function _drawWord(drawX, drawY, word, lookup, ctx, useBitmap, bitmap, scale, dr
 		ctx[drawMethod](word, drawX, drawY);
 	}
 }
-
-//
-export default Draw;

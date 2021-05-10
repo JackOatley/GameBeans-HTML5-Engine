@@ -1,6 +1,6 @@
 import Room from "./room.js";
 import Sound from "./Sound.js";
-import draw from "./draw.js";
+import * as draw from "./draw.js";
 import instance from "./instance.js";
 import input from "./inputs/input.js";
 import * as math from "./math.js";
@@ -191,10 +191,27 @@ let GAME = {
 		setGameSpeed: main.setGameSpeed
 	},
 	instance: instance,
-	draw: Object.assign(draw, {
+	draw: {
+		setTarget: draw.setTarget,
+		resetTarget: draw.resetTarget,
+		getTarget: draw.getTarget,
+		getContext: draw.getContext,
+		clear: draw.clear,
+		save: draw.save,
+		restore: draw.restore,
+		reset: draw.reset,
+		setImageSmoothing: draw.setImageSmoothing,
+		setColor: draw.setColor,
+		sprite: draw.drawSprite,
+		lives: draw.lives,
+		spriteTiled: draw.spriteTiled,
+		drawCanvas: draw.drawCanvas,
+		setFont: draw.setFont,
+		text: draw.text,
+		transform: draw.transform,
 		self: instance.drawSelf,
 		debug: instance.drawDebug
-	}),
+	},
 	Room: Room,
 	sprite: Sprite,
 	Sound: Sound,
@@ -241,6 +258,7 @@ let blockBegin = "blockBegin",
 	drawEllipse = draw.shape.ellipse,
 	drawSelf = instance.drawSelf,
 	drawSprite = draw.sprite,
+	drawLives = draw.lives,
 	soundPlay = (snd, loop) => Sound.play(snd, {loop: loop}),
 	soundStop = Sound.stop;
 
@@ -264,6 +282,7 @@ export {
 	drawSelf,
 	drawSelf as instanceDrawSelf,
 	drawSprite,
+	drawLives,
 	roomEnter, roomNext, roomPrevious,
 	blockBegin, blockEnd, ifElse,
 	exitEvent,

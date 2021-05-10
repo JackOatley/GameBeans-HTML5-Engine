@@ -1,6 +1,6 @@
 import Generator from "./generator.js";
 import Grid from "./data/grid.js";
-import Draw from "./draw.js";
+import * as Draw from "./draw.js";
 import Sprite from "./sprite.js";
 
 /**

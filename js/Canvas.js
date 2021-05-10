@@ -1,4 +1,4 @@
-import draw from "./draw.js";
+import * as draw from "./draw.js";
 import Generator from "./generator.js";
 
 /**
