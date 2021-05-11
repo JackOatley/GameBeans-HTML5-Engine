@@ -1,14 +1,10 @@
 import * as math from "./math.js";
-import input from "./inputs/input.js";
+import { mouse, triggerEvents } from "./inputs/input.js";
 import object from "./object.js";
 import sprite from "./sprite.js";
 import * as Draw from "./draw.js";
-import global from "./global.js";
 
 const INSTANCE_HARD_LIMIT = 10000;
-
-//
-window.global = global;
 
 //
 const instanceArray = [];
@@ -49,11 +45,7 @@ class instance {
 	}
 
 	/**
-	 * @param {object} obj
-	 * @param {number} x
-	 * @param {number} y
-	 * @param {number} speed
-	 * @param {number} direction
+	 * @type {function(Object, number, number, number, number):Object}
 	 */
 	static createMoving(obj, x, y, speed, direction) {
 		const newInst = instance.create(obj, x, y);
@@ -82,7 +74,7 @@ class instance {
 		inst.boxCollision = {};
 
 		//
-		let spr = sprite.get(inst.sprite);
+		const spr = sprite.get(inst.sprite);
 		if (spr) {
 			inst.boxCollision.x = spr.originX;
 			inst.boxCollision.y = spr.originY;
@@ -99,36 +91,32 @@ class instance {
 
 	/**
 	 * Finds instance n of the given object.
-	 * @param {Object} obj
-	 * @param {number=} n
-	 * @return {?Object}
+	 * @type {function(Object, number=):Object}
 	 */
 	static find(obj, n=0) {
 		if (typeof obj === "function") obj = obj.objectName;
-		let i, c=0, inst;
-		for (i=0; i<instanceArray.length; i++) {
-			inst = instanceArray[i];
-			if (inst.objectName === obj) {
-				if (c++ === n)
-					return inst;
+		const length = instanceArray.length;
+		for (let i = 0, c = 0; i<length; i++) {
+			const inst = instanceArray[i];
+			if (inst.objectName === obj && c++ === n) {
+				return inst;
 			}
 		}
 		return null;
 	}
 
-	/** */
+	/**
+	 * @type {function(Object!string):Object}
+	 */
 	static findRandom(obj) {
 		if (typeof obj === "function") obj = obj.objectName;
-		let n = math.randomInt(0, count(obj) - 1);
+		const n = math.randomInt(0, count(obj) - 1);
 		return find(obj, n);
 	}
 
 	/**
 	 * Find the nearest instance of an object to a point.
-	 * @param {number} x
-	 * @param {number} y
-	 * @param {string|Object} obj
-	 * @param {?Object}
+	 * @type {function(number, number, Object!string):Object}
 	 */
 	static nearest(x, y, obj) {
 
@@ -156,15 +144,12 @@ class instance {
 
 	/**
 	 * Find the furthest instance of an object from a point.
-	 * @param {number} x
-	 * @param {number} y
-	 * @param {string|Object} obj
-	 * @param {?Object}
+	 * @type {function(number, number, Object!string):Object}
 	 */
 	static furthest(x, y, obj) {
 		let all = object.get(obj).getAllInstances();
-		if (all.length === 0) { return null; }
-		if (all.length === 1) { return all[0]; }
+		if (all.length === 0) return null;
+		if (all.length === 1) return all[0];
 		let frst, dist = 0, newDist;
 		all.forEach(inst => {
 			newDist = math.pointDistance(x, y, inst.x, inst.y);
@@ -178,31 +163,27 @@ class instance {
 
 	/**
 	 * Returns the number of instances of a given object.
-	 * @param {string|Object} obj
-	 * @return {number}
+	 * @type {function(Object!string):number}
 	 */
 	static count(obj) {
 		const name = object.get(obj).objectName;
-		var c = 0;
-		for (var n=instanceArray.length-1; n>0; n--) {
+		const length = instanceArray.length;
+		let c = 0;
+		for (let n = 0; n < length; n++) {
 			c += (instanceArray[n].objectName === name);
 		}
 		return c;
 	}
 
 	/**
-	 * @param {number} rotation
-	 * @param {boolean} relative
-	 * @return {void}
+	 * @type {function(number, boolean):void}
 	 */
 	static setRotation(rotation, relative) {
 		this.rotation = (relative) ? this.rotation + rotation : rotation;
 	}
 
 	/**
-	 * @param {number} rotation
-	 * @param {boolean} relative
-	 * @return {void}
+	 * @type {function(number, boolean):void}
 	 */
 	static setDirection(direction, relative) {
 		this.direction = (relative) ? this.direction + direction : direction;
@@ -229,19 +210,14 @@ class instance {
 	}
 
 	/**
-	 * @param {object} inst
-	 * @param {number} x
-	 * @param {number} y
-	 * @return {number}
+	 * @type {function(Object, number, number):number}
 	 */
 	static distanceToPoint(inst, x, y) {
 		return math.pointDistance(inst.x, inst.y, x, y);
 	}
 
 	/**
-	 * @param {object} inst1
-	 * @param {object} inst2
-	 * @return {number}
+	 * @type {function(Object, Object):number}
 	 */
 	static distanceToInstance(inst1, inst2) {
 		return math.pointDistance(inst1.x, inst1.y, inst2.x, inst2.y);
@@ -249,9 +225,10 @@ class instance {
 
 	/** */
 	static position(x, y, obj) {
-		let all = object.get(obj).getAllInstances();
-		for (var n=0; n<all.length; n++) {
-			let inst = all[n];
+		const all = object.get(obj).getAllInstances();
+		const length = all.length;
+		for (var n=0; n<length; n++) {
+			const inst = all[n];
 			if (instance.pointOn(x, y, inst)) {
 				return inst;
 			}
@@ -261,7 +238,6 @@ class instance {
 
 	/** Returns whether the given point is over the given instance. */
 	static pointOn(x, y, inst) {
-		//console.log(x, Draw.offsetX, x - Draw.offsetX);
 		return !(inst.boxTop > y - Draw.offsetY
 		|| inst.boxBottom < y - Draw.offsetY
 		|| inst.boxLeft > x - Draw.offsetX
@@ -270,7 +246,7 @@ class instance {
 
 	/** */
 	static mouseOn(inst) {
-		return instance.pointOn(input.mouse.x, input.mouse.y, inst);
+		return instance.pointOn(mouse.x, mouse.y, inst);
 	}
 
 	/**
@@ -291,7 +267,7 @@ class instance {
 		instanceExecuteListeners(inst);
 
 		// Input events.
-		input.triggerEvents.forEach((event) => {
+		triggerEvents.forEach(event => {
 			executeEvent(inst, event);
 		});
 
@@ -629,7 +605,7 @@ function instanceCollisionInstance(inst, target) {
 /**
  *
  */
-const checkCollision = (inst, x, y, obj) => {
+export const checkCollision = (inst, x, y, obj) => {
 	if (!inst.exists) return false;
 	const box1 = inst.boxCollision;
 	const arr = getInstancesObject(obj);
@@ -647,7 +623,7 @@ const checkCollision = (inst, x, y, obj) => {
 /**
  *
  */
-const checkCollisionPoint = (obj, x, y) => {
+export const checkCollisionPoint = (obj, x, y) => {
 	const arr = getInstancesObject(obj);
 	for (let n = 0; n < arr.length; n++) {
 		const targ = arr[n];

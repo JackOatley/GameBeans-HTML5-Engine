@@ -5,4 +5,6 @@ let global = {
 	fpsNow: 0
 }
 
+window.global = global;
+
 export default global;

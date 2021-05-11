@@ -80,4 +80,10 @@ Input.mouse = mouse;
 Input.keyboard = keyboard;
 Input.touch = touch;
 
+const triggerEvents = Input.triggerEvents;
+
+export {
+	mouse, keyboard, touch, triggerEvents
+}
+
 export default Input;
