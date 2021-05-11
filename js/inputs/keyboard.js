@@ -1,11 +1,8 @@
 import keyValues from "../keyvalues.js";
 
-// Keyboard object
-export const keyboard = {
-	press: {},
-	down: {},
-	release: {}
-}
+export const press = {};
+export const down = {};
+export const release = {};
 
 /**
  *
@@ -13,23 +10,23 @@ export const keyboard = {
 export function init() {
 
 	keyValues.forEach((key) => {
-		keyboard.press[key] = false;
-		keyboard.down[key] = false;
-		keyboard.release[key] = false;
+		press[key] = false;
+		down[key] = false;
+		release[key] = false;
 	});
 
 	document.addEventListener("keydown", e => {
 		e.preventDefault();
-		if (!keyboard.down[e.code]) {
-			keyboard.press[e.code] = true;
-			keyboard.down[e.code] = true;
+		if (!down[e.code]) {
+			press[e.code] = true;
+			down[e.code] = true;
 		}
 	});
 
 	document.addEventListener("keyup", e => {
 		e.preventDefault();
-		keyboard.release[e.code] = true;
-		keyboard.down[e.code] = false;
+		release[e.code] = true;
+		down[e.code] = false;
 	});
 
 }
@@ -37,20 +34,20 @@ export function init() {
 /**
  *
  */
-export function update() {
-	Object.keys(keyboard.down).forEach((key) => {
-		keyboard.press[key] = false;
-		keyboard.release[key] = false;
+export const update = () => {
+	Object.keys(down).forEach((key) => {
+		press[key] = false;
+		release[key] = false;
 	});
 }
 
 /**
  *
  */
-export function clear() {
-	Object.keys(keyboard.down).forEach((key) => {
-		keyboard.down[key] = false;
-		keyboard.press[key] = false;
-		keyboard.release[key] = false;
+export const clear = () => {
+	Object.keys(down).forEach((key) => {
+		down[key] = false;
+		press[key] = false;
+		release[key] = false;
 	});
 }

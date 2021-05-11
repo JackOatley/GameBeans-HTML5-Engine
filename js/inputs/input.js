@@ -33,14 +33,14 @@ class Input {
 		triggers.length = 0;
 
 		// Keyboard events.
-		Object.keys(keyboard.keyboard.down).forEach((key) => {
+		Object.keys(keyboard.down).forEach((key) => {
 			if (keyValues.includes(key)) {
-				if (keyboard.keyboard.down[key]) triggers.push(key);
-				if (keyboard.keyboard.press[key]) triggers.push(key + "Press");
-				if (keyboard.keyboard.release[key]) triggers.push(key + "Release");
+				if (keyboard.down[key]) triggers.push(key);
+				if (keyboard.press[key]) triggers.push(key + "Press");
+				if (keyboard.release[key]) triggers.push(key + "Release");
 			} else {
 				console.warn( "input key not supported: ", key );
-				delete keyboard.keyboard.down[key];
+				delete keyboard.down[key];
 			}
 		});
 

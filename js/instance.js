@@ -603,43 +603,92 @@ function executeEvent(inst, event, otherInst) {
 
 }
 
-/** */
+/**
+ * @type {function(Object, Object|string):void}
+ */
 function instanceCollisionInstance(inst, target) {
-
 	if (!inst.exists) return;
-
-	//
-	let arr =(target === "solid")
-		? getAllSolid(target)
-	 	: object.getAllInstances(target);
-
-	let box1 = inst.boxCollision;
-	arr.forEach(function(targ) {
+	const box1 = inst.boxCollision;
+	const arr = getInstancesObject(target);
+	for (let n = 0; n < arr.length; n++) {
 
 		// If target doesn't exist, or is same instance
+		const targ = arr[n];
 		if (!targ.exists || inst === targ)
-			return;
+			continue;
 
 		// No collision, boxes do not overlap.
-		let box2 = targ.boxCollision;
-		if (box1.left > box2.right
-		|| box1.right < box2.left
-		|| box1.top > box2.bottom
-		|| box1.bottom < box2.top)
-			return;
+		if (!boxOverlapBox(box1, targ.boxCollision))
+			continue;
 
-		// Execute collision event.
 		executeEvent(inst, "collision_" + target, targ);
 
-	});
-
+	}
 }
 
 /**
- * @param {Object} inst
- * @param {Array} actions
- * @param {Object} otherInst
- * @return {void}
+ *
+ */
+const checkCollision = (inst, x, y, obj) => {
+	if (!inst.exists) return false;
+	const box1 = inst.boxCollision;
+	const arr = getInstancesObject(obj);
+	for (let n = 0; n < arr.length; n++) {
+		const targ = arr[n];
+		if (targ.exists && inst !== targ) {
+			if (boxOverlapBox(box1, targ.boxCollision, x, y)) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+/**
+ *
+ */
+const checkCollisionPoint = (obj, x, y) => {
+	const arr = getInstancesObject(obj);
+	for (let n = 0; n < arr.length; n++) {
+		const targ = arr[n];
+		if (targ.exists) {
+			if (pointInBox(x, y, targ.boxCollision,)) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+/**
+ * Returns an array of instances of the given object. If the object provided is
+ * is a string constaining "solid", all instances of solid objects are returned.
+ * @type {function(Object|string):Array}
+ */
+const getInstancesObject = obj => {
+	if (obj === "solid") return getAllSolid(obj);
+	return object.getAllInstances(obj);
+}
+
+/**
+ * @type {function(Object, Object):boolean}
+ */
+const boxOverlapBox = (b1, b2, x1=0, y1=0) => {
+	return (!((x1 + b1.left) > b2.right
+	|| (x1 + b1.right) < b2.left
+	|| (y1 + b1.top) > b2.bottom
+	|| (y1 + b1.bottom) < b2.top));
+}
+
+/**
+ * @type {function(Object, Object):boolean}
+ */
+const pointInBox = (x, y, b) => {
+	return (!(x > b.right || x < b.left || y > b.bottom || y < b.top));
+}
+
+/**
+ * @type {function(Object, Array, Object):void}
  */
 function executeActions(inst, actions, otherInst) {
 	const steps = [];
@@ -690,5 +739,9 @@ function executeActions(inst, actions, otherInst) {
 	}
 
 }
+
+// Fix this stuff
+instance.checkCollision = checkCollision;
+instance.checkCollisionPoint = checkCollisionPoint;
 
 export default instance;

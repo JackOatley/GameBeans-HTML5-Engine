@@ -11,7 +11,7 @@ export let x = 0;
 export let y = 0;
 
 /**
- *
+ * @type {function():void}
  */
 export const init = () => {
 
@@ -50,7 +50,7 @@ export const init = () => {
 }
 
 /**
- *
+ * @type {function():void}
  */
 export const update = () => {
 	wheelUp = false;

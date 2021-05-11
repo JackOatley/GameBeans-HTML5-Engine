@@ -11,10 +11,10 @@ export function FourWayMovement(speed, keys) {
 
 		// Get direction
 		let dir = 0;
-		if (input.keyboard.keyboard.down[keys[0]]) dir = 1;
-		if (input.keyboard.keyboard.down[keys[1]]) dir = 2;
-		if (input.keyboard.keyboard.down[keys[2]]) dir = 3;
-		if (input.keyboard.keyboard.down[keys[3]]) dir = 4;
+		if (input.keyboard.down[keys[0]]) dir = 1;
+		if (input.keyboard.down[keys[1]]) dir = 2;
+		if (input.keyboard.down[keys[2]]) dir = 3;
+		if (input.keyboard.down[keys[3]]) dir = 4;
 
 		// Apply
 		switch (dir) {
