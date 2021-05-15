@@ -72,7 +72,6 @@ class GameObject {
 
 		// If flow action, get flow tag.
 		let flow = "";
-		//console.warn(action);
 		if (typeof action === "string") {
 			flow = action;
 		}
@@ -82,11 +81,16 @@ class GameObject {
 			this.prototype.events[event] = [];
 		}
 
+		//
+		if (event === "outsideroom") {
+			GameObject.addListener(this, "outsideroom");
+		}
+
 		// Create collision listeners, if applicable.
 		if (event.includes("collision_")) {
-			let index = event.indexOf("_") + 1;
-			let name = event.slice(index, 200);
-			GameObject.addCollisionListener(this, name);
+			const index = event.indexOf("_") + 1;
+			const name = event.slice(index, 200);
+			GameObject.addListener(this, "collision", name);
 		}
 
 		// Add action to event.
@@ -100,9 +104,9 @@ class GameObject {
 	/**
 	 *
 	 */
-	addCollisionListener(target) {
+	addListener(type, target="") {
 		this.prototype.listeners.push({
-			type: "collision",
+			type: type,
 			target: target
 		});
 	}

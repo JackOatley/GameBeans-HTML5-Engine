@@ -1,4 +1,4 @@
-import { ARROW_KEYS, WASD_KEYS, input, math } from "./../core.js";
+import { ARROW_KEYS, WASD_KEYS, input, math } from "../core.js";
 
 export function EightWayMovement(speed, keys) {
 

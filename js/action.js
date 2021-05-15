@@ -130,14 +130,14 @@ function moveReverseY() {
  * @type {function():void}
  */
 function actionWrap() {
-	const width = this.boxRight - this.boxLeft;
-	const height = this.boxBottom - this.boxTop;
-	const roomW = Room.current.width;
-	const roomH = Room.current.height;
-	if (this.boxRight < 0) this.x += roomW + width;
-	if (this.boxBottom < 0) this.y += roomH + height;
-	if (this.boxLeft > roomW) this.x -= roomW + width;
-	if (this.boxTop > roomH) this.y -= roomH + height;
+	const w = this.boxRight - this.boxLeft;
+	const h = this.boxBottom - this.boxTop;
+	const rw = Room.current.width;
+	const rh = Room.current.height;
+	if (this.boxRight < 0) this.x += rw + w;
+	if (this.boxBottom < 0) this.y += rh + h;
+	if (this.boxLeft > rw) this.x -= rw + w;
+	if (this.boxTop > rh) this.y -= rh + h;
 }
 
 /**
@@ -145,15 +145,14 @@ function actionWrap() {
  * @type {function():void}
  */
 function actionConfine() {
-	const width = this.boxRight - this.boxLeft;
-	const height = this.boxBottom - this.boxTop;
-	const thisRoom = Room.current;
-	const roomW = thisRoom.width;
-	const roomH = thisRoom.height;
+	const w = this.boxRight - this.boxLeft;
+	const h = this.boxBottom - this.boxTop;
+	const rw = Room.current.width;
+	const rh = Room.current.height;
 	if (this.boxLeft < 0) this.x = this.x - this.boxLeft;
 	if (this.boxTop < 0) this.y = this.y - this.boxTop;
-	if (this.boxRight > roomW) this.x = roomW - width + this.x - this.boxLeft;
-	if (this.boxBottom > roomH) this.y = roomH - height + this.y - this.boxTop;
+	if (this.boxRight > rw) this.x = rw - w + this.x - this.boxLeft;
+	if (this.boxBottom > rh) this.y = rh - h + this.y - this.boxTop;
 }
 
 /**

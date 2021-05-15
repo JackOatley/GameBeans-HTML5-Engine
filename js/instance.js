@@ -3,6 +3,7 @@ import { mouse, triggerEvents } from "./inputs/input.js";
 import object from "./object.js";
 import sprite from "./sprite.js";
 import * as Draw from "./draw.js";
+import Room from "./room.js";
 
 const INSTANCE_HARD_LIMIT = 10000;
 
@@ -212,15 +213,15 @@ class instance {
 	/**
 	 * @type {function(Object, number, number):number}
 	 */
-	static distanceToPoint(inst, x, y) {
-		return math.pointDistance(inst.x, inst.y, x, y);
+	static distanceToPoint(i, x, y) {
+		return math.pointDistance(i.x, i.y, x, y);
 	}
 
 	/**
 	 * @type {function(Object, Object):number}
 	 */
-	static distanceToInstance(inst1, inst2) {
-		return math.pointDistance(inst1.x, inst1.y, inst2.x, inst2.y);
+	static distanceToInstance(i1, i2) {
+		return math.pointDistance(i1.x, i1.y, i2.x, i2.y);
 	}
 
 	/** */
@@ -263,7 +264,17 @@ class instance {
 		updateBoundingBox(inst);
 		updateCollisionBox(inst);
 
-		// Collision events.
+		// Outside room.
+		if (inst.events["outsideroom"]) {
+			if (inst.boxBottom < 0
+			||  inst.boxRight < 0
+			||  inst.boxTop > Room.current.height
+			||  inst.boxLeft > Room.current.width) {
+				executeEvent(inst, "outsideroom");
+			}
+		}
+
+		// Event listeners.
 		instanceExecuteListeners(inst);
 
 		// Input events.
@@ -349,23 +360,21 @@ class instance {
 	static stepAll() {
 		newStep();
 		let arr = instanceArray.slice();
-		arr.forEach(function(inst) { executeEvent(inst, "stepBegin"); });
+		arr.forEach(inst => executeEvent(inst, "stepBegin"));
 		arr.forEach(instance.step);
-		arr.forEach(function(inst) { executeEvent(inst, "stepEnd"); });
+		arr.forEach(inst => executeEvent(inst, "stepEnd"));
 		clearDestroyed();
 	}
 
 	/** */
 	static drawAll() {
-		if (doDepthSort) {
-			instanceArray.sort(sortFunction);
-		}
+		if (doDepthSort) instanceArray.sort(sortFunction);
 		instanceArray.forEach(instance.draw);
 	}
 
 	/** */
 	static drawGuiAll() {
-		var n = instanceArray.length;
+		let n = instanceArray.length;
 		while (n--) {
 			executeEvent(instanceArray[n], "drawGUI");
 		}
@@ -375,10 +384,10 @@ class instance {
 
 /** Resets some instance variables/states. */
 function newStep() {
-	let arr = instanceArray.slice();
-	let i, n = arr.length;
+	const arr = instanceArray.slice();
+	let n = arr.length;
 	while (n--) {
-		i = arr[n];
+		const i = arr[n];
 		i.previousX = i.x;
 		i.previousY = i.y;
 	}
@@ -537,19 +546,20 @@ const sortFunction = (a, b) =>
  * @return {void}
  */
 function instanceExecuteListeners(inst) {
-	inst.listeners.forEach((listener) => {
-		if (listener.type === "collision") {
-			instanceCollisionInstance(inst, listener.target);
+	const length = inst.listeners.length;
+	for (let n = 0; n < length; n++) {
+		const l = inst.listeners[n];
+		switch (l.type) {
+			case ("outsideroom"): outsideRoom(inst); break;
+			case ("collision"): instanceCollisionInstance(inst, l.target); break;
 		}
-	});
+	}
 }
 
 /**
  * Execute an event for the given instance only.
- * @param {Object} inst
- * @param {event} event
- * @param {Object} otherInst The other instance, in collisions for example.
- * @return {void}
+ * TODO: This try catch setup has got to be slow, right?
+ * @type {function(Object, Object, Object):return}
  */
 function executeEvent(inst, event, otherInst) {
 
@@ -583,6 +593,7 @@ function executeEvent(inst, event, otherInst) {
  * @type {function(Object, Object|string):void}
  */
 function instanceCollisionInstance(inst, target) {
+
 	if (!inst.exists) return;
 	const box1 = inst.boxCollision;
 	const arr = getInstancesObject(target);
@@ -600,6 +611,17 @@ function instanceCollisionInstance(inst, target) {
 		executeEvent(inst, "collision_" + target, targ);
 
 	}
+}
+
+/**
+ * @type {function(Object):void}
+ */
+export const outsideRoom = i => {
+	if (i.boxBottom < 0
+	||  i.boxRight < 0
+	||  i.boxTop > Room.current.height
+	||  i.boxLeft > Room.current.width)
+		executeEvent(i, "outsideroom");
 }
 
 /**
@@ -628,7 +650,7 @@ export const checkCollisionPoint = (obj, x, y) => {
 	for (let n = 0; n < arr.length; n++) {
 		const targ = arr[n];
 		if (targ.exists) {
-			if (pointInBox(x, y, targ.boxCollision,)) {
+			if (pointInBox(x, y, targ.boxCollision)) {
 				return true;
 			}
 		}
