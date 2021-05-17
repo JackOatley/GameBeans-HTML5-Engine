@@ -8,6 +8,7 @@ export const DEGTORAD = PI / 180;
 export const cos = Math.cos;
 export const sin = Math.sin;
 export const sign = Math.sign;
+export const mod = (a, n) => a - Math.floor(a/n) * n;
 
 /**
  *
@@ -64,7 +65,8 @@ export const pointDirection = function(x1, y1, x2, y2) {
  *
  */
 export const angleDifference = function(angle1, angle2) {
-	const diff = (angle2 - angle1) % 360;
-	if (diff <= -180) return diff + 360;
-	return diff - 360;
+	let d = mod(angle2 - angle1, 360);
+	if (d < -180) d += 360;
+	if (d > 180)  d -= 360;
+	return d;
 }

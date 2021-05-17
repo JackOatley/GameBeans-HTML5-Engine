@@ -1,4 +1,4 @@
-import * as math from "./math.js";
+import { DEGTORAD } from "./math.js";
 import sprite from "./sprite.js";
 import canvas from "./Canvas.js";
 import Font from "./font.js";
@@ -108,36 +108,30 @@ export function setColor(c) {
  */
 export function drawSprite(spr, index, x, y, scaleX, scaleY, rotation, opts = {}) {
 
-	if (!spr) {
-		return;
-	}
+	if (!spr) return;
 
-	var ctx = context;
-	if (!(ctx instanceof CanvasRenderingContext2D)) {
+	if (!(context instanceof CanvasRenderingContext2D)) {
 		window.addConsoleText("#F00", "Sprites are currently only supported in Canvas 2D!");
-		window._GB_stop();
-		return;
+		return window._GB_stop();
 	}
 
 	spr = sprite.get(spr);
 
 	//
-	var ox = (opts.originX !== undefined) ? opts.originX : spr.originX;
-	var oy = (opts.originY !== undefined) ? opts.originY : spr.originY;
+	context.save();
+	context.translate(x, y);
+	context.rotate(rotation * DEGTORAD);
+	context.scale(scaleX, scaleY);
 
-	//
-	ctx.save();
-	ctx.translate(x, y);
-	ctx.rotate(rotation * math.DEGTORAD);
-	ctx.scale(scaleX, scaleY);
-
-	//
+	// TODO: What does this do with negative numbers?
 	index = Math.floor(index || 0) % spr.images.length;
 
 	//
-	let frame = spr.images[index];
-	let img = frame.img;
-	ctx.drawImage(
+	const ox = opts.originX ?? spr.originX;
+	const oy = opts.originY ?? spr.originY;
+	const frame = spr.images[index];
+	const img = frame.img;
+	context.drawImage(
 		img, frame.clip.x, frame.clip.y,
 		frame.clip.w, frame.clip.h,
 		-ox, -oy,
@@ -145,37 +139,45 @@ export function drawSprite(spr, index, x, y, scaleX, scaleY, rotation, opts = {}
 	);
 
 	//
-	ctx.restore();
+	context.restore();
 }
 
 /**
  * @type {function(Object, number, number, number, number, number):void}
  */
-export function lives(spr, x, y, number, order, seperation) {
+export const lives = (spr, x, y, number, order, seperation) => {
 	const [xd, yd] = order ? [0, seperation] : [seperation, 0];
-	for (let n = 0; n < number; n++) {
+	for (let n = 0; n < number; n++)
 		drawSprite(spr, 0, x + xd * n, y + yd * n, 1, 1, 0);
-	}
 }
 
 /**
  * Draws the sprite at the given x, y position.
  * @type {function(Object, number, number, number, number, number):void}
  */
-export function spriteTiled(spr, index, x, y, w, h) {
+export const spriteTiled = (spr, index, x, y, w, h) => {
 	spr = sprite.get(spr);
 	for (let rx=0, dx=x; rx<w; rx++, dx+=spr.width)
-	for (let ry=0, dy=y; ry<h; ry++, dy+=spr.height) {
+	for (let ry=0, dy=y; ry<h; ry++, dy+=spr.height)
 		drawSprite(spr, index, dx, dy, 1, 1, 0);
-	}
 }
 
 /**
  * Draws a canvas at the given position.
  * @type {function(HTMLCanvasElement, number, number):void}
  */
-export function drawCanvas(canv, x, y) {
+export const drawCanvas = (canv, x, y) => {
 	context.drawImage(canv.domElement, x, y);
+}
+
+/**
+ *
+ */
+export const setShadow = (color, blur, x, y) => {
+	context.shadowColor = color;
+	context.shadowBlur = blur;
+	context.shadowOffsetX = x;
+	context.shadowOffsetY = y;
 }
 
 /**
@@ -307,7 +309,7 @@ export const transform = {
 	},
 
 	rotate: (rot) => {
-		context.rotate(rot * math.DEGTORAD);
+		context.rotate(rot * DEGTORAD);
 	},
 
 	translate: (x, y) => {

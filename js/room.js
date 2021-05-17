@@ -124,10 +124,10 @@ class Room {
 		if (this.backgroundMethod.indexOf("iso-") !== -1) {
 
 			let pattern = this.backgroundMethod.replace("iso-", "");
-			let xpos = Camera.currentlyDrawing.left - this.backgroundX;
-			let ypos = Camera.currentlyDrawing.top - this.backgroundY;
-			let camWidth = Camera.currentlyDrawing.width;
-			let camHeight = Camera.currentlyDrawing.height;
+			let xpos = Camera?.currentlyDrawing?.left ?? 0 - this.backgroundX;
+			let ypos = Camera?.currentlyDrawing?.top ?? 0 - this.backgroundY;
+			let camWidth = Camera?.currentlyDrawing?.width ?? this.width;
+			let camHeight = Camera?.currentlyDrawing?.height ?? this.height;
 
 			// First.
 			ctx.save();
