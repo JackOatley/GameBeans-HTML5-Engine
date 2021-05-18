@@ -210,6 +210,10 @@ class instance {
 		inst.y += vec[1];
 	}
 
+	static directionToPoint(x, y, speed) {
+		directionToPoint(this, x, y, speed);
+	}
+
 	/**
 	 * @type {function(Object, number, number):number}
 	 */
@@ -382,8 +386,18 @@ class instance {
 
 }
 
+/**
+ *
+ */
+export const directionToPoint = (i, x, y, s) => {
+	const to = math.pointDirection(i.x, i.y, x, y);
+	const diff = math.angleDifference(i.direction, to);
+	const max = Math.min(s, Math.abs(diff));
+	i.direction += max * directionToPoint
+}
+
 /** Resets some instance variables/states. */
-function newStep() {
+function newStep(i) {
 	const arr = instanceArray.slice();
 	let n = arr.length;
 	while (n--) {
@@ -698,6 +712,7 @@ function executeActions(inst, actions, otherInst) {
 	for (var a=0; a<len; a++) {
 
 		var action = actions[a];
+
 		switch (action.flow) {
 
 			// regular action
