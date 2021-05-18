@@ -8,392 +8,386 @@ import Room from "./room.js";
 const INSTANCE_HARD_LIMIT = 10000;
 
 //
-const instanceArray = [];
+export const instanceArray = [];
 const otherStack = [];
-var uniqueId = 1;
-var doDepthSort = false;
-var currentEvent = "";
+let uniqueId = 1;
+let doDepthSort = false;
+let currentEvent = "";
 
-//
-class instance {
+export const setDepthSort = x  => doDepthSort = x;
 
-	static get instanceArray() { return instanceArray; }
-	static set doDepthSort(x) { doDepthSort = x; }
+//static get instanceArray() { return instanceArray; }
+//static set doDepthSort(x) { doDepthSort = x; }
 
-	/**
-	 * Create a new instance of an object.
-	 * @param {string|Object} obj
-	 * @param {number} x
-	 * @param {number} y
-	 * @return {?Object}
-	 */
-	static create(obj, x, y) {
+/**
+ * Create a new instance of an object.
+ * @param {string|Object} obj
+ * @param {number} x
+ * @param {number} y
+ * @return {?Object}
+ */
+export function create(obj, x, y) {
 
-		var o = object.get(obj);
+	var o = object.get(obj);
 
-		if (o === null) {
-			window.addConsoleText("#F00", "Instance creation failed! No such object as " + obj + ".");
-			return null;
-		}
-
-		if (instanceArray.length >= INSTANCE_HARD_LIMIT) {
-			window.addConsoleText("#F00", "instance number hard limit reached:", INSTANCE_HARD_LIMIT);
-			return null;
-		}
-
-		return new o(x, y);
-
-	}
-
-	/**
-	 * @type {function(Object, number, number, number, number):Object}
-	 */
-	static createMoving(obj, x, y, speed, direction) {
-		const newInst = instance.create(obj, x, y);
-		newInst.speed = speed;
-		newInst.direction = direction;
-		return newInst;
-	}
-
-	/**
-	 *
-	 */
-	static setup(inst, o, x, y) {
-
-		inst.id = uniqueId++;
-		inst.exists = true;
-		inst.speed = 0;
-		inst.object = o;
-		inst.objectName = o.objectName;
-		inst.assetType = "instance";
-		inst.x = Number(x);
-		inst.y = Number(y);
-		inst.startX = inst.x;
-		inst.startY = inst.y;
-		inst.previousX = inst.x;
-		inst.previousY = inst.y;
-		inst.boxCollision = {};
-
-		//
-		const spr = sprite.get(inst.sprite);
-		if (spr) {
-			inst.boxCollision.x = spr.originX;
-			inst.boxCollision.y = spr.originY;
-			inst.boxCollision.width = spr.width;
-			inst.boxCollision.height = spr.height;
-		}
-
-		//
-		addToArray(inst);
-		updateBoundingBox(inst);
-		updateCollisionBox(inst);
-		executeEvent(inst, "create");
-	}
-
-	/**
-	 * Finds instance n of the given object.
-	 * @type {function(Object, number=):Object}
-	 */
-	static find(obj, n=0) {
-		if (typeof obj === "function") obj = obj.objectName;
-		const length = instanceArray.length;
-		for (let i = 0, c = 0; i<length; i++) {
-			const inst = instanceArray[i];
-			if (inst.objectName === obj && c++ === n) {
-				return inst;
-			}
-		}
+	if (o === null) {
+		window.addConsoleText("#F00", "Instance creation failed! No such object as " + obj + ".");
 		return null;
 	}
 
-	/**
-	 * @type {function(Object!string):Object}
-	 */
-	static findRandom(obj) {
-		if (typeof obj === "function") obj = obj.objectName;
-		const n = math.randomInt(0, count(obj) - 1);
-		return find(obj, n);
-	}
-
-	/**
-	 * Find the nearest instance of an object to a point.
-	 * @type {function(number, number, Object!string):Object}
-	 */
-	static nearest(x, y, obj) {
-
-		var all = [];
-		if (!Array.isArray(obj)) {
-			all.push(...(object.get(obj).getAllInstances()));
-		} else {
-			obj.forEach(o => {
-				all.push(...(object.get(o).getAllInstances()));
-			});
-		}
-
-		if (all.length === 0) { return null; }
-		if (all.length === 1) { return all[0]; }
-		let nrst, dist = 1e9, newDist;
-		all.forEach(inst => {
-			newDist = math.pointDistance(x, y, inst.x, inst.y);
-			if (newDist < dist) {
-				nrst = inst;
-				dist = newDist;
-			}
-		});
-		return nrst;
-	}
-
-	/**
-	 * Find the furthest instance of an object from a point.
-	 * @type {function(number, number, Object!string):Object}
-	 */
-	static furthest(x, y, obj) {
-		let all = object.get(obj).getAllInstances();
-		if (all.length === 0) return null;
-		if (all.length === 1) return all[0];
-		let frst, dist = 0, newDist;
-		all.forEach(inst => {
-			newDist = math.pointDistance(x, y, inst.x, inst.y);
-			if (newDist > dist) {
-				frst = inst;
-				dist = newDist;
-			}
-		});
-		return frst;
-	}
-
-	/**
-	 * Returns the number of instances of a given object.
-	 * @type {function(Object!string):number}
-	 */
-	static count(obj) {
-		const name = object.get(obj).objectName;
-		const length = instanceArray.length;
-		let c = 0;
-		for (let n = 0; n < length; n++) {
-			c += (instanceArray[n].objectName === name);
-		}
-		return c;
-	}
-
-	/**
-	 * @type {function(number, boolean):void}
-	 */
-	static setRotation(rotation, relative) {
-		this.rotation = (relative) ? this.rotation + rotation : rotation;
-	}
-
-	/**
-	 * @type {function(number, boolean):void}
-	 */
-	static setDirection(direction, relative) {
-		this.direction = (relative) ? this.direction + direction : direction;
-	}
-
-	/** */
-	static moveFree(speed, direction) {
-		this.speed = speed;
-		this.direction = direction;
-	}
-
-	/** Start moving in the direction of a given point. */
-	static moveTowardsPoint(inst, x, y, spd) {
-		inst.direction = math.pointDirection(inst.x, inst.y, x, y);
-		inst.speed = spd;
-	}
-
-	/** Step towards the given point */
-	static stepTowardsPoint(inst, x, y, spd) {
-		let dir = math.pointDirection(inst.x, inst.y, x, y);
-		let vec = math.lengthDir(spd, dir);
-		inst.x += vec[0];
-		inst.y += vec[1];
-	}
-
-	static directionToPoint(x, y, speed) {
-		directionToPoint(this, x, y, speed);
-	}
-
-	/**
-	 * @type {function(Object, number, number):number}
-	 */
-	static distanceToPoint(i, x, y) {
-		return math.pointDistance(i.x, i.y, x, y);
-	}
-
-	/**
-	 * @type {function(Object, Object):number}
-	 */
-	static distanceToInstance(i1, i2) {
-		return math.pointDistance(i1.x, i1.y, i2.x, i2.y);
-	}
-
-	/** */
-	static position(x, y, obj) {
-		const all = object.get(obj).getAllInstances();
-		const length = all.length;
-		for (var n=0; n<length; n++) {
-			const inst = all[n];
-			if (instance.pointOn(x, y, inst)) {
-				return inst;
-			}
-		}
+	if (instanceArray.length >= INSTANCE_HARD_LIMIT) {
+		window.addConsoleText("#F00", "instance number hard limit reached:", INSTANCE_HARD_LIMIT);
 		return null;
 	}
 
-	/** Returns whether the given point is over the given instance. */
-	static pointOn(x, y, inst) {
-		return !(inst.boxTop > y - Draw.offsetY
-		|| inst.boxBottom < y - Draw.offsetY
-		|| inst.boxLeft > x - Draw.offsetX
-		|| inst.boxRight < x - Draw.offsetX);
-	}
+	const newInstance = new o(x, y);
+	return newInstance;
 
-	/** */
-	static mouseOn(inst) {
-		return instance.pointOn(mouse.x, mouse.y, inst);
-	}
+}
 
-	/**
-	 * Execute step event.
-	 * @param {Object} inst
-	 * @return {void}
-	 */
-	static step(inst) {
-
-		// Step events.
-		executeEvent(inst, "step");
-		updateAnimation(inst);
-		updatePosition(inst);
-		updateBoundingBox(inst);
-		updateCollisionBox(inst);
-
-		// Outside room.
-		if (inst.events["outsideroom"]) {
-			if (inst.boxBottom < 0
-			||  inst.boxRight < 0
-			||  inst.boxTop > Room.current.height
-			||  inst.boxLeft > Room.current.width) {
-				executeEvent(inst, "outsideroom");
-			}
-		}
-
-		// Event listeners.
-		instanceExecuteListeners(inst);
-
-		// Input events.
-		triggerEvents.forEach(event => {
-			executeEvent(inst, event);
-		});
-
-	}
-
-	/** */
-	static destroy(inst) {
-		executeEvent(inst, "destroy");
-		inst.exists = false;
-	}
-
-	/** */
-	static uninstantiate(inst) {
-		inst.exists = false;
-		let arr = inst.object.instances;
-		let index = arr.indexOf(inst);
-		if (index >= 0) {
-			arr[index] = arr[arr.length-1];
-			arr.length -= 1;
-		}
-	}
-
-	/** */
-	static draw(inst) {
-		if (!inst.visible) return;
-		(inst.events["draw"])
-			? executeEvent(inst, "draw")
-			: instance.drawSelf(inst);
-	}
-
-	/**
-	 * @param {Object} inst Instance to draw.
-	 * @param {Object} [opts] Options object.
-	 */
-	static drawSelf(inst, opts) {
-		if (inst.sprite === null) return;
-		Draw.drawSprite(
-			inst.sprite,
-			inst.index,
-			inst.x, inst.y,
-			inst.scaleX, inst.scaleY,
-			inst.rotation,
-			opts
-		);
-	}
-
-	/** */
-	static drawDebug(inst) {
-		let box = inst.boxCollision;
-		Draw.shape.rectangle(
-			box.left,
-			box.top,
-			box.right - box.left,
-			box.bottom - box.top, {
-				color: "rgba(255,0,0,0.5)"
-			}
-		);
-	}
-
-	/** */
-	static changeSprite(sprite) {
-		this.sprite = sprite;
-	}
-
-	/**
-	 * Execute a particular event for all current instances.
-	 * @param {string} event The event to execute.
-	 * @param {Object} otherInst
-	 * @return {void}
-	 */
-	static executeEventAll(event, otherInst) {
-		var n = instanceArray.length;
-		while (n--) {
-			executeEvent(instanceArray[n], event, otherInst);
-		}
-	}
-
-	/** */
-	static stepAll() {
-		newStep();
-		let arr = instanceArray.slice();
-		arr.forEach(inst => executeEvent(inst, "stepBegin"));
-		arr.forEach(instance.step);
-		arr.forEach(inst => executeEvent(inst, "stepEnd"));
-		clearDestroyed();
-	}
-
-	/** */
-	static drawAll() {
-		if (doDepthSort) instanceArray.sort(sortFunction);
-		instanceArray.forEach(instance.draw);
-	}
-
-	/** */
-	static drawGuiAll() {
-		let n = instanceArray.length;
-		while (n--) {
-			executeEvent(instanceArray[n], "drawGUI");
-		}
-	}
-
+/**
+ * @type {function(Object, number, number, number, number):Object}
+ */
+export function createMoving(obj, x, y, speed, direction) {
+	const newInst = create(obj, x, y);
+	newInst.speed = speed;
+	newInst.direction = direction;
+	return newInst;
 }
 
 /**
  *
  */
-export const directionToPoint = (i, x, y, s) => {
-	const to = math.pointDirection(i.x, i.y, x, y);
-	const diff = math.angleDifference(i.direction, to);
+export function setup(inst, o, x, y) {
+
+	inst.id = uniqueId++;
+	inst.exists = true;
+	inst.speed = 0;
+	inst.object = o;
+	inst.objectName = o.objectName;
+	inst.assetType = "instance";
+	inst.x = Number(x);
+	inst.y = Number(y);
+	inst.startX = inst.x;
+	inst.startY = inst.y;
+	inst.previousX = inst.x;
+	inst.previousY = inst.y;
+	inst.boxCollision = {};
+
+	//
+	const spr = sprite.get(inst.sprite);
+	if (spr) {
+		inst.boxCollision.x = spr.originX;
+		inst.boxCollision.y = spr.originY;
+		inst.boxCollision.width = spr.width;
+		inst.boxCollision.height = spr.height;
+	}
+
+	//
+	addToArray(inst);
+	updateBoundingBox(inst);
+	updateCollisionBox(inst);
+	executeEvent(inst, "create");
+}
+
+/**
+ * Finds instance n of the given object.
+ * @type {function(Object, number=):Object}
+ */
+export function find(obj, n=0) {
+	if (typeof obj === "function") obj = obj.objectName;
+	const length = instanceArray.length;
+	for (let i = 0, c = 0; i<length; i++) {
+		const inst = instanceArray[i];
+		if (inst.objectName === obj && c++ === n) {
+			return inst;
+		}
+	}
+	return null;
+}
+
+/**
+ * @type {function(Object!string):Object}
+ */
+export function findRandom(obj) {
+	if (typeof obj === "function") obj = obj.objectName;
+	const n = math.randomInt(0, count(obj) - 1);
+	return find(obj, n);
+}
+
+/**
+ * Find the nearest instance of an object to a point.
+ * @type {function(number, number, Object!string):Object}
+ */
+export function nearest(x, y, obj) {
+
+	var all = [];
+	if (!Array.isArray(obj)) {
+		all.push(...(object.get(obj).getAllInstances()));
+	} else {
+		obj.forEach(o => {
+			all.push(...(object.get(o).getAllInstances()));
+		});
+	}
+
+	if (all.length === 0) { return null; }
+	if (all.length === 1) { return all[0]; }
+	let nrst, dist = 1e9, newDist;
+	all.forEach(inst => {
+		newDist = math.pointDistance(x, y, inst.x, inst.y);
+		if (newDist < dist) {
+			nrst = inst;
+			dist = newDist;
+		}
+	});
+	return nrst;
+}
+
+/**
+ * Find the furthest instance of an object from a point.
+ * @type {function(number, number, Object!string):Object}
+ */
+export function furthest(x, y, obj) {
+	let all = object.get(obj).getAllInstances();
+	if (all.length === 0) return null;
+	if (all.length === 1) return all[0];
+	let frst, dist = 0, newDist;
+	all.forEach(inst => {
+		newDist = math.pointDistance(x, y, inst.x, inst.y);
+		if (newDist > dist) {
+			frst = inst;
+			dist = newDist;
+		}
+	});
+	return frst;
+}
+
+/**
+ * Returns the number of instances of a given object.
+ * @type {function(Object!string):number}
+ */
+export function count(obj) {
+	const name = object.get(obj).objectName;
+	const length = instanceArray.length;
+	let c = 0;
+	for (let n = 0; n < length; n++) {
+		c += (instanceArray[n].objectName === name);
+	}
+	return c;
+}
+
+/**
+ * @type {function(number, boolean):void}
+ */
+export function setRotation(rotation, relative) {
+	this.rotation = (relative) ? this.rotation + rotation : rotation;
+}
+
+/**
+ * @type {function(number, boolean):void}
+ */
+export function setDirection(direction, relative) {
+	this.direction = (relative) ? this.direction + direction : direction;
+}
+
+/** */
+export function moveFree(speed, direction) {
+	this.speed = speed;
+	this.direction = direction;
+}
+
+/** Start moving in the direction of a given point. */
+export function moveTowardsPoint(x, y, spd) {
+	this.direction = math.pointDirection(this.x, this.y, x, y);
+	this.speed = spd;
+}
+
+/** Step towards the given point */
+export function stepTowardsPoint(x, y, spd) {
+	let dir = math.pointDirection(this.x, this.y, x, y);
+	let vec = math.lengthDir(spd, dir);
+	this.x += vec[0];
+	this.y += vec[1];
+}
+
+/**
+ * @type {function(Object, number, number):number}
+ */
+export function distanceToPoint(x, y) {
+	return math.pointDistance(this.x, this.y, x, y);
+}
+
+/**
+ * @type {function(Object, Object):number}
+ */
+export function distanceToInstance(i1, i2) {
+	return math.pointDistance(i1.x, i1.y, i2.x, i2.y);
+}
+
+/** */
+export function position(x, y, obj) {
+	const all = object.get(obj).getAllInstances();
+	const length = all.length;
+	for (var n=0; n<length; n++) {
+		const inst = all[n];
+		if (pointOn(x, y, inst)) {
+			return inst;
+		}
+	}
+	return null;
+}
+
+/** Returns whether the given point is over the given instance. */
+export function pointOn(x, y, inst) {
+	return !(inst.boxTop > y - Draw.offsetY
+	|| inst.boxBottom < y - Draw.offsetY
+	|| inst.boxLeft > x - Draw.offsetX
+	|| inst.boxRight < x - Draw.offsetX);
+}
+
+/** */
+export function mouseOn(i) {
+	return pointOn(mouse.x, mouse.y, i);
+}
+
+/**
+ * Execute step event.
+ * @param {Object} inst
+ * @return {void}
+ */
+export function step(inst) {
+
+	// Step events.
+	executeEvent(inst, "step");
+	updateAnimation(inst);
+	updatePosition(inst);
+	updateBoundingBox(inst);
+	updateCollisionBox(inst);
+
+	// Outside room.
+	if (inst.events["outsideroom"]) {
+		if (inst.boxBottom < 0
+		||  inst.boxRight < 0
+		||  inst.boxTop > Room.current.height
+		||  inst.boxLeft > Room.current.width) {
+			executeEvent(inst, "outsideroom");
+		}
+	}
+
+	// Event listeners.
+	instanceExecuteListeners(inst);
+
+	// Input events.
+	triggerEvents.forEach(event => {
+		executeEvent(inst, event);
+	});
+
+}
+
+/** */
+export function destroy(inst) {
+	executeEvent(inst, "destroy");
+	inst.exists = false;
+}
+
+/** */
+export function uninstantiate(inst) {
+	inst.exists = false;
+	let arr = inst.object.instances;
+	let index = arr.indexOf(inst);
+	if (index >= 0) {
+		arr[index] = arr[arr.length-1];
+		arr.length -= 1;
+	}
+}
+
+/** */
+export function draw(inst) {
+	if (!inst.visible) return;
+	(inst.events["draw"])
+		? executeEvent(inst, "draw")
+		: drawSelf(inst);
+}
+
+/**
+ * @param {Object} inst Instance to draw.
+ * @param {Object} [opts] Options object.
+ */
+export function drawSelf(inst, opts) {
+	if (inst.sprite === null) return;
+	Draw.drawSprite(
+		inst.sprite,
+		inst.index,
+		inst.x, inst.y,
+		inst.scaleX, inst.scaleY,
+		inst.rotation,
+		opts
+	);
+}
+
+/** */
+export function drawDebug(inst) {
+	let box = inst.boxCollision;
+	Draw.shape.rectangle(
+		box.left,
+		box.top,
+		box.right - box.left,
+		box.bottom - box.top, {
+			color: "rgba(255,0,0,0.5)"
+		}
+	);
+}
+
+/** */
+export function changeSprite(sprite) {
+	this.sprite = sprite;
+}
+
+/**
+ * Execute a particular event for all current instances.
+ * @param {string} event The event to execute.
+ * @param {Object} otherInst
+ * @return {void}
+ */
+export function executeEventAll(event, otherInst) {
+	var n = instanceArray.length;
+	while (n--) {
+		executeEvent(instanceArray[n], event, otherInst);
+	}
+}
+
+/** */
+export function stepAll() {
+	newStep();
+	let arr = instanceArray.slice();
+	arr.forEach(inst => executeEvent(inst, "stepBegin"));
+	arr.forEach(step);
+	arr.forEach(inst => executeEvent(inst, "stepEnd"));
+	clearDestroyed();
+}
+
+/** */
+export function drawAll() {
+	if (doDepthSort) instanceArray.sort(sortFunction);
+	instanceArray.forEach(draw);
+}
+
+/** */
+export function drawGuiAll() {
+	let n = instanceArray.length;
+	while (n--) {
+		executeEvent(instanceArray[n], "drawGUI");
+	}
+}
+
+/**
+ *
+ */
+export function directionToPoint(x, y, s) {
+	const to = math.pointDirection(this.x, this.y, x, y);
+	const diff = math.angleDifference(this.direction, to);
 	const max = Math.min(s, Math.abs(diff));
-	i.direction += max * directionToPoint
+	this.direction += max * Math.sign(diff);
 }
 
 /** Resets some instance variables/states. */
@@ -538,7 +532,7 @@ function clearDestroyed() {
 	var i, n = l;
 	while (i = instanceArray[--n]) {
 		if (!i.exists) {
-			instance.uninstantiate(i)
+			uninstantiate(i)
 			i.object.pool.release(i);
 			instanceArray[n] = instanceArray[--l];
 		}
@@ -641,13 +635,13 @@ export const outsideRoom = i => {
 /**
  *
  */
-export const checkCollision = (inst, x, y, obj) => {
-	if (!inst.exists) return false;
-	const box1 = inst.boxCollision;
+export const checkCollision = (i, x, y, obj) => {
+	if (!i.exists) return false;
+	const box1 = i.boxCollision;
 	const arr = getInstancesObject(obj);
 	for (let n = 0; n < arr.length; n++) {
 		const targ = arr[n];
-		if (targ.exists && inst !== targ) {
+		if (targ.exists && i !== targ) {
 			if (boxOverlapBox(box1, targ.boxCollision, x, y)) {
 				return true;
 			}
@@ -752,9 +746,3 @@ function executeActions(inst, actions, otherInst) {
 	}
 
 }
-
-// Fix this stuff
-instance.checkCollision = checkCollision;
-instance.checkCollisionPoint = checkCollisionPoint;
-
-export default instance;

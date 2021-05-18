@@ -1,5 +1,5 @@
 import * as math from "./math.js";
-import instance from "./instance.js";
+import * as instance from "./instance.js";
 
 //
 let basic = JSON.stringify({
@@ -84,7 +84,7 @@ let ObjectVars = {
 			set: function(x) {
 				if (this._depth !== x) {
 					this._depth = x;
-					instance.doDepthSort = true;
+					instance.setDepthSort(true);
 				}
 			},
 			get: function() { return this._depth; }

@@ -11,7 +11,7 @@ import Sound from "./Sound.js";
 import object from "./object.js";
 import event from "./event.js";
 import * as action from "./action.js";
-import instance from "./instance.js";
+import * as instance from "./instance.js";
 import * as draw from "./draw.js";
 import * as math from "./math.js";
 import tween from "./tween.js";

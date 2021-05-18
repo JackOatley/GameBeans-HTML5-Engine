@@ -1,7 +1,7 @@
 import Room from "./room.js";
 import Sound from "./Sound.js";
 import * as draw from "./draw.js";
-import instance from "./instance.js";
+import * as instance from "./instance.js";
 import input from "./inputs/input.js";
 import * as math from "./math.js";
 import Sprite from "./sprite.js";
@@ -43,7 +43,7 @@ function setProperty(object, property, value, relative) {
  * @type {function(string, string, *, boolean):boolean}
  */
 function test(varName, op, value, global) {
-	let target = global ? window.global : this;
+	const target = global ? window.global : this;
 	switch (op) {
 		case("!=="): return target[varName] !== value;
 		case("==="): return target[varName] === value;
@@ -249,7 +249,7 @@ let blockBegin = "blockBegin",
 	instanceCheckCollision = instance.checkCollision,
 	instanceCheckCollisionPoint = instance.checkCollisionPoint,
 	directionToPoint = instance.directionToPoint,
-	message = args => console.log(args),
+	message = (args) => console.log(args),
 	alert = (m) => window.alert(m),
 	confirm = (m) => window.confirm(m),
 	drawSetColor = draw.setColor,

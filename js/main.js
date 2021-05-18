@@ -1,7 +1,7 @@
 import Canvas from "./Canvas.js";
 import room from "./room.js";
 import input from "./inputs/input.js";
-import Instance from "./instance.js";
+import * as Instance from "./instance.js";
 import global from "./global.js";
 import * as draw from "./draw.js";
 import Camera from "./camera.js";

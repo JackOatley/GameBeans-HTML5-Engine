@@ -1,5 +1,5 @@
 import event from "./event.js";
-import instance from "./instance.js";
+import * as instance from "./instance.js";
 import objectVars from "./objectVars.js";
 import Pool from "./utils/pool.js";
 import Generator from "./generator.js"

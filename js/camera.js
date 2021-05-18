@@ -1,7 +1,7 @@
 import room from "./room.js";
 import * as draw from "./draw.js";
 import Generator from "./generator.js";
-import Instance from "./instance.js";
+import * as Instance from "./instance.js";
 
 /**
  * @author Jack Oatley

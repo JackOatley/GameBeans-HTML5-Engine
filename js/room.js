@@ -1,7 +1,7 @@
 import Camera from "./camera.js";
 import Generator from "./generator.js";
 import Transition from "./transition.js";
-import instance from "./instance.js";
+import * as instance from "./instance.js";
 import Sprite from "./sprite.js";
 import * as draw from "./draw.js";
 
@@ -79,7 +79,7 @@ class Room {
 		this.instances.forEach(function(inst) {
 			instance.create(inst.name, inst.x, inst.y);
 		});
-		instance.doDepthSort = true;
+		instance.setDepthSort(true);
 
 		// enter room event
 		instance.executeEventAll("roomenter");
