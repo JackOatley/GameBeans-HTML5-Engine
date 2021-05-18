@@ -181,7 +181,7 @@ function get(...args) {
 }
 
 // Fucntions for use in code.
-let GAME = {
+export const GAME = {
 	App: App,
 	Camera: Camera,
 	Canvas: Canvas,
@@ -230,69 +230,53 @@ let GAME = {
 	Vector2: Vector2
 }
 
-//
-let blockBegin = "blockBegin",
-	blockEnd = "blockEnd",
-	exitEvent = "exitEvent",
-	ifElse = "ifElse",
-	chance = math.chance,
-	roomEnter = Room.enter,
-	roomNext = Room.next,
-	roomPrevious = Room.previous,
-	instanceCreate = instance.create,
-	instanceCreateMoving = instance.createMoving,
-	moveFree = instance.moveFree,
-	instanceDestroy = instance.destroy,
-	changeSprite = instance.changeSprite,
-	instanceSetRotation = instance.setRotation,
-	instanceSetDirection = instance.setDirection,
-	instanceCheckCollision = instance.checkCollision,
-	instanceCheckCollisionPoint = instance.checkCollisionPoint,
-	directionToPoint = instance.directionToPoint,
-	message = (args) => console.log(args),
-	alert = (m) => window.alert(m),
-	confirm = (m) => window.confirm(m),
-	drawSetColor = draw.setColor,
-	drawSetFont = draw.setFont,
-	drawSetFontSize = draw.setFontSize,
-	drawText = draw.text,
-	drawRectangle = draw.shape.rectangle,
-	drawEllipse = draw.shape.ellipse,
-	drawSelf = instance.drawSelf,
-	drawSprite = draw.drawSprite,
-	drawSetShadow = draw.setShadow,
-	drawLives = draw.lives,
-	soundPlay = (snd, loop) => Sound.play(snd, {loop: loop}),
-	soundStop = Sound.stop;
+// Control actions.
+export const blockBegin = "blockBegin";
+export const blockEnd = "blockEnd";
+export const exitEvent = "exitEvent";
+export const ifElse = "ifElse";
+export const chance = math.chance;
+export const roomEnter = Room.enter;
+export const roomNext = Room.next;
+export const roomPrevious = Room.previous;
+
+// Debug actions.
+export const message = args => console.log(args);
+export const alert = m => window.alert(m);
+export const confirm = m => window.confirm(m);
+
+// Instance actions.
+export const instanceCreate = instance.create;
+export const instanceCreateMoving = instance.createMoving;
+export const moveFree = instance.moveFree;
+export const instanceDestroy = instance.destroy;
+export const changeSprite = instance.changeSprite;
+export const instanceSetRotation = instance.setRotation;
+export const instanceSetDirection = instance.setDirection;
+export const instanceCheckCollision = instance.checkCollision;
+export const instanceCheckCollisionPoint = instance.checkCollisionPoint;
+export const directionToPoint = instance.directionToPoint;
+export const drawSelf = instance.drawSelf;
+export const drawDebug = instance.drawDebug;
+
+// Drawing actions.
+export const drawSetColor = draw.setColor;
+export const drawSetFont = draw.setFont;
+export const drawSetFontSize = draw.setFontSize;
+export const drawText = draw.text;
+export const drawRectangle = draw.shape.rectangle;
+export const drawEllipse = draw.shape.ellipse;
+export const drawSprite = draw.drawSprite;
+export const drawSetShadow = draw.setShadow;
+export const drawLives = draw.lives;
+
+// Sound actions.
+export const soundPlay = (snd, loop) => Sound.play(snd, {loop: loop});
+export const soundStop = Sound.stop;
 
 //
 export {
-	chance,
-	instanceCreate,
-	instanceCreateMoving,
-	instanceDestroy,
-	instanceSetRotation,
-	instanceSetDirection,
-	instanceCheckCollision,
-	instanceCheckCollisionPoint,
-	directionToPoint,
-	changeSprite,
 	changeSprite as instanceChangeSprite,
-	soundPlay, soundStop,
-	drawSetColor,
-	drawSetFont,
-	drawSetFontSize,
-	drawText,
-	drawRectangle,
-	drawEllipse,
-	drawSelf,
-	drawSelf as instanceDrawSelf,
-	drawSprite,
-	drawSetShadow,
-	drawLives,
-	roomEnter, roomNext, roomPrevious,
-	blockBegin, blockEnd, ifElse,
-	exitEvent,
 	set,
 	get,
 	setProperty,
@@ -300,7 +284,6 @@ export {
 	setGravity,
 	jump,
 	jumpRandom,
-	moveFree,
 	moveDirect,
 	moveSpeedX,
 	moveSpeedY,
@@ -311,9 +294,5 @@ export {
 	actionWrap       as wrap,
 	actionConfine    as confine,
 	actionFunc       as func,	// DEPRECATE?
-	script,
-	message,
-	alert,
-	confirm,
-	GAME
+	script
 }

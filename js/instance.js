@@ -16,9 +16,6 @@ let currentEvent = "";
 
 export const setDepthSort = x  => doDepthSort = x;
 
-//static get instanceArray() { return instanceArray; }
-//static set doDepthSort(x) { doDepthSort = x; }
-
 /**
  * Create a new instance of an object.
  * @param {string|Object} obj
