@@ -7,7 +7,7 @@ import * as math from "./math.js";
 import Sprite from "./sprite.js";
 import Canvas from "./Canvas.js";
 import Color from "./Color.js";
-import main from "./main.js";
+import { setGameSpeed } from "./main.js";
 import Camera from "./camera.js";
 import * as App from "./App.js";
 import Grid from "./data/grid.js";
@@ -23,7 +23,7 @@ import Vector2 from "./Vector2.js";
  * Set the variable with the given name.
  * @type {function(string, *, boolean, boolean):void}
  */
-function set(varName, value, relative, global) {
+export function set(varName, value, relative, global) {
 	const target = global ? window.global : this;
 	if (relative) return target[varName] += value;
 	target[varName] = value;
@@ -33,7 +33,7 @@ function set(varName, value, relative, global) {
  * Set the variable with the given name.
  * @type {function(Object, string, *, boolean):void}
  */
-function setProperty(object, property, value, relative) {
+export function setProperty(object, property, value, relative) {
 	if (relative) return object[property] += value;
 	object[property] = value;
 }
@@ -42,7 +42,7 @@ function setProperty(object, property, value, relative) {
  * Intended to be equivalent to an if statement.
  * @type {function(string, string, *, boolean):boolean}
  */
-function test(varName, op, value, global) {
+export function test(varName, op, value, global) {
 	const target = global ? window.global : this;
 	switch (op) {
 		case("!=="): return target[varName] !== value;
@@ -61,7 +61,7 @@ function test(varName, op, value, global) {
  * Sets the instance's gravity to the given value.
  * @type {function(number):void}
  */
-function setGravity(value) {
+export function setGravity(value) {
 	this.gravity = value;
 }
 
@@ -70,7 +70,7 @@ function setGravity(value) {
  * the current room.
  * @type {function(number, number, boolean):void}
  */
-function jump(x, y, relative) {
+export function jump(x, y, relative) {
 	if (!relative) return [this.x, this.y] [Number(x), Number(y)];
 	this.x += Number(x);
 	this.y += Number(y);
@@ -81,7 +81,7 @@ function jump(x, y, relative) {
  * the current room.
  * @type {function():number}
  */
-function jumpRandom() {
+export function jumpRandom() {
 	const x1 = 0, y1 = 0, x2 = Room.current.width, y2 = Room.current.height;
 	this.x = Math.floor(Math.random() * (x2 - x1)) + x1;
 	this.y = Math.floor(Math.random() * (y2 - y1)) + y1;
@@ -92,36 +92,36 @@ function jumpRandom() {
  * the current room.
  * @type {function(number, number):void}
  */
-function moveDirect(x, y) {
-	this.x += x * main.dt;
-	this.y += y * main.dt;
-}
+//export function moveDirect(x, y) {
+	//this.x += x;
+	//this.y += y;
+//}
 
 /**
  * @type {function(number):void}
  */
-function moveSpeedX(speed) {
+export function moveSpeedX(speed) {
 	this.speedX = Number(speed);
 }
 
 /**
  * @type {function(number):void}
  */
-function moveSpeedY(speed) {
+export function moveSpeedY(speed) {
 	this.speedY = Number(speed);
 }
 
 /**
  * @type {function():void}
  */
-function moveReverseX() {
+export function moveReverseX() {
 	this.speedX = -this.speedX;
 }
 
 /**
  * @type {function():void}
  */
-function moveReverseY() {
+export function moveReverseY() {
 	this.speedY = -this.speedY;
 }
 
@@ -129,7 +129,7 @@ function moveReverseY() {
  * Wraps the instance back into the room when it leaves.
  * @type {function():void}
  */
-function actionWrap() {
+export function actionWrap() {
 	const w = this.boxRight - this.boxLeft;
 	const h = this.boxBottom - this.boxTop;
 	const rw = Room.current.width;
@@ -144,7 +144,7 @@ function actionWrap() {
  * Wraps the instance back into the room when it leaves.
  * @type {function():void}
  */
-function actionConfine() {
+export function actionConfine() {
 	const w = this.boxRight - this.boxLeft;
 	const h = this.boxBottom - this.boxTop;
 	const rw = Room.current.width;
@@ -167,7 +167,7 @@ function actionFunc(func, ...args) {
  * Executes the given Script with an array of arguments.
  * @type {function(string, Array):void}
  */
-function script(s, args) {
+export function script(s, args) {
 	if (typeof s === "string") return window[s].apply(this, args);
 	s.apply(this, args);
 }
@@ -176,7 +176,7 @@ function script(s, args) {
  * Shows the value of the given variable of the instance, in the console.
  * @type {function(...*):void}
  */
-function get(...args) {
+export function get(...args) {
 	console.log(this[args].toFixed(2));
 }
 
@@ -187,7 +187,7 @@ export const GAME = {
 	Canvas: Canvas,
 	Color: Color,
 	main: {
-		setGameSpeed: main.setGameSpeed
+		setGameSpeed: setGameSpeed
 	},
 	instance: instance,
 	draw: {
@@ -276,23 +276,7 @@ export const soundStop = Sound.stop;
 
 //
 export {
-	changeSprite as instanceChangeSprite,
-	set,
-	get,
-	setProperty,
-	test,
-	setGravity,
-	jump,
-	jumpRandom,
-	moveDirect,
-	moveSpeedX,
-	moveSpeedY,
-	moveReverseX,
-	moveReverseY,
-	actionWrap,
-	actionConfine,
 	actionWrap       as wrap,
 	actionConfine    as confine,
 	actionFunc       as func,	// DEPRECATE?
-	script
 }

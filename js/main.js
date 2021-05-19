@@ -19,60 +19,54 @@ var frameRequest = null;
 window.addConsoleText = window.addConsoleText || console.log;
 window._GB_stop = window._GB_stop || NOOP;
 
-//
-const main = {
+/**
+ *
+ */
+export function start(opts = {}) {
 
-	/**
-	 *
-	 */
-	start: function(opts = {}) {
-
-		// Basic site-locking
-		if (opts.host !== undefined && opts.host !== "") {
-			let loc = (window.parent) ? window.parent.location : window.location;
-			let host = loc.hostname;
-			let arr = opts.host.split(" ").join("").split(",");
-			if (!opts.host.includes(host))
-				return;
-		}
-
-		//
-		var canv = new Canvas({
-			width: room.current.width,
-			height: room.current.height,
-			crisp2D: true,
-			application: true,
-			context: opts.defaultContext || "2d"
-		});
-
-		// selectively enable input methods
-		if (opts.enableMouse) input.initMouse();
-		if (opts.enableKeyboard) input.initKeyboard();
-		if (opts.enableTouch) input.initTouch();
-		if (opts.hideCursor) canv.domElement.style.cursor = "none";
-
-		//
-		this.stop();
-		room.enter(room.current);
-		tick(performance.now());
-
-	},
-
-	/**
-	 * @return {void}
-	 */
-	stop: function() {
-		if (frameRequest) window.cancelAnimationFrame(frameRequest);
-	},
-
-	/**
-	 * @param {number} speed
-	 * @return {void}
-	 */
-	setGameSpeed: function(speed) {
-		tickLength = 1000 / speed;
+	// Basic site-locking
+	if (opts.host !== undefined && opts.host !== "") {
+		let loc = (window.parent) ? window.parent.location : window.location;
+		let host = loc.hostname;
+		let arr = opts.host.split(" ").join("").split(",");
+		if (!opts.host.includes(host))
+			return;
 	}
 
+	//
+	var canv = new Canvas({
+		width: room.current.width,
+		height: room.current.height,
+		crisp2D: true,
+		application: true,
+		context: opts.defaultContext ?? "2d"
+	});
+
+	// selectively enable input methods
+	if (opts.enableMouse) input.initMouse();
+	if (opts.enableKeyboard) input.initKeyboard();
+	if (opts.enableTouch) input.initTouch();
+	if (opts.hideCursor) canv.domElement.style.cursor = "none";
+
+	//
+	stop();
+	room.enter(room.current);
+	requestAnimationFrame(tick);
+
+}
+
+/**
+ * @return {void}
+ */
+export const stop = () => {
+	if (frameRequest) window.cancelAnimationFrame(frameRequest);
+}
+
+/**
+ * @type {function(number):void}
+ */
+export const setGameSpeed = speed => {
+	tickLength = 1000 / speed;
 }
 
 /**
@@ -86,24 +80,27 @@ function tick(timestamp) {
 		if (window._GB_stop && input.triggerEvents.includes("EscapePress"))
 			window._GB_stop();
 
+		// Account for the first frame.
+		if (!last) last = timestamp = performance.now();
+
 		// request the next frame
-		frameRequest = window.requestAnimationFrame(tick);
+		frameRequest = requestAnimationFrame(tick);
 		global.fpsNow = 1000 / (timestamp - last);
 		global.dt = timestamp - last;
+
 		fpsFrames += 1;
 		fpsTime += global.dt;
-		while (fpsTime >= 1000) {
+		while (fpsTime >= tickLength) {
 			global.fps = fpsFrames;
 			fpsFrames = 0;
-			fpsTime -= 1000;
+			fpsTime -= tickLength;
+
+			input.getTriggerEvents();
+			gameUpdate();
+			gameDraw();
+			input.update();
 		}
 		last = timestamp;
-
-		//
-		input.getTriggerEvents();
-		gameUpdate();
-		gameDraw();
-		input.update();
 
 	} catch (err) {
 		console.error(err);
@@ -147,6 +144,3 @@ function handleResizeEvent() {
 
 // attach event listerners
 window.addEventListener("resize", handleResizeEvent);
-
-//
-export default main;

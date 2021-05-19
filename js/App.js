@@ -1,5 +1,5 @@
 import Canvas from "./Canvas.js";
-import main from "./main.js";
+import { start } from "./main.js";
 import * as Draw from "./draw.js";
 import { instanceArray } from "./instance.js";
 import Input from "./inputs/input.js";
@@ -30,5 +30,5 @@ export const restart = () => {
 	instanceArray.length = 0;
 	Input.clear();
 	Camera.destroyAll();
-	main.start();
+	start();
 }
