@@ -651,7 +651,9 @@ export const checkCollision = (i, x, y, obj) => {
  *
  */
 export const checkCollisionPoint = (obj, x, y) => {
-	const arr = getInstancesObject(obj);
+	let arr = [obj];
+	if (obj.assetType !== "instance")
+		arr = getInstancesObject(obj);
 	for (let n = 0; n < arr.length; n++) {
 		const targ = arr[n];
 		if (targ.exists) {
