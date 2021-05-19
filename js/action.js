@@ -7,7 +7,7 @@ import * as math from "./math.js";
 import Sprite from "./sprite.js";
 import Canvas from "./Canvas.js";
 import Color from "./Color.js";
-import { setGameSpeed } from "./main.js";
+import * as main from "./main.js";
 import Camera from "./camera.js";
 import * as App from "./App.js";
 import Grid from "./data/grid.js";
@@ -187,7 +187,7 @@ export const GAME = {
 	Canvas: Canvas,
 	Color: Color,
 	main: {
-		setGameSpeed: setGameSpeed
+		setGameSpeed: main.setGameSpeed
 	},
 	instance: instance,
 	draw: {
@@ -239,6 +239,7 @@ export const chance = math.chance;
 export const roomEnter = Room.enter;
 export const roomNext = Room.next;
 export const roomPrevious = Room.previous;
+export const setGameSpeed = main.setGameSpeed;
 
 // Debug actions.
 export const message = args => console.log(args);
