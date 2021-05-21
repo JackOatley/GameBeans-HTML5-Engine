@@ -23,7 +23,7 @@ export const setDepthSort = x  => doDepthSort = x;
  * @param {number} y
  * @return {?Object}
  */
-export function create(obj, x, y) {
+export function create(obj, x, y, triggerEvent = true) {
 
 	var o = GameObject.get(obj);
 
@@ -37,8 +37,9 @@ export function create(obj, x, y) {
 		return null;
 	}
 
-	const newInstance = new o(x, y);
-	return newInstance;
+	const i = new o(x, y);
+	if (triggerEvent) executeEvent(i, "create");
+	return i;
 
 }
 
@@ -46,10 +47,11 @@ export function create(obj, x, y) {
  * @type {function(Object, number, number, number, number):Object}
  */
 export function createMoving(obj, x, y, speed, direction) {
-	const newInst = create(obj, x, y);
-	newInst.speed = speed;
-	newInst.direction = direction;
-	return newInst;
+	const i = create(obj, x, y, false);
+	i.speed = speed;
+	i.direction = direction;
+	executeEvent(i, "create");
+	return i;
 }
 
 /**
@@ -84,7 +86,6 @@ export function setup(inst, o, x, y) {
 	addToArray(inst);
 	updateBoundingBox(inst);
 	updateCollisionBox(inst);
-	executeEvent(inst, "create");
 }
 
 /**
@@ -120,23 +121,23 @@ export function nearest(x, y, obj) {
 
 	var all = [];
 	if (!Array.isArray(obj)) {
-		all.push(...(GameObject.get(obj).getAllInstances()));
+		all.push(...(GameObject.get(obj).instances));
 	} else {
 		obj.forEach(o => {
-			all.push(...(GameObject.get(o).getAllInstances()));
+			all.push(...(GameObject.get(o).instances));
 		});
 	}
 
 	if (all.length === 0) { return null; }
 	if (all.length === 1) { return all[0]; }
 	let nrst, dist = 1e9, newDist;
-	all.forEach(inst => {
+	for (const inst of all) {
 		newDist = math.pointDistance(x, y, inst.x, inst.y);
 		if (newDist < dist) {
 			nrst = inst;
 			dist = newDist;
 		}
-	});
+	}
 	return nrst;
 }
 
@@ -145,17 +146,17 @@ export function nearest(x, y, obj) {
  * @type {function(number, number, Object!string):Object}
  */
 export function furthest(x, y, obj) {
-	let all = GameObject.get(obj).getAllInstances();
+	const all = GameObject.get(obj).instances;
 	if (all.length === 0) return null;
 	if (all.length === 1) return all[0];
 	let frst, dist = 0, newDist;
-	all.forEach(inst => {
+	for (const inst of all) {
 		newDist = math.pointDistance(x, y, inst.x, inst.y);
 		if (newDist > dist) {
 			frst = inst;
 			dist = newDist;
 		}
-	});
+	}
 	return frst;
 }
 
@@ -164,13 +165,7 @@ export function furthest(x, y, obj) {
  * @type {function(Object!string):number}
  */
 export function count(obj) {
-	const name = GameObject.get(obj).objectName;
-	const length = instanceArray.length;
-	let c = 0;
-	for (let n = 0; n < length; n++) {
-		c += (instanceArray[n].objectName === name);
-	}
-	return c;
+	return GameObject.get(obj)?.instances.length ?? 0;
 }
 
 /**
@@ -223,10 +218,8 @@ export function distanceToInstance(i1, i2) {
 
 /** */
 export function position(x, y, obj) {
-	const all = GameObject.get(obj).getAllInstances();
-	const length = all.length;
-	for (var n=0; n<length; n++) {
-		const inst = all[n];
+	const all = GameObject.get(obj).instances;
+	for (const inst of all) {
 		if (pointOn(x, y, inst)) {
 			return inst;
 		}
@@ -336,21 +329,19 @@ export function drawDebug(inst) {
 }
 
 /** */
-export function changeSprite(sprite) {
+export function changeSprite(sprite, index = 0, speed = 1) {
 	this.sprite = sprite;
+	this.index = index;
+	this.imageSpeed = speed;
 }
 
 /**
  * Execute a particular event for all current instances.
- * @param {string} event The event to execute.
- * @param {Object} otherInst
- * @return {void}
+ * @type {function(string, Object):void}
  */
 export function executeEventAll(event, otherInst) {
-	var n = instanceArray.length;
-	while (n--) {
-		executeEvent(instanceArray[n], event, otherInst);
-	}
+	for (const i of instanceArray)
+		executeEvent(i, event, otherInst);
 }
 
 /** */
@@ -371,10 +362,8 @@ export function drawAll() {
 
 /** */
 export function drawGuiAll() {
-	let n = instanceArray.length;
-	while (n--) {
-		executeEvent(instanceArray[n], "drawGUI");
-	}
+	for (const i of instanceArray)
+		executeEvent(i, "drawGUI");
 }
 
 /**
@@ -389,10 +378,7 @@ export function directionToPoint(x, y, s) {
 
 /** Resets some instance variables/states. */
 function newStep(i) {
-	const arr = instanceArray.slice();
-	let n = arr.length;
-	while (n--) {
-		const i = arr[n];
+	for (const i of instanceArray) {
 		i.previousX = i.x;
 		i.previousY = i.y;
 	}
@@ -551,9 +537,7 @@ const sortFunction = (a, b) =>
  * @return {void}
  */
 function instanceExecuteListeners(inst) {
-	const length = inst.listeners.length;
-	for (let n = 0; n < length; n++) {
-		const l = inst.listeners[n];
+	for (const l of inst.listeners) {
 		switch (l.type) {
 			case ("outsideroom"): outsideRoom(inst); break;
 			case ("collision"): instanceCollisionInstance(inst, l.target); break;
@@ -576,7 +560,7 @@ function executeEvent(inst, event, otherInst) {
 	//
 	try {
 		if (inst.exists) {
-			let actions = inst.events[event];
+			const actions = inst.events[event];
 			if (actions) {
 				executeActions(inst, actions, otherInst);
 			}
@@ -585,8 +569,7 @@ function executeEvent(inst, event, otherInst) {
 	catch (err) {
 		console.error(err);
 		window.addConsoleText("#F00", "Failed to execute event [" + event + "]" + " of object [" + inst.objectName + "]" + " with error: " + err);
-		window._GB_stop();
-		return;
+		return window._GB_stop();
 	}
 
 	// Restore previous "other" instance.
@@ -598,23 +581,14 @@ function executeEvent(inst, event, otherInst) {
  * @type {function(Object, Object|string):void}
  */
 function instanceCollisionInstance(inst, target) {
-
 	if (!inst.exists) return;
 	const box1 = inst.boxCollision;
 	const arr = getInstancesObject(target);
-	for (let n = 0; n < arr.length; n++) {
-
-		// If target doesn't exist, or is same instance
-		const targ = arr[n];
-		if (!targ.exists || inst === targ)
-			continue;
-
-		// No collision, boxes do not overlap.
-		if (!boxOverlapBox(box1, targ.boxCollision))
-			continue;
-
-		executeEvent(inst, "collision_" + target, targ);
-
+	for (const targ of arr) {
+		if (targ.exists								// Target doesn't exist.
+		&& inst !== targ							// Same instance.
+		&& boxOverlapBox(box1, targ.boxCollision))	// No collision.
+			executeEvent(inst, "collision_" + target, targ);
 	}
 }
 
@@ -636,8 +610,7 @@ export const checkCollision = (i, x, y, obj) => {
 	if (!i.exists) return false;
 	const box1 = i.boxCollision;
 	const arr = getInstancesObject(obj);
-	for (let n = 0; n < arr.length; n++) {
-		const targ = arr[n];
+	for (const targ of arr) {
 		if (targ.exists && i !== targ) {
 			if (boxOverlapBox(box1, targ.boxCollision, x, y)) {
 				return true;
@@ -671,8 +644,8 @@ export const checkCollisionPoint = (obj, x, y) => {
  * @type {function(Object|string):Array}
  */
 const getInstancesObject = obj => {
-	if (obj === "solid") return getAllSolid(obj);
-	return GameObject.getAllInstances(obj);
+	if (obj === "solid") return getAllSolid();
+	return GameObject.get(obj).instances;
 }
 
 /**
@@ -702,9 +675,7 @@ function executeActions(inst, actions, otherInst) {
 	var scope = 0;
 	var len = actions.length;
 
-	for (var a=0; a<len; a++) {
-
-		var action = actions[a];
+	for (const action of actions) {
 
 		switch (action.flow) {
 
