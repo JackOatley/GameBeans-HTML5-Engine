@@ -1,6 +1,6 @@
 import * as math from "./math.js";
 import { mouse, triggerEvents } from "./inputs/input.js";
-import object from "./object.js";
+import { GameObject } from "./object.js";
 import sprite from "./sprite.js";
 import * as Draw from "./draw.js";
 import Room from "./room.js";
@@ -25,7 +25,7 @@ export const setDepthSort = x  => doDepthSort = x;
  */
 export function create(obj, x, y) {
 
-	var o = object.get(obj);
+	var o = GameObject.get(obj);
 
 	if (o === null) {
 		window.addConsoleText("#F00", "Instance creation failed! No such object as " + obj + ".");
@@ -120,10 +120,10 @@ export function nearest(x, y, obj) {
 
 	var all = [];
 	if (!Array.isArray(obj)) {
-		all.push(...(object.get(obj).getAllInstances()));
+		all.push(...(GameObject.get(obj).getAllInstances()));
 	} else {
 		obj.forEach(o => {
-			all.push(...(object.get(o).getAllInstances()));
+			all.push(...(GameObject.get(o).getAllInstances()));
 		});
 	}
 
@@ -145,7 +145,7 @@ export function nearest(x, y, obj) {
  * @type {function(number, number, Object!string):Object}
  */
 export function furthest(x, y, obj) {
-	let all = object.get(obj).getAllInstances();
+	let all = GameObject.get(obj).getAllInstances();
 	if (all.length === 0) return null;
 	if (all.length === 1) return all[0];
 	let frst, dist = 0, newDist;
@@ -164,7 +164,7 @@ export function furthest(x, y, obj) {
  * @type {function(Object!string):number}
  */
 export function count(obj) {
-	const name = object.get(obj).objectName;
+	const name = GameObject.get(obj).objectName;
 	const length = instanceArray.length;
 	let c = 0;
 	for (let n = 0; n < length; n++) {
@@ -223,7 +223,7 @@ export function distanceToInstance(i1, i2) {
 
 /** */
 export function position(x, y, obj) {
-	const all = object.get(obj).getAllInstances();
+	const all = GameObject.get(obj).getAllInstances();
 	const length = all.length;
 	for (var n=0; n<length; n++) {
 		const inst = all[n];
@@ -672,7 +672,7 @@ export const checkCollisionPoint = (obj, x, y) => {
  */
 const getInstancesObject = obj => {
 	if (obj === "solid") return getAllSolid(obj);
-	return object.getAllInstances(obj);
+	return GameObject.getAllInstances(obj);
 }
 
 /**

@@ -3,7 +3,7 @@ import { start } from "./main.js";
 import * as Draw from "./draw.js";
 import { instanceArray } from "./instance.js";
 import Input from "./inputs/input.js";
-import Camera from "./camera.js";
+import { Camera } from "./camera.js";
 
 /**
  * Sets the cursor to use when the mouse is in the game window.

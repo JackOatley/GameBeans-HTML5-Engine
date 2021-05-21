@@ -1,5 +1,5 @@
 import Room from "./room.js";
-import Sound from "./Sound.js";
+import { Sound } from "./Sound.js";
 import * as draw from "./draw.js";
 import * as instance from "./instance.js";
 import input from "./inputs/input.js";
@@ -8,14 +8,14 @@ import Sprite from "./sprite.js";
 import Canvas from "./Canvas.js";
 import Color from "./Color.js";
 import * as main from "./main.js";
-import Camera from "./camera.js";
+import { Camera } from "./camera.js";
 import * as App from "./App.js";
 import Grid from "./data/grid.js";
 import Tilemap from "./tilemap.js";
 import tween from "./tween.js";
 import Transition from "./transition.js";
 import Font from "./font.js";
-import GameObject from "./object.js";
+import { GameObject } from "./object.js";
 import Primitive from "./drawing/primitive.js";
 import Vector2 from "./Vector2.js";
 

@@ -1,4 +1,4 @@
-import Camera from "./camera.js";
+import { Camera } from "./camera.js";
 import Generator from "./generator.js";
 import Transition from "./transition.js";
 import * as instance from "./instance.js";

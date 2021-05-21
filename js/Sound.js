@@ -3,29 +3,21 @@ import Generator from "./generator.js";
 /**
  * @author Jack Oatley
  */
-class Sound {
+export class Sound {
+
+	assetType = "sound";
 
 	/**
-	 * @param {string} name name for the resource.
-	 * @param {string} source A path to an audio source, or a base64 encoded audio.
+	 * @type {function(string, string):Sound}
 	 */
 	constructor(name, source) {
 		this.name = name;
 		this.instances = [new Audio(source)];
 		this.ready = false;
-		this.volume = 1.0;
+		this.volume = 1;
 		Sound.names.push(name);
 		Sound.array.push(this);
 		this.__test();
-	}
-
-
-	/**
-	 * Returns the asset type, this can't/shouldn't be overwitten.
-	 * @return {string}
-	 */
-	get assetType() {
-		return "sound";
 	}
 
 	/**
@@ -121,10 +113,9 @@ class Sound {
 	 * @return {void}
 	 */
 	__test() {
-		var i = this;
-		let a = this.instances[0];
-		a.oncanplaythrough = function() {
-			i.ready = true;
+		const a = this.instances[0];
+		a.oncanplaythrough = () => {
+			this.ready = true;
 			a.oncanplaythrough = null;
 		}
 	}
@@ -182,6 +173,3 @@ Generator.classStaticMatch(Sound);
 Sound.isEnabled = true;
 Sound.names = [];
 Sound.array = [];
-
-// Export.
-export default Sound;

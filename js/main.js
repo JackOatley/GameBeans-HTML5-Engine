@@ -4,7 +4,7 @@ import input from "./inputs/input.js";
 import * as Instance from "./instance.js";
 import global from "./global.js";
 import * as draw from "./draw.js";
-import Camera from "./camera.js";
+import { allCameras, updateAllCameras } from "./camera.js";
 import Transition from "./transition.js";
 import { NOOP } from "./constants.js";
 
@@ -125,8 +125,8 @@ function gameUpdate() {
 function gameDraw() {
 	draw.reset();
 	room.current.draw();
-	if (Camera.array.length) {
-		Camera.updateAll();
+	if (allCameras.length) {
+		updateAllCameras();
 	} else {
 		Instance.drawAll();
 	}

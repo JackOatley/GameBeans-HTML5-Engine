@@ -1,12 +1,16 @@
 import room from "./room.js";
 import * as draw from "./draw.js";
-import Generator from "./generator.js";
 import * as Instance from "./instance.js";
+
+/**
+ *
+ */
+export const allCameras = [];
 
 /**
  * @author Jack Oatley
  */
-class Camera {
+export class Camera {
 
 	/**
 	 * Create a new Camera instance.
@@ -69,11 +73,7 @@ class Camera {
 			this.y = y / count;
 		}
 
-		// update bounds
-		this.left = this.x - this.width / 2;
-		this.right = this.x + this.width / 2;
-		this.top = this.y - this.height / 2;
-		this.bottom = this.y + this.height / 2;
+		this.updateBounds();
 
 		// apply camera
 		draw.transform.scale(room.current.width/this.width, room.current.height/this.height);
@@ -87,6 +87,16 @@ class Camera {
 	}
 
 	/**
+	 *
+	 */
+	updateBounds() {
+		this.left = this.x - this.width / 2;
+		this.right = this.x + this.width / 2;
+		this.top = this.y - this.height / 2;
+		this.bottom = this.y + this.height / 2;
+	}
+
+	/**
 	 * @return {void}
 	 */
 	destroy() {
@@ -95,13 +105,27 @@ class Camera {
 		Camera.array.splice(index, 1);
 	}
 
+	/**
+	 *
+	 */
+	static create = opts => new Camera(opts);
+	static array = allCameras;
+	static currentlyDrawing = null;
+	static updateAll = updateAllCameras;
+	static destroyAll = destroyAllCameras;
+
 }
 
-Camera.array = [];
-Camera.currentlyDrawing = null;
+/**
+ * @type {function():void}
+ */
+export function updateAllCameras() {
+	allCameras.forEach(x => x.update());
+}
 
-Camera.create = Generator.functionFromConstructor(Camera);
-Camera.updateAll = Generator.arrayExecute(Camera.array, Camera.prototype.update);
-Camera.destroyAll = Generator.arrayExecute(Camera.array, Camera.prototype.destroy);
-
-export default Camera;
+/**
+ * @type {function():void}
+ */
+export function destroyAllCameras() {
+	allCameras.forEach(x => x.destroy());
+}

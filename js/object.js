@@ -7,7 +7,7 @@ import Generator from "./generator.js"
 /**
  *
  */
-class GameObject {
+export class GameObject {
 
 	/**
 	 * @param {string} name
@@ -78,19 +78,21 @@ class GameObject {
 
 		// Create a new event if not yet defined.
 		if (!this.prototype.events[event]) {
+
 			this.prototype.events[event] = [];
-		}
 
-		//
-		if (event === "outsideroom") {
-			GameObject.addListener(this, "outsideroom");
-		}
+			//
+			if (event === "outsideroom") {
+				GameObject.addListener(this, "outsideroom");
+			}
 
-		// Create collision listeners, if applicable.
-		if (event.includes("collision_")) {
-			const index = event.indexOf("_") + 1;
-			const name = event.slice(index, 200);
-			GameObject.addListener(this, "collision", name);
+			// Create collision listeners, if applicable.
+			if (event.includes("collision_")) {
+				const index = event.indexOf("_") + 1;
+				const name = event.slice(index, 200);
+				GameObject.addListener(this, "collision", name);
+			}
+
 		}
 
 		// Add action to event.
@@ -155,5 +157,3 @@ Generator.classStaticMatch(GameObject);
 GameObject.prototype.assetType = "object";
 GameObject.names = [];
 GameObject.array = [];
-
-export default GameObject;
