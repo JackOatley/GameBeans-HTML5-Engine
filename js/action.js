@@ -1,3 +1,4 @@
+import * as App from "./App.js";
 import Room from "./room.js";
 import { Sound } from "./Sound.js";
 import * as draw from "./draw.js";
@@ -9,7 +10,6 @@ import Canvas from "./Canvas.js";
 import Color from "./Color.js";
 import * as main from "./main.js";
 import { Camera } from "./camera.js";
-import * as App from "./App.js";
 import Grid from "./data/grid.js";
 import Tilemap from "./tilemap.js";
 import tween from "./tween.js";
@@ -245,6 +245,8 @@ export const roomEnter = Room.enter;
 export const roomNext = Room.next;
 export const roomPrevious = Room.previous;
 export const setGameSpeed = main.setGameSpeed;
+export const restart = App.restart;
+export const setCursor = App.setCursor;
 
 // Debug actions.
 export const message = args => console.log(args);
