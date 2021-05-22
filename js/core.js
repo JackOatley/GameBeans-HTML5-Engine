@@ -1,4 +1,5 @@
 export * from "./constants.js";
+import * as constants from "./constants.js";
 import * as App from "./App.js";
 import * as main from "./main.js";
 import canvas from "./Canvas.js";
@@ -22,6 +23,7 @@ import Grid from "./data/grid.js";
 import Vector2 from "./Vector2.js";
 
 export {
+	constants,
 	App,
 	canvas,
 	Camera,

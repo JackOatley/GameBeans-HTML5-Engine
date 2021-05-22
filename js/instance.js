@@ -411,22 +411,26 @@ function updatePosition(inst) {
 
 /**
  * Update the instance's bounding box.
- * @param {Object} i Instance.
- * @return {void}
+ * @type {function(Object):void}
  */
 function updateBoundingBox(i) {
 	const spr = sprite.get(i.sprite);
-	if (!spr) return;
-	i.boxTop = i.y - spr.originY * i.scaleY;
-	i.boxLeft = i.x - spr.originX * i.scaleX;
-	i.boxBottom = i.boxTop + spr.height * i.scaleY;
-	i.boxRight = i.boxLeft + spr.width * i.scaleX;
+	if (!spr) {
+		i.boxTop = i.y;
+		i.boxLeft = i.x;
+		i.boxBottom = i.y;
+		i.boxRight = i.x;
+	} else {
+		i.boxTop = i.y - spr.originY * i.scaleY;
+		i.boxLeft = i.x - spr.originX * i.scaleX;
+		i.boxBottom = i.boxTop + spr.height * i.scaleY;
+		i.boxRight = i.boxLeft + spr.width * i.scaleX;
+	}
 }
 
 /**
  * Update the instance's collision box.
- * @param {Object} i Instance.
- * @return {void}
+ * @type {function(Object):void}
  */
 function updateCollisionBox(i) {
 	const box = i.boxCollision;
@@ -438,8 +442,7 @@ function updateCollisionBox(i) {
 
 /**
  * Update the instance's animation.
- * @param {Object} inst Instance.
- * @return {void}
+ * @type {function(Object):void}
  */
 function updateAnimation(inst) {
 
@@ -477,8 +480,7 @@ function updateAnimation(inst) {
 }
 
 /**
- * @param {Object} inst Instance.
- * @return {void}
+ * @type {function(Object):void}
  */
 function addToArray(inst) {
 	const length = instanceArray.length;
@@ -492,18 +494,19 @@ function addToArray(inst) {
 }
 
 /**
+ * Returns all instances.
+ * @return {Array<Object>}
+ */
+function getAll() {
+	return instanceArray.filter(i => true);
+}
+
+/**
  * Returns all instances set as "solid".
  * @return {Array<Object>}
  */
 function getAllSolid() {
-	var arr = [];
-	var i, n = instanceArray.length;
-	while (i = instanceArray[--n]) {
-		if (i.solid) {
-			arr.push(i);
-		}
-	}
-	return arr;
+	return instanceArray.filter(i => i.solid);
 }
 
 /**
@@ -606,24 +609,26 @@ export const outsideRoom = i => {
 /**
  *
  */
-export const checkCollision = (i, x, y, obj) => {
-	if (!i.exists) return false;
+export const checkCollision = (i, x, y, obj, not = false) => {
+	not = not == true; /** TODO: Remove the need for this conversion */
+	if (!i.exists) return not;
 	const box1 = i.boxCollision;
 	const arr = getInstancesObject(obj);
 	for (const targ of arr) {
 		if (targ.exists && i !== targ) {
 			if (boxOverlapBox(box1, targ.boxCollision, x, y)) {
-				return true;
+				return !not;
 			}
 		}
 	}
-	return false;
+	return not;
 }
 
 /**
  *
  */
-export const checkCollisionPoint = (obj, x, y) => {
+export const checkCollisionPoint = (obj, x, y, not = false) => {
+	not = not == true; /** TODO: Remove the need for this conversion */
 	let arr = [obj];
 	if (obj.assetType !== "instance")
 		arr = getInstancesObject(obj);
@@ -631,11 +636,11 @@ export const checkCollisionPoint = (obj, x, y) => {
 		const targ = arr[n];
 		if (targ.exists) {
 			if (pointInBox(x, y, targ.boxCollision)) {
-				return true;
+				return !not;
 			}
 		}
 	}
-	return false;
+	return not;
 }
 
 /**
@@ -644,6 +649,7 @@ export const checkCollisionPoint = (obj, x, y) => {
  * @type {function(Object|string):Array}
  */
 const getInstancesObject = obj => {
+	if (obj === "all") return getAll();
 	if (obj === "solid") return getAllSolid();
 	return GameObject.get(obj).instances;
 }
