@@ -1,6 +1,6 @@
 import Canvas from "./Canvas.js";
 import { start } from "./main.js";
-import * as Draw from "./draw.js";
+import { drawTotalReset } from "./draw.js";
 import { instanceArray } from "./instance.js";
 import Input from "./inputs/input.js";
 import { Camera } from "./camera.js";
@@ -22,11 +22,7 @@ export const restart = () => {
 	Canvas.array = [];
 	Canvas.main = null;
 	Canvas.dom = null;
-	Draw.target = null;
-	Draw.context = null;
-	Draw.targetStack = [];
-	Draw.offsetX = 0;
-	Draw.offsetY = 0;
+	drawTotalReset();
 	instanceArray.length = 0;
 	Input.clear();
 	Camera.destroyAll();

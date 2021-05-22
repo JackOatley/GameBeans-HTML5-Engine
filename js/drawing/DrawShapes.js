@@ -1,14 +1,9 @@
 import * as Draw from "../draw.js";
 
 /**
- * @param {number} x1
- * @param {number} y1
- * @param {number} x2
- * @param {number} y2
- * @param {Object} [opts={}]
- * @return {void}
+ * @type {function(number, number, number, number, Object):void}
  */
-function line(x1, y1, x2, y2, opts = {}) {
+export function line(x1, y1, x2, y2, opts = {}) {
 	var ctx = Draw.context;
 	ctx.strokeStyle = opts.color || Draw.color;
 	ctx.beginPath();
@@ -18,14 +13,9 @@ function line(x1, y1, x2, y2, opts = {}) {
 }
 
 /**
- * @param {number} x1
- * @param {number} y1
- * @param {number} x2
- * @param {number} y2
- * @param {Object} [opts={}]
- * @return {void}
+ * @type {function(number, number, number, number, Object):void}
  */
-function ellipse(x, y, xr, yr, opts = {}) {
+export function ellipse(x, y, xr, yr, opts = {}) {
 
 	//
 	var ctx = Draw.context;
@@ -66,34 +56,17 @@ function ellipse(x, y, xr, yr, opts = {}) {
 }
 
 /**
- * @param {number} x
- * @param {number} y
- * @param {number} w
- * @param {number} h
- * @param {Object} [opts={}]
- * @return {void}
+ * @type {function(number, number, number, number, Object):void}
  */
-function rectangle(x, y, w, h, opts = {}) {
+export function rectangle(x, y, w, h, opts = {}) {
 
 	//
-	var ctx = Draw.context;
+	const ctx = Draw.context;
 	ctx.beginPath();
 	ctx.rect(x, y, w, h);
 
 	//
-	let style;
-	if (opts.healthbar) {
-		let amount = opts.healthbar.amount || 1;
-		let color = opts.healthbar.color || "#0F0";
-		let background = opts.healthbar.background || "#F00";
-		style = ctx.createLinearGradient(x, 0, x+w, 0);
-		style.addColorStop(0, color);
-		style.addColorStop(amount, color);
-		style.addColorStop(amount, background);
-		style.addColorStop(1, background);
-	} else {
-		style = opts.color || Draw.color;
-	}
+	const style = opts.color || Draw.color;
 
 	//
 	if (opts.fill || (!opts.fill && !opts.stroke)) {
@@ -109,5 +82,14 @@ function rectangle(x, y, w, h, opts = {}) {
 
 }
 
+/**
+ * @type {function(number, number, number, number, number, number, number):void}
+ */
+export function healthBar(x, y, w, h, amount, c1, c2) {
+	const size = w * amount / 100;
+	rectangle(x, y, w, h, { color: c2 });
+	rectangle(x, y, size, h, { color: c1 });
+}
+
 //
-export default { line, ellipse, rectangle }
+//export default { line, ellipse, rectangle }

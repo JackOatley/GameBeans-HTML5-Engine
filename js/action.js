@@ -191,6 +191,11 @@ export const GAME = {
 	},
 	instance: instance,
 	draw: {
+		shape: {
+			rectangle: draw.shape.rectangle,
+			ellipse: draw.shape.ellipse,
+			healthBar: draw.shape.healthBar
+		},
 		setTarget: draw.setTarget,
 		resetTarget: draw.resetTarget,
 		getTarget: draw.getTarget,

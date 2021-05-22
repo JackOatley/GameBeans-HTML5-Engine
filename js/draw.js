@@ -3,7 +3,7 @@ import sprite from "./sprite.js";
 import canvas from "./Canvas.js";
 import Font from "./font.js";
 import Color from "./Color.js";
-import DrawShapes from "./drawing/DrawShapes.js";
+import * as DrawShapes from "./drawing/DrawShapes.js";
 
 export const shape = DrawShapes;
 
@@ -12,7 +12,7 @@ export let context = null;
 export let offsetX = 0;
 export let offsetY = 0;
 
-let color = "#FFFFFF";
+export let color = "#FFFFFF";
 let font = "Arial";
 let fontSize = 30;
 let lineHeight = 0;
@@ -21,6 +21,17 @@ let textBaseline = "alphabetic";
 let defaultTransform = [1, 0, 0, 1, 0, 0];
 let targetStack = [];
 let imageSmoothing = false;
+
+/**
+ *
+ */
+export function drawTotalReset() {
+	target = null;
+	context = null;
+	targetStack = [];
+	offsetX = 0;
+	offsetY = 0;
+}
 
 /** */
 export function setTarget(newTarget) {
