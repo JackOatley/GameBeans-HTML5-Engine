@@ -27,19 +27,7 @@ export function ellipse(x, y, xr, yr, opts = {}) {
 	ctx.restore();
 
 	//
-	let style;
-	if (opts.healthbar) {
-		let amount = opts.healthbar.amount || 1;
-		let color = opts.healthbar.color || "#0F0";
-		let background = opts.healthbar.background || "#F00";
-		style = ctx.createLinearGradient( x-xr, 0, x+xr, 0 );
-		style.addColorStop(0, color);
-		style.addColorStop(amount, color);
-		style.addColorStop(amount, background);
-		style.addColorStop(1, background);
-	} else {
-		style = opts.color || Draw.color;
-	}
+	let style = opts.color || Draw.color;
 
 	//
 	if (opts.fill || (!opts.fill && !opts.stroke)) {
@@ -90,6 +78,3 @@ export function healthBar(x, y, w, h, amount, c1, c2) {
 	rectangle(x, y, w, h, { color: c2 });
 	rectangle(x, y, size, h, { color: c1 });
 }
-
-//
-//export default { line, ellipse, rectangle }
