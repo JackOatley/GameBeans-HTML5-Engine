@@ -129,7 +129,7 @@ export function moveReverseY() {
  * Wraps the instance back into the room when it leaves.
  * @type {function():void}
  */
-export function actionWrap() {
+export function wrap() {
 	const w = this.boxRight - this.boxLeft;
 	const h = this.boxBottom - this.boxTop;
 	const rw = Room.current.width;
@@ -144,7 +144,7 @@ export function actionWrap() {
  * Wraps the instance back into the room when it leaves.
  * @type {function():void}
  */
-export function actionConfine() {
+export function confine() {
 	const w = this.boxRight - this.boxLeft;
 	const h = this.boxBottom - this.boxTop;
 	const rw = Room.current.width;
@@ -159,8 +159,8 @@ export function actionConfine() {
  * Executes the given function with variable arguments on the instance.
  * @type {function(function, ...*):void}
  */
-function actionFunc(func, ...args) {
-	func.apply(this, args);
+export function func(f, ...args) {
+	f.apply(this, args);
 }
 
 /**
@@ -280,10 +280,3 @@ export const drawLives = draw.lives;
 // Sound actions.
 export const soundPlay = (snd, loop) => Sound.play(snd, {loop: loop});
 export const soundStop = Sound.stop;
-
-//
-export {
-	actionWrap       as wrap,
-	actionConfine    as confine,
-	actionFunc       as func,	// DEPRECATE?
-}
