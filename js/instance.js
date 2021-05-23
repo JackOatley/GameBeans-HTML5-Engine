@@ -241,9 +241,15 @@ export function mouseOn(i) {
 }
 
 /**
+ *
+ */
+export function stepBegin(i) {
+	executeEvent(i, "stepBegin");
+}
+
+/**
  * Execute step event.
- * @param {Object} inst
- * @return {void}
+ * @type {function(Object):void}
  */
 export function step(inst) {
 
@@ -272,6 +278,13 @@ export function step(inst) {
 		executeEvent(inst, event);
 	});
 
+}
+
+/**
+ *
+ */
+export function stepEnd(i) {
+	executeEvent(i, "stepEnd");
 }
 
 /** */
@@ -347,10 +360,10 @@ export function executeEventAll(event, otherInst) {
 /** */
 export function stepAll() {
 	newStep();
-	let arr = instanceArray.slice();
-	arr.forEach(inst => executeEvent(inst, "stepBegin"));
+	const arr = instanceArray.slice();
+	arr.forEach(stepBegin);
 	arr.forEach(step);
-	arr.forEach(inst => executeEvent(inst, "stepEnd"));
+	arr.forEach(stepEnd);
 	clearDestroyed();
 }
 
@@ -564,9 +577,7 @@ function executeEvent(inst, event, otherInst) {
 	try {
 		if (inst.exists) {
 			const actions = inst.events[event];
-			if (actions) {
-				executeActions(inst, actions, otherInst);
-			}
+			if (actions) executeActions(inst, actions, otherInst);
 		}
 	}
 	catch (err) {
@@ -632,8 +643,7 @@ export const checkCollisionPoint = (obj, x, y, not = false) => {
 	let arr = [obj];
 	if (obj.assetType !== "instance")
 		arr = getInstancesObject(obj);
-	for (let n = 0; n < arr.length; n++) {
-		const targ = arr[n];
+	for (const targ of arr) {
 		if (targ.exists) {
 			if (pointInBox(x, y, targ.boxCollision)) {
 				return !not;
@@ -658,6 +668,7 @@ const getInstancesObject = obj => {
  * @type {function(Object, Object):boolean}
  */
 const boxOverlapBox = (b1, b2, x1=0, y1=0) => {
+	if (isNaN(b2.right)) return false;
 	return (!((x1 + b1.left) > b2.right
 	|| (x1 + b1.right) < b2.left
 	|| (y1 + b1.top) > b2.bottom
