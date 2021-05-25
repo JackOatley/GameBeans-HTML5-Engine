@@ -21,15 +21,16 @@ export class GameObject {
 		 * @param {number=} y
 		 * @return {!Object}
 		 */
-		var obj = function(x = 0, y = 0) {
+		var obj = function(x = 0, y = 0, opts) {
 			var inst = obj.pool.get(this);
-			instance.setup(inst, obj, x, y);
+			instance.setup(inst, obj, x, y, opts);
 			obj.instances.push(inst);
 			return inst;
 		};
 
 		//Object.assign(obj, GameObject.prototype);
 		obj.eventAddAction = this.eventAddAction;
+		obj.find = this.find;
 
 		objectVars.set(obj.prototype);
 		obj.objectName = name || "object_" + obj.id;

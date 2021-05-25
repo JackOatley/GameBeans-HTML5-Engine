@@ -23,9 +23,9 @@ export const setDepthSort = x  => doDepthSort = x;
  * @param {number} y
  * @return {?Object}
  */
-export function create(obj, x, y, triggerEvent = true) {
+export function create(obj, x, y, opts = {}) {
 
-	var o = GameObject.get(obj);
+	const o = GameObject.get(obj);
 
 	if (o === null) {
 		window.addConsoleText("#F00", "Instance creation failed! No such object as " + obj + ".");
@@ -37,9 +37,7 @@ export function create(obj, x, y, triggerEvent = true) {
 		return null;
 	}
 
-	const i = new o(x, y);
-	if (triggerEvent) executeEvent(i, "create");
-	return i;
+	return new o(x, y, opts);
 
 }
 
@@ -47,17 +45,16 @@ export function create(obj, x, y, triggerEvent = true) {
  * @type {function(Object, number, number, number, number):Object}
  */
 export function createMoving(obj, x, y, speed, direction) {
-	const i = create(obj, x, y, false);
-	i.speed = speed;
-	i.direction = direction;
-	executeEvent(i, "create");
-	return i;
+	return create(obj, x, y, {
+		speed: speed,
+		direction: direction
+	});
 }
 
 /**
  *
  */
-export function setup(inst, o, x, y) {
+export function setup(inst, o, x, y, opts) {
 
 	inst.id = uniqueId++;
 	inst.exists = true;
@@ -72,6 +69,7 @@ export function setup(inst, o, x, y) {
 	inst.previousX = inst.x;
 	inst.previousY = inst.y;
 	inst.boxCollision = {};
+	Object.assign(inst, opts);
 
 	//
 	const spr = sprite.get(inst.sprite);
@@ -86,6 +84,7 @@ export function setup(inst, o, x, y) {
 	addToArray(inst);
 	updateBoundingBox(inst);
 	updateCollisionBox(inst);
+	executeEvent(inst, "create");
 }
 
 /**
