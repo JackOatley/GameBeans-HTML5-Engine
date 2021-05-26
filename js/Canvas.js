@@ -75,7 +75,7 @@ class Canvas {
 		Canvas.main = this;
 		if (Canvas.dom === null) {
 			Canvas.dom = c;
-			var el = document.getElementById("gbgamebox") || document.body;
+			var el = document.body;
 			el.appendChild(c);
 		}
 

@@ -5,8 +5,8 @@ import * as instance from "./instance.js";
 let basic = JSON.stringify({
 	sprite: null,
 	index: 0,
-	imageSpeed: 1,
-	animationBehavior: "loop",
+	imageSpeed: 0,
+	animationBehavior: undefined,
 	visible: true,
 	solid: false,
 	persistent: false,
