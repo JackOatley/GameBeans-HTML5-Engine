@@ -19,29 +19,20 @@ import { GameObject } from "./object.js";
 import Primitive from "./drawing/primitive.js";
 import Vector2 from "./Vector2.js";
 
-/**
- * Set the variable with the given name.
- * @type {function(string, *, boolean, boolean):void}
- */
+// Set the variable with the given name.
 export function set(varName, value, relative, global) {
 	const target = global ? window.global : this;
 	if (relative) return target[varName] += value;
 	target[varName] = value;
 }
 
-/**
- * Set the variable with the given name.
- * @type {function(Object, string, *, boolean):void}
- */
+// Set the variable with the given name.
 export function setProperty(object, property, value, relative) {
 	if (relative) return object[property] += value;
 	object[property] = value;
 }
 
-/**
- * Intended to be equivalent to an if statement.
- * @type {function(string, string, *, boolean):boolean}
- */
+// Intended to be equivalent to an if statement.
 export function test(varName, op, value, global) {
 	const target = global ? window.global : this;
 	switch (op) {
@@ -57,78 +48,48 @@ export function test(varName, op, value, global) {
 	}
 }
 
-/**
- * Sets the instance's gravity to the given value.
- * @type {function(number):void}
- */
+// Sets the instance's gravity to the given value.
 export function setGravity(value) {
 	this.gravity = value;
 }
 
-/**
- * Instantly sets the instance's x and y values to a random position within
- * the current room.
- * @type {function(number, number, boolean):void}
- */
+// Instantly sets the instance's x and y values to a random position within
+// the current room.
 export function jump(x, y, relative) {
 	if (!relative) return [this.x, this.y] [Number(x), Number(y)];
 	this.x += Number(x);
 	this.y += Number(y);
 }
 
-/**
- * Instantly sets the instance's x and y values to a random position within
- * the current room.
- * @type {function():number}
- */
+// Instantly sets the instance's x and y values to a random position within
+// the current room.
 export function jumpRandom() {
 	const x1 = 0, y1 = 0, x2 = Room.current.width, y2 = Room.current.height;
 	this.x = Math.floor(Math.random() * (x2 - x1)) + x1;
 	this.y = Math.floor(Math.random() * (y2 - y1)) + y1;
 }
 
-/**
- * Instantly sets the instance's x and y values to a random position within
- * the current room.
- * @type {function(number, number):void}
- */
-//export function moveDirect(x, y) {
-	//this.x += x;
-	//this.y += y;
-//}
-
-/**
- * @type {function(number):void}
- */
+//
 export function moveSpeedX(speed) {
 	this.speedX = Number(speed);
 }
 
-/**
- * @type {function(number):void}
- */
+//
 export function moveSpeedY(speed) {
 	this.speedY = Number(speed);
 }
 
-/**
- * @type {function():void}
- */
+//
 export function moveReverseX() {
 	this.speedX = -this.speedX;
 }
 
-/**
- * @type {function():void}
- */
+//
 export function moveReverseY() {
 	this.speedY = -this.speedY;
 }
 
-/**
- * Wraps the instance back into the room when it leaves.
- * @type {function():void}
- */
+// Wraps the instance back into the room when it leaves.
 export function wrap() {
 	const w = this.boxRight - this.boxLeft;
 	const h = this.boxBottom - this.boxTop;
@@ -140,10 +101,7 @@ export function wrap() {
 	if (this.boxTop > rh) this.y -= rh + h;
 }
 
-/**
- * Wraps the instance back into the room when it leaves.
- * @type {function():void}
- */
+// Wraps the instance back into the room when it leaves.
 export function confine() {
 	const w = this.boxRight - this.boxLeft;
 	const h = this.boxBottom - this.boxTop;
@@ -155,27 +113,18 @@ export function confine() {
 	if (this.boxBottom > rh) this.y = rh - h + this.y - this.boxTop;
 }
 
-/**
- * Executes the given function with variable arguments on the instance.
- * @type {function(function, ...*):void}
- */
+// Executes the given function with variable arguments on the instance.
 export function func(f, ...args) {
 	f.apply(this, args);
 }
 
-/**
- * Executes the given Script with an array of arguments.
- * @type {function(string, Array):void}
- */
+// Executes the given Script with an array of arguments.
 export function script(s, args) {
 	if (typeof s === "string") return window[s].apply(this, args);
 	s.apply(this, args);
 }
 
-/**
- * Shows the value of the given variable of the instance, in the console.
- * @type {function(...*):void}
- */
+// Shows the value of the given variable of the instance, in the console.
 export function get(...args) {
 	console.log(this[args].toFixed(2));
 }

@@ -3,7 +3,7 @@ import { mouse, triggerEvents } from "./inputs/input.js";
 import { GameObject } from "./object.js";
 import sprite from "./sprite.js";
 import * as Draw from "./draw.js";
-import Room from "./room.js";
+import { currentRoom } from "./room.js";
 
 const INSTANCE_HARD_LIMIT = 10000;
 
@@ -28,12 +28,12 @@ export function create(obj, x, y, opts = {}) {
 	const o = GameObject.get(obj);
 
 	if (o === null) {
-		window.addConsoleText("#F00", "Instance creation failed! No such object as " + obj + ".");
+		window._gbide_error("Instance creation failed! No such object as " + obj + ".");
 		return null;
 	}
 
 	if (instanceArray.length >= INSTANCE_HARD_LIMIT) {
-		window.addConsoleText("#F00", "instance number hard limit reached:", INSTANCE_HARD_LIMIT);
+		window._gbide_error("instance number hard limit reached:", INSTANCE_HARD_LIMIT);
 		return null;
 	}
 
@@ -68,6 +68,8 @@ export function setup(inst, o, x, y, opts) {
 	inst.startY = inst.y;
 	inst.previousX = inst.x;
 	inst.previousY = inst.y;
+	inst.wasInRoomBounds = false;
+	inst.inRoomBounds = false;
 	inst.boxCollision = {};
 	Object.assign(inst, opts);
 
@@ -167,33 +169,29 @@ export function count(obj) {
 	return GameObject.get(obj)?.instances.length ?? 0;
 }
 
-/**
- * @type {function(number, boolean):void}
- */
+//
 export function setRotation(rotation, relative) {
-	this.rotation = (relative) ? this.rotation + rotation : rotation;
+	this.rotation = relative ? this.rotation + rotation : rotation;
 }
 
-/**
- * @type {function(number, boolean):void}
- */
+//
 export function setDirection(direction, relative) {
-	this.direction = (relative) ? this.direction + direction : direction;
+	this.direction = relative ? this.direction + direction : direction;
 }
 
-/** */
+//
 export function moveFree(speed, direction) {
 	this.speed = speed;
 	this.direction = direction;
 }
 
-/** Start moving in the direction of a given point. */
+// Start moving in the direction of a given point.
 export function moveTowardsPoint(x, y, spd) {
 	this.direction = math.pointDirection(this.x, this.y, x, y);
 	this.speed = spd;
 }
 
-/** Step towards the given point */
+// Step towards the given point.
 export function stepTowardsPoint(x, y, spd) {
 	let dir = math.pointDirection(this.x, this.y, x, y);
 	let vec = math.lengthDir(spd, dir);
@@ -201,21 +199,17 @@ export function stepTowardsPoint(x, y, spd) {
 	this.y += vec[1];
 }
 
-/**
- * @type {function(Object, number, number):number}
- */
+//
 export function distanceToPoint(x, y) {
 	return math.pointDistance(this.x, this.y, x, y);
 }
 
-/**
- * @type {function(Object, Object):number}
- */
+//
 export function distanceToInstance(i1, i2) {
 	return math.pointDistance(i1.x, i1.y, i2.x, i2.y);
 }
 
-/** */
+//
 export function position(x, y, obj) {
 	const all = GameObject.get(obj).instances;
 	for (const inst of all) {
@@ -239,9 +233,7 @@ export function mouseOn(i) {
 	return pointOn(mouse.x, mouse.y, i);
 }
 
-/**
- *
- */
+//
 export function stepBegin(i) {
 	executeEvent(i, "stepBegin");
 }
@@ -252,6 +244,8 @@ export function stepBegin(i) {
  */
 export function step(inst) {
 
+	if (!inst.exists) return;
+
 	// Step events.
 	executeEvent(inst, "step");
 	updateAnimation(inst);
@@ -260,13 +254,12 @@ export function step(inst) {
 	updateCollisionBox(inst);
 
 	// Outside room.
-	if (inst.events["outsideroom"]) {
-		if (inst.boxBottom < 0
-		||  inst.boxRight < 0
-		||  inst.boxTop > Room.current.height
-		||  inst.boxLeft > Room.current.width) {
-			executeEvent(inst, "outsideroom");
-		}
+	inst.inRoomBounds = getInRoomBounds(inst);
+	if (!inst.inRoomBounds && inst.events["outsideroom"])
+		executeEvent(inst, "outsideroom");
+
+	if (!inst.inRoomBounds && inst.wasInRoomBounds) {
+		executeEvent(inst, "leaveroombounds");
 	}
 
 	// Event listeners.
@@ -279,20 +272,18 @@ export function step(inst) {
 
 }
 
-/**
- *
- */
+//
 export function stepEnd(i) {
 	executeEvent(i, "stepEnd");
 }
 
-/** */
+//
 export function destroy(inst) {
 	executeEvent(inst, "destroy");
 	inst.exists = false;
 }
 
-/** */
+//
 export function uninstantiate(inst) {
 	inst.exists = false;
 	let arr = inst.object.instances;
@@ -391,6 +382,7 @@ export function directionToPoint(x, y, s) {
 /** Resets some instance variables/states. */
 function newStep(i) {
 	for (const i of instanceArray) {
+		i.wasInRoomBounds = i.inRoomBounds;
 		i.previousX = i.x;
 		i.previousY = i.y;
 	}
@@ -581,7 +573,7 @@ function executeEvent(inst, event, otherInst) {
 	}
 	catch (err) {
 		console.error(err);
-		window.addConsoleText("#F00", "Failed to execute event [" + event + "]" + " of object [" + inst.objectName + "]" + " with error: " + err);
+		window._gbide_error("Failed to execute event [" + event + "]" + " of object [" + inst.objectName + "]" + " with error: " + err);
 		return window._GB_stop();
 	}
 
@@ -611,8 +603,8 @@ function instanceCollisionInstance(inst, target) {
 export const outsideRoom = i => {
 	if (i.boxBottom < 0
 	||  i.boxRight < 0
-	||  i.boxTop > Room.current.height
-	||  i.boxLeft > Room.current.width)
+	||  i.boxTop > currentRoom.height
+	||  i.boxLeft > currentRoom.width)
 		executeEvent(i, "outsideroom");
 }
 
@@ -679,6 +671,14 @@ const boxOverlapBox = (b1, b2, x1=0, y1=0) => {
  */
 const pointInBox = (x, y, b) => {
 	return (!(x > b.right || x < b.left || y > b.bottom || y < b.top));
+}
+
+/**
+ *
+ */
+const getInRoomBounds = i => {
+	return !(i.boxBottom < 0 ||  i.boxRight < 0
+	||  i.boxTop > currentRoom.height ||  i.boxLeft > currentRoom.width);
 }
 
 /**

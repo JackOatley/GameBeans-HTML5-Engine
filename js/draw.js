@@ -13,8 +13,9 @@ export let offsetX = 0;
 export let offsetY = 0;
 
 export let color = "#FFFFFF";
-let font = "Arial";
+let fontName = "Arial";
 let fontSize = 30;
+let font = `${fontSize}px ${fontName}`;
 let lineHeight = 0;
 let textAlign = "start";
 let textBaseline = "alphabetic";
@@ -194,13 +195,20 @@ export const setShadow = (color, blur, x, y) => {
 /**
  * @type {function(string, number, string, string):void}
  */
-export function setFont(font, size, align, baseline) {
-	font = typeof font === "string" ? font : font.name;
-	font = font;
-	fontSize = size || 16;
-	context.font = fontSize + "px " + font;
-	context.textAlign = textAlign = align || "left";
-	context.textBaseline = textBaseline = baseline || "alphabetic";
+export function setFont(font, size = 16, align = "left", baseline = alphabetic) {
+	fontName = typeof font === "string" ? font : font.name;
+	fontSize = size;
+	context.font = `${fontSize}px ${fontName}`;
+	context.textAlign = textAlign = align;
+	context.textBaseline = textBaseline = baseline;
+}
+
+/**
+ *
+ */
+export function setFontSize(size = 16) {
+	fontSize = size;
+	context.font = `${fontSize}px ${fontName}`;
 }
 
 /**

@@ -5,10 +5,13 @@ import * as instance from "./instance.js";
 import Sprite from "./sprite.js";
 import * as draw from "./draw.js";
 
+//
+export let currentRoom = null;
+
 /**
  *
  */
-class Room {
+export class Room {
 
 	/**
 	 * @param {string} name
@@ -30,8 +33,8 @@ class Room {
 		this.instances = [];
 		Room.names.push(name);
 		Room.array.push(this);
-		if (Room.current === null)
-			Room.current = this;
+		if (currentRoom === null)
+			currentRoom = Room.current = this;
 	}
 
 	/**
@@ -75,7 +78,7 @@ class Room {
 		});
 
 		// goto new room and create new instances
-		Room.current = this;
+		currentRoom = Room.current = this;
 		this.instances.forEach(function(inst) {
 			instance.create(inst.name, inst.x, inst.y);
 		});
@@ -100,7 +103,7 @@ class Room {
 		if (spr === null) return;
 
 		if (!(ctx instanceof CanvasRenderingContext2D)) {
-			window.addConsoleText("#F00", "Room background images are currently only supported in Canvas 2D!");
+			window._gbide_error("Room background images are currently only supported in Canvas 2D!");
 			window._GB_stop();
 			return;
 		}
@@ -156,7 +159,7 @@ class Room {
 	 * @return {void}
 	 */
 	static next() {
-		const index = Room.array.indexOf(Room.current);
+		const index = Room.array.indexOf(currentRoom);
 		Room.enter(Room.array[index+1]);
 	}
 
@@ -164,7 +167,7 @@ class Room {
 	 * @return {void}
 	 */
 	static previous() {
-		const index = Room.array.indexOf(Room.current);
+		const index = Room.array.indexOf(currentRoom);
 		Room.enter(Room.array[index-1]);
 	}
 

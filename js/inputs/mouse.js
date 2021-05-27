@@ -32,12 +32,13 @@ export const init = () => {
 	document.addEventListener("mousemove", e => {
 		const canv = Canvas.main.domElement;
 		const rect = canv.getBoundingClientRect();
-		const hs = canv.width / rect.width;
-		const vs = canv.height / rect.height;
-		rawX = ~~(e.clientX - rect.left);
-		rawY = ~~(e.clientY - rect.top);
-		x = ~~(rawX * hs);
-		y = ~~(rawY * vs);
+		const scale = Math.min(rect.height / canv.height, rect.width / canv.width);
+		const offsetX = (rect.width - canv.width * scale) / 2;
+		const offsetY = (rect.height - canv.height * scale) / 2;
+		rawX = ~~(e.clientX - rect.left) - offsetX;
+		rawY = ~~(e.clientY - rect.top) - offsetY;
+		x = ~~(rawX / scale);
+		y = ~~(rawY / scale);
 	});
 
 	document.addEventListener("mousewheel", e => {
