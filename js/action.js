@@ -131,11 +131,12 @@ export function get(...args) {
 
 // Fucntions for use in code.
 export const GAME = {
-	App: App,
-	Camera: Camera,
-	Canvas: Canvas,
-	Color: Color,
+	App,
+	Camera,
+	Canvas,
+	Color,
 	main: {
+		start: main.start,
 		setGameSpeed: main.setGameSpeed
 	},
 	instance: instance,
@@ -173,7 +174,7 @@ export const GAME = {
 		mouse: input.mouse,
 		touch: input.touch
 	},
-	math: math,
+	math,
 	Font: Font,
 	Grid: Grid,
 	Tilemap: Tilemap,

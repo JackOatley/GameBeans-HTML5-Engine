@@ -24,6 +24,8 @@ window._GB_stop = window._GB_stop || NOOP;
  */
 export function start(opts = {}) {
 
+	console.log("STARTING");
+
 	// Basic site-locking
 	if (opts.host !== undefined && opts.host !== "") {
 		let loc = (window.parent) ? window.parent.location : window.location;
@@ -32,6 +34,8 @@ export function start(opts = {}) {
 		if (!opts.host.includes(host))
 			return;
 	}
+
+	console.log(room.current);
 
 	//
 	var canv = new Canvas({
@@ -43,8 +47,8 @@ export function start(opts = {}) {
 	});
 
 	// selectively enable input methods
-	if (opts.enableMouse) input.initMouse();
-	if (opts.enableKeyboard) input.initKeyboard();
+	if (opts.enableMouse ?? true) input.initMouse();
+	if (opts.enableKeyboard ?? true) input.initKeyboard();
 	if (opts.enableTouch) input.initTouch();
 	if (opts.hideCursor) canv.domElement.style.cursor = "none";
 

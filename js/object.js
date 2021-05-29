@@ -58,13 +58,7 @@ export class GameObject {
 		return instance.count(this);
 	}
 
-	/**
-	 * Add an action with variable parameters to an event of an object.
-	 * @param {*} object Can be an object constructor or integer ID.
-	 * @param {*} event
-	 * @param {*} action
-	 * @return {void}
-	 */
+	// Add an action with variable parameters to an event of an object.
 	eventAddAction(event, action) {
 
 		if (action === undefined) {

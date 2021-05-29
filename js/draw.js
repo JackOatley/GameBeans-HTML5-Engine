@@ -143,12 +143,14 @@ export function drawSprite(spr, index, x, y, scaleX, scaleY, rotation, opts = {}
 	const oy = opts.originY ?? spr.originY;
 	const frame = spr.images[index];
 	const img = frame.img;
-	context.drawImage(
-		img, frame.clip.x, frame.clip.y,
-		frame.clip.w, frame.clip.h,
-		-ox, -oy,
-		spr.width, spr.height
-	);
+	if (frame.ready) {
+		context.drawImage(
+			img, frame.clip.x, frame.clip.y,
+			frame.clip.w, frame.clip.h,
+			-ox, -oy,
+			spr.width, spr.height
+		);
+	}
 
 	//
 	context.restore();
