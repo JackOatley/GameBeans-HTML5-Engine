@@ -1,5 +1,5 @@
 import Canvas from "./Canvas.js";
-import Color from "./Color.js";
+import * as Color from "./Color.js";
 import Generator from "./generator.js";
 
 /**

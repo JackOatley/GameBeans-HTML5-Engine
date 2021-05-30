@@ -1,9 +1,8 @@
 import { Room } from "../core.js";
 
-export function RoomDestroy() {
-
+export function RoomDestroy()
+{
 	this.eventAddAction("outsideroom", function() {
 		this.destroy();
 	});
-
 }

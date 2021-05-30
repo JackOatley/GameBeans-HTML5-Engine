@@ -4,11 +4,9 @@ export const press = {};
 export const down = {};
 export const release = {};
 
-/**
- *
- */
-export function init() {
-
+//
+export function init()
+{
 	keyValues.forEach((key) => {
 		press[key] = false;
 		down[key] = false;
@@ -28,26 +26,23 @@ export function init() {
 		release[e.code] = true;
 		down[e.code] = false;
 	});
-
 }
 
-/**
- *
- */
-export const update = () => {
-	Object.keys(down).forEach((key) => {
+//
+export function update()
+{
+	for (const key of Object.keys(down)) {
 		press[key] = false;
 		release[key] = false;
-	});
+	}
 }
 
-/**
- *
- */
-export const clear = () => {
-	Object.keys(down).forEach((key) => {
+//
+export function clear()
+{
+	for (const key of Object.keys(down)) {
 		down[key] = false;
 		press[key] = false;
 		release[key] = false;
-	});
+	}
 }

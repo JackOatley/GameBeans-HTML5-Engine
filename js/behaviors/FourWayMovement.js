@@ -1,7 +1,7 @@
 import { ARROW_KEYS, WASD_KEYS, input } from "../core.js";
 
-export function FourWayMovement(speed, keys) {
-
+export function FourWayMovement(speed, keys)
+{
 	switch (keys) {
 		case ("Arrows"): keys = ARROW_KEYS; break;
 		case ("WASD"): keys = WASD_KEYS; break;
@@ -25,5 +25,4 @@ export function FourWayMovement(speed, keys) {
 		}
 
 	});
-
 }

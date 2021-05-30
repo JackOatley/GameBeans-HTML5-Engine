@@ -1,7 +1,7 @@
 import { Room } from "../core.js";
 
-export function BoundToRoom() {
-
+export function BoundToRoom()
+{
 	this.eventAddAction("stepEnd", function() {
 
 		const w = this.boxRight - this.boxLeft;
@@ -14,5 +14,4 @@ export function BoundToRoom() {
 		if (this.boxBottom > rh) this.y = rh - h + this.y - this.boxTop;
 
 	});
-
 }

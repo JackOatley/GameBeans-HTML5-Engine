@@ -1,7 +1,7 @@
 import { Room } from "../core.js";
 
-export function RoomWrap() {
-
+export function RoomWrap()
+{
 	this.eventAddAction("stepEnd", function() {
 
 		const w = this.boxRight - this.boxLeft;
@@ -14,5 +14,4 @@ export function RoomWrap() {
 		if (this.boxBottom < 0) this.y += rh + h;
 
 	});
-
 }

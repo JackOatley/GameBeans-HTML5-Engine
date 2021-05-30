@@ -1,7 +1,7 @@
 import { ARROW_KEYS, WASD_KEYS, input, math } from "../core.js";
 
-export function EightWayMovement(speed, keys) {
-
+export function EightWayMovement(speed, keys)
+{
 	switch (keys) {
 		case ("Arrows"): keys = ARROW_KEYS; break;
 		case ("WASD"): keys = WASD_KEYS; break;
@@ -25,5 +25,4 @@ export function EightWayMovement(speed, keys) {
 		}
 
 	});
-
 }

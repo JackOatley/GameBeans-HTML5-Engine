@@ -5,7 +5,7 @@ import * as main from "./main.js";
 import canvas from "./Canvas.js";
 import { Camera } from "./camera.js";
 import Room from "./room.js";
-import input from "./inputs/input.js";
+import * as input from "./inputs/input.js";
 import Script from "./Script.js";
 import sprite from "./sprite.js";
 import { Sound } from "./Sound.js";

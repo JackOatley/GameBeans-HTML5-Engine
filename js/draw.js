@@ -2,7 +2,7 @@ import { DEGTORAD } from "./math.js";
 import sprite from "./sprite.js";
 import canvas from "./Canvas.js";
 import Font from "./font.js";
-import Color from "./Color.js";
+import * as Color from "./Color.js";
 import * as DrawShapes from "./drawing/DrawShapes.js";
 
 export const shape = DrawShapes;
@@ -23,10 +23,9 @@ let defaultTransform = [1, 0, 0, 1, 0, 0];
 let targetStack = [];
 let imageSmoothing = false;
 
-/**
- *
- */
-export function drawTotalReset() {
+//
+export function drawTotalReset()
+{
 	target = null;
 	context = null;
 	targetStack = [];
@@ -34,123 +33,116 @@ export function drawTotalReset() {
 	offsetY = 0;
 }
 
-/** */
-export function setTarget(newTarget) {
+//
+export function setTarget(newTarget)
+{
 	targetStack.push(target);
 	target = newTarget;
 	context = target.context;
 }
 
-/** */
-export function resetTarget() {
-	let newTarget = targetStack.pop();
-	target = newTarget;
+//
+export function resetTarget()
+{
+	target = targetStack.pop();
 	context = target.context;
 }
 
-/** */
-export function getTarget() {
+//
+export function getTarget()
+{
 	return target;
 }
 
-/**
- * @type {function{}:CanvasRenderingContext2D}
- */
-export const getContext = () => context;
+//
+export function getContext()
+{
+	return context;
+}
 
-/** */
-export function clear(col) {
+//
+export function clear(col)
+{
 	canvas.fill(target, col);
 }
 
 /** */
-export function save() {
+export function save()
+{
 	context.save();
 }
 
-/** */
-export function restore() {
+///
+export function restore()
+{
 	context.restore();
 }
 
-/** */
-export function reset() {
+//
+export function reset()
+{
 	context.imageSmoothingEnabled = imageSmoothing;
 	context.globalAlpha = 1;
-	if (context instanceof CanvasRenderingContext2D) {
+	if (context instanceof CanvasRenderingContext2D)
 		context.setTransform.apply(context, defaultTransform);
-	}
 }
 
-/** */
-export function setImageSmoothing(enable) {
+//
+export function setImageSmoothing(enable)
+{
 	imageSmoothing = enable;
 }
 
 /**
- * Can be a number, a hex-value or an object containing R,
- * G, B and optionally A properties or H, S, L and optionally A properties.
- * @type {function(*):void}
+ * Can be a number, a hex-value or an object containing R, G, B and optionally A
+ * properties or H, S, L and optionally A properties.
  */
-export function setColor(c) {
+export function setColor(c)
+{
+	if (typeof(c) === "string")
+		return color = c;
 
-	// quick exit if c is already a CSS color value
-	if (typeof c === "string") {
-		color = c;
-		return;
-	}
+	if ("r" in c && "g" in c && "b" in c)
+		return color = Color.rgbaToCSS(c.r, c.g, c.b, c.a);
 
-	// RGB / RGBA
-	if (c.r !== undefined && c.g !== undefined && c.b !== undefined) {
-		var a = (c.a !== undefined) || 1;
-		color = "rgba("+c.r+","+c.g+","+c.b+","+a+")";
-	}
-
-	// HSL / HSLA
-	else if (c.h !== undefined && c.s !== undefined && c.l !== undefined) {
-		var a = (c.a !== undefined) || 1;
-		color = "hsla("+c.h+","+c.s+"%,"+c.l+"%,"+a+")";
-	}
-
+	if ("h" in c && "s" in c && "l" in c)
+		return color = Color.hslaToCSS(c.h, c.s, c.l, c.a);
 }
 
 /**
  * Draws the sprite at the given x, y position.
- * @type {function(Object, number, number, number, number, number, number, Object):void}
  */
-export function drawSprite(spr, index, x, y, scaleX, scaleY, rotation, opts = {})
+export function drawSprite(spr, i, x, y, sX, sY, rotation, opts = {})
 {
 	if (!spr) return;
 
 	if (!(context instanceof CanvasRenderingContext2D)) {
-		window.addConsoleText("#F00", "Sprites are currently only supported in Canvas 2D!");
+		window.addConsoleText("red", "Sprites are currently only supported in Canvas 2D!");
 		return window._GB_stop();
 	}
 
 	spr = sprite.get(spr);
+	i = Math.floor(i ?? 0) % spr.images.length; // TODO: Check negative numbers?
+	const frame = spr.images[i];
+	if (!frame.ready)
+		return;
 
 	//
 	context.save();
 	context.translate(x, y);
 	context.rotate(rotation * DEGTORAD);
-	context.scale(scaleX, scaleY);
-
-	// TODO: What does this do with negative numbers?
-	index = Math.floor(index || 0) % spr.images.length;
+	context.scale(sX, sY);
 
 	//
 	const ox = opts.originX ?? spr.originX;
 	const oy = opts.originY ?? spr.originY;
-	const frame = spr.images[index];
 	const img = frame.img;
-	if (frame.ready) {
-		context.drawImage(
-			img, frame.clip.x, frame.clip.y,
-			frame.clip.w, frame.clip.h,
-			-ox, -oy,
-			spr.width, spr.height
-		);
-	}
+	context.drawImage(
+		img, frame.clip.x, frame.clip.y,
+		frame.clip.w, frame.clip.h,
+		-ox, -oy,
+		spr.width, spr.height
+	);
 
 	//
 	context.restore();
@@ -170,12 +162,14 @@ export function lives(spr, x, y, number, order, seperation)
  * Draws the sprite at the given x, y position, and tiles it to fill a given
  * width and height.
  */
-export function spriteTiled(spr, index, x, y, w, h)
+export function spriteTiled(spr, i, x, y, w, h)
 {
 	spr = sprite.get(spr);
-	for (let rx=0, dx=x; rx<w; rx++, dx+=spr.width)
-	for (let ry=0, dy=y; ry<h; ry++, dy+=spr.height)
-		drawSprite(spr, index, dx, dy, 1, 1, 0);
+	const sw = spr.width;
+	const sh = spr.height;
+	for (let rx = 0, dx = x; rx < w; rx++, dx += sw)
+	for (let ry = 0, dy = y; ry < h; ry++, dy += sh)
+		drawSprite(spr, i, dx, dy, 1, 1, 0);
 }
 
 /**
