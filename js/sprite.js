@@ -22,8 +22,8 @@ class Sprite {
 		//
 		this.assetType = "sprite";
 		this.name = opts.name || Sprite.newName();
-		this.originX = opts.originX || 0;
-		this.originY = opts.originY || 0;
+		this.originX = opts.originX ?? 0;
+		this.originY = opts.originY ?? 0;
 		this.width = 0;
 		this.height = 0;
 		this.images = [];
@@ -104,7 +104,7 @@ class Sprite {
 	 */
 	cache(opts = {}) {
 		this.images.forEach((frame) => {
-			let canvas = document.createElement("CANVAS");
+			let canvas = document.createElement("canvas");
 			canvas.width = opts.width || frame.img.width;
 			canvas.height = opts.height || frame.img.height;
 			let ctx = canvas.getContext("2d");

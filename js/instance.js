@@ -118,9 +118,9 @@ export function findRandom(obj) {
  * Find the nearest instance of an object to a point.
  * @type {function(number, number, Object!string):Object}
  */
-export function nearest(x, y, obj) {
-
-	var all = [];
+export function nearest(x, y, obj)
+{
+	const all = [];
 	if (!Array.isArray(obj)) {
 		all.push(...(GameObject.get(obj).instances));
 	} else {
@@ -242,8 +242,8 @@ export function stepBegin(i) {
  * Execute step event.
  * @type {function(Object):void}
  */
-export function step(inst) {
-
+export function step(inst)
+{
 	if (!inst.exists) return;
 
 	// Step events.
@@ -269,7 +269,6 @@ export function step(inst) {
 	triggerEvents.forEach(event => {
 		executeEvent(inst, event);
 	});
-
 }
 
 //

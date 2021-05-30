@@ -118,8 +118,8 @@ export function setColor(c) {
  * Draws the sprite at the given x, y position.
  * @type {function(Object, number, number, number, number, number, number, Object):void}
  */
-export function drawSprite(spr, index, x, y, scaleX, scaleY, rotation, opts = {}) {
-
+export function drawSprite(spr, index, x, y, scaleX, scaleY, rotation, opts = {})
+{
 	if (!spr) return;
 
 	if (!(context instanceof CanvasRenderingContext2D)) {
@@ -159,17 +159,19 @@ export function drawSprite(spr, index, x, y, scaleX, scaleY, rotation, opts = {}
 /**
  * @type {function(Object, number, number, number, number, number):void}
  */
-export const lives = (spr, x, y, number, order, seperation) => {
+export function lives(spr, x, y, number, order, seperation)
+{
 	const [xd, yd] = order ? [0, seperation] : [seperation, 0];
 	for (let n = 0; n < number; n++)
 		drawSprite(spr, 0, x + xd * n, y + yd * n, 1, 1, 0);
 }
 
 /**
- * Draws the sprite at the given x, y position.
- * @type {function(Object, number, number, number, number, number):void}
+ * Draws the sprite at the given x, y position, and tiles it to fill a given
+ * width and height.
  */
-export const spriteTiled = (spr, index, x, y, w, h) => {
+export function spriteTiled(spr, index, x, y, w, h)
+{
 	spr = sprite.get(spr);
 	for (let rx=0, dx=x; rx<w; rx++, dx+=spr.width)
 	for (let ry=0, dy=y; ry<h; ry++, dy+=spr.height)
@@ -178,16 +180,17 @@ export const spriteTiled = (spr, index, x, y, w, h) => {
 
 /**
  * Draws a canvas at the given position.
- * @type {function(HTMLCanvasElement, number, number):void}
  */
-export const drawCanvas = (canv, x, y) => {
+export function drawCanvas(canv, x, y)
+{
 	context.drawImage(canv.domElement, x, y);
 }
 
 /**
  *
  */
-export const setShadow = (color, blur, x, y) => {
+export function setShadow(color, blur, x, y)
+{
 	context.shadowColor = color;
 	context.shadowBlur = blur;
 	context.shadowOffsetX = x;
@@ -197,7 +200,8 @@ export const setShadow = (color, blur, x, y) => {
 /**
  * @type {function(string, number, string, string):void}
  */
-export function setFont(font, size = 16, align = "left", baseline = alphabetic) {
+export function setFont(font, size = 16, align = "left", baseline = alphabetic)
+{
 	fontName = typeof font === "string" ? font : font.name;
 	fontSize = size;
 	context.font = `${fontSize}px ${fontName}`;
@@ -208,7 +212,8 @@ export function setFont(font, size = 16, align = "left", baseline = alphabetic) 
 /**
  *
  */
-export function setFontSize(size = 16) {
+export function setFontSize(size = 16)
+{
 	fontSize = size;
 	context.font = `${fontSize}px ${fontName}`;
 }
@@ -216,8 +221,8 @@ export function setFontSize(size = 16) {
 /**
  * @type {function(string, number, number, Object=):void}
  */
-export function text(str, x, y, opts = {}) {
-
+export function text(str, x, y, opts = {})
+{
 	x = Number(x);
 	y = Number(y);
 
@@ -319,8 +324,6 @@ export function text(str, x, y, opts = {}) {
 
 	}
 
-
-
 }
 
 export const transform = {
@@ -343,9 +346,10 @@ export const transform = {
 /**
  *
  */
-function _drawWord(drawX, drawY, word, lookup, ctx, useBitmap, bitmap, scale, drawMethod) {
+function _drawWord(x, y, word, lookup, ctx, useBitmap, bitmap, scale, mathod)
+{
 	if (useBitmap) {
-		var dx = ~~drawX;
+		var dx = ~~x;
 		var len = word.length;
 		for (var cn=0; cn<len; cn++) {
 			var metrics = lookup[word[cn]];
@@ -354,10 +358,10 @@ function _drawWord(drawX, drawY, word, lookup, ctx, useBitmap, bitmap, scale, dr
 			var sy = ~~metrics.top;
 			var sh = Math.ceil(metrics.bottom) - sy;
 			var sw = Math.ceil(metrics.right) - sx;
-			ctx.drawImage(bitmap, sx, sy, sw, sh, dx, drawY, sw*scale, sh*scale);
+			ctx.drawImage(bitmap, sx, sy, sw, sh, dx, y, sw*scale, sh*scale);
 			dx += (sw + 1) * scale;
 		}
 	} else {
-		ctx[drawMethod](word, drawX, drawY);
+		ctx[mathod](word, x, y);
 	}
 }

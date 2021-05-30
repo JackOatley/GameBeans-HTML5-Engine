@@ -13,8 +13,8 @@ export class GameObject {
 	 * @param {string} name
 	 * @param {number} sprite
 	 */
-	constructor(name, sprite) {
-
+	constructor(name, sprite)
+	{
 		/**
 		 * Create new constructor.
 		 * @param {number=} x
@@ -40,7 +40,6 @@ export class GameObject {
 		GameObject.names.push(obj.objectName);
 		GameObject.array.push(obj);
 		return obj;
-
 	}
 
 	/**
