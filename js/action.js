@@ -119,9 +119,11 @@ export function func(f, ...args) {
 }
 
 // Executes the given Script with an array of arguments.
-export function script(s, args) {
-	if (typeof s === "string") return window[s].apply(this, args);
-	s.apply(this, args);
+export function script(s, args)
+{
+	if (typeof s === "string")
+		return window[s].apply(this, args);
+	return s.apply(this, args);
 }
 
 // Shows the value of the given variable of the instance, in the console.

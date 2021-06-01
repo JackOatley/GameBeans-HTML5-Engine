@@ -339,15 +339,19 @@ export function changeSprite(sprite, index = 0, speed = 1) {
 
 /**
  * Execute a particular event for all current instances.
- * @type {function(string, Object):void}
  */
-export function executeEventAll(event, otherInst) {
+export function executeEventAll(e, other)
+{
 	for (const i of instanceArray)
-		executeEvent(i, event, otherInst);
+		executeEvent(i, e, other);
 }
 
-/** */
-export function stepAll() {
+/**
+ * A new array is created so that if any instances are created during any of the
+ * step events then they are not included in the next event until a fresh tick.
+ */
+export function stepAll()
+{
 	newStep();
 	const arr = instanceArray.slice();
 	arr.forEach(stepBegin);
@@ -357,13 +361,16 @@ export function stepAll() {
 }
 
 /** */
-export function drawAll() {
-	if (doDepthSort) instanceArray.sort(sortFunction);
+export function drawAll()
+{
+	if (doDepthSort)
+		instanceArray.sort(sortFunction);
 	instanceArray.forEach(draw);
 }
 
 /** */
-export function drawGuiAll() {
+export function drawGuiAll()
+{
 	for (const i of instanceArray)
 		executeEvent(i, "drawGUI");
 }
@@ -371,7 +378,8 @@ export function drawGuiAll() {
 /**
  *
  */
-export function directionToPoint(x, y, s) {
+export function directionToPoint(x, y, s)
+{
 	const to = math.pointDirection(this.x, this.y, x, y);
 	const diff = math.angleDifference(this.direction, to);
 	const max = Math.min(s, Math.abs(diff));
@@ -379,7 +387,8 @@ export function directionToPoint(x, y, s) {
 }
 
 /** Resets some instance variables/states. */
-function newStep(i) {
+function newStep(i)
+{
 	for (const i of instanceArray) {
 		i.wasInRoomBounds = i.inRoomBounds;
 		i.previousX = i.x;
@@ -387,10 +396,11 @@ function newStep(i) {
 	}
 }
 
-/** */
-function updatePosition(inst) {
-
-	// if the instance is already falling at terminal velocity then we no longer apply gravity
+/**
+ *
+ */
+function updatePosition(inst)
+{
 	let gravVector = {
 		x: math.lengthDirX(inst.terminal, inst.gravityDirection),
 		y: math.lengthDirY(inst.terminal, inst.gravityDirection)
@@ -406,17 +416,15 @@ function updatePosition(inst) {
 		inst.speedY += math.lengthDirY(inst.gravity, inst.gravityDirection);
 	}
 
-	// move instance
 	inst.x += inst.speedX;
 	inst.y += inst.speedY;
-
 }
 
 /**
  * Update the instance's bounding box.
- * @type {function(Object):void}
  */
-function updateBoundingBox(i) {
+function updateBoundingBox(i)
+{
 	const spr = sprite.get(i.sprite);
 	if (!spr) {
 		i.boxTop = i.y;
@@ -433,9 +441,9 @@ function updateBoundingBox(i) {
 
 /**
  * Update the instance's collision box.
- * @type {function(Object):void}
  */
-function updateCollisionBox(i) {
+function updateCollisionBox(i)
+{
 	const box = i.boxCollision;
 	box.top = i.y - box.y * i.scaleY;
 	box.left = i.x - box.x * i.scaleX;
@@ -445,10 +453,9 @@ function updateCollisionBox(i) {
 
 /**
  * Update the instance's animation.
- * @type {function(Object):void}
  */
-function updateAnimation(inst) {
-
+function updateAnimation(inst)
+{
 	inst.index += inst.imageSpeed;
 	let spr = sprite.get(inst.sprite);
 	if (spr) {
@@ -498,25 +505,25 @@ function addToArray(inst) {
 
 /**
  * Returns all instances.
- * @return {Array<Object>}
  */
-function getAll() {
+function getAll()
+{
 	return instanceArray.filter(i => true);
 }
 
 /**
  * Returns all instances set as "solid".
- * @return {Array<Object>}
  */
-function getAllSolid() {
+function getAllSolid()
+{
 	return instanceArray.filter(i => i.solid);
 }
 
 /**
  * Remove isntances that have been requested to be destroyed.
- * @return {void}
  */
-function clearDestroyed() {
+function clearDestroyed()
+{
 	var l = instanceArray.length;
 	var i, n = l;
 	while (i = instanceArray[--n]) {
@@ -530,19 +537,20 @@ function clearDestroyed() {
 }
 
 /**
- * The function used for instance depth ordering. Sorts by ID is depth same.
- * @param {Object} a Instance.
- * @param {Object} b Instance.
- * @return {number} 0, -1 or 1.
+ * The function used for instance depth ordering. Sorts by ID if depth same.
+ * Returns a number of 0, -1 or 1.
  */
-const sortFunction = (a, b) =>
-	(a.depth === b.depth) ? a.id - b.id : a.depth - b.depth;
+function sortFunction(a, b)
+{
+	return (a.depth === b.depth) ? a.id - b.id : a.depth - b.depth;
+}
 
 /**
  * @param {Object} inst Instance.
  * @return {void}
  */
-function instanceExecuteListeners(inst) {
+function instanceExecuteListeners(inst)
+{
 	for (const l of inst.listeners) {
 		switch (l.type) {
 			case ("outsideroom"): outsideRoom(inst); break;
@@ -553,11 +561,9 @@ function instanceExecuteListeners(inst) {
 
 /**
  * Execute an event for the given instance only.
- * TODO: This try catch setup has got to be slow, right?
- * @type {function(Object, Object, Object):return}
  */
-function executeEvent(inst, event, otherInst) {
-
+function executeEvent(inst, event, otherInst)
+{
 	// Set the current "other" instance.
 	otherStack.push(window.other);
 	window.other = otherInst;
@@ -578,20 +584,20 @@ function executeEvent(inst, event, otherInst) {
 
 	// Restore previous "other" instance.
 	window.other = otherStack.pop();
-
 }
 
 /**
  * @type {function(Object, Object|string):void}
  */
-function instanceCollisionInstance(inst, target) {
+function instanceCollisionInstance(inst, target)
+{
 	if (!inst.exists) return;
 	const box1 = inst.boxCollision;
 	const arr = getInstancesObject(target);
 	for (const targ of arr) {
-		if (targ.exists								// Target doesn't exist.
-		&& inst !== targ							// Same instance.
-		&& boxOverlapBox(box1, targ.boxCollision))	// No collision.
+		if (targ.exists
+		&& inst !== targ
+		&& boxOverlapBox(box1, targ.boxCollision))
 			executeEvent(inst, "collision_" + target, targ);
 	}
 }

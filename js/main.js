@@ -22,10 +22,8 @@ window._GB_stop = window._GB_stop || NOOP;
 /**
  *
  */
-export function start(opts = {}) {
-
-	console.log("STARTING");
-
+export function start(opts = {})
+{
 	// Basic site-locking
 	if (opts.host !== undefined && opts.host !== "") {
 		let loc = (window.parent) ? window.parent.location : window.location;
@@ -34,8 +32,6 @@ export function start(opts = {}) {
 		if (!opts.host.includes(host))
 			return;
 	}
-
-	console.log(room.current);
 
 	//
 	var canv = new Canvas({
