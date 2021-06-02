@@ -1,4 +1,4 @@
-import Canvas from "./Canvas.js";
+import Canvas, * as canvas from "./Canvas.js";
 import room from "./room.js";
 import * as input from "./inputs/input.js";
 import * as Instance from "./instance.js";
@@ -34,13 +34,14 @@ export function start(opts = {})
 	}
 
 	//
-	var canv = new Canvas({
+	const canv = new Canvas({
 		width: room.current.width,
 		height: room.current.height,
 		crisp2D: true,
-		application: true,
 		context: opts.defaultContext ?? "2d"
 	});
+	draw.setTarget(canv);
+	canvas.setMain(canv);
 
 	// selectively enable input methods
 	if (opts.enableMouse ?? true) input.initMouse();
@@ -72,19 +73,18 @@ export const setGameSpeed = speed => {
 /**
  *
  */
-function tick(timestamp) {
-
+function tick(timestamp)
+{
 	try {
 
 		// Exit game with Esc key.
 		if (window._GB_stop && input.triggerEvents.includes("EscapePress"))
 			window._GB_stop();
 
+		frameRequest = requestAnimationFrame(tick);
+
 		// Account for the first frame.
 		if (!last) last = timestamp = performance.now();
-
-		// request the next frame
-		frameRequest = requestAnimationFrame(tick);
 		global.fpsNow = 1000 / (timestamp - last);
 		global.dt = timestamp - last;
 
@@ -112,9 +112,9 @@ function tick(timestamp) {
 
 /**
  * Update sequence.
- * @return {void}
  */
-function gameUpdate() {
+function gameUpdate()
+{
 	Instance.stepAll();
 	Transition.updateAll();
 }
@@ -122,14 +122,14 @@ function gameUpdate() {
 /**
  * @return {void}
  */
-function gameDraw() {
+function gameDraw()
+{
 	draw.reset();
 	room.current.draw();
-	if (allCameras.length) {
+	if (allCameras.length)
 		updateAllCameras();
-	} else {
+	else
 		Instance.drawAll();
-	}
 	draw.reset();
 	Instance.drawGuiAll();
 	Transition.drawAll();
@@ -138,9 +138,8 @@ function gameDraw() {
 /**
  * @return {void}
  */
-function handleResizeEvent() {
+function handleResizeEvent()
+{
 	Instance.executeEventAll("resize");
 }
-
-// attach event listerners
 window.addEventListener("resize", handleResizeEvent);

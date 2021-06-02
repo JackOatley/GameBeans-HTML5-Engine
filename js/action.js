@@ -164,7 +164,9 @@ export const GAME = {
 		drawCanvas: draw.drawCanvas,
 		setFont: draw.setFont,
 		text: draw.text,
-		transform: draw.transform,
+		scale: draw.scale,
+		rotate: draw.rotate,
+		translate: draw.translate,
 		self: instance.drawSelf,
 		debug: instance.drawDebug
 	},

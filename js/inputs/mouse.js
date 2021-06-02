@@ -1,4 +1,4 @@
-import Canvas from "../Canvas.js";
+import * as canvas from "../Canvas.js";
 
 export const press = [false, false, false];
 export const down = [false, false, false];
@@ -30,7 +30,7 @@ export const init = () => {
 	});
 
 	document.addEventListener("mousemove", e => {
-		const canv = Canvas.main.domElement;
+		const canv = canvas.main.domElement;
 		const rect = canv.getBoundingClientRect();
 		const scale = Math.min(rect.height / canv.height, rect.width / canv.width);
 		const offsetX = (rect.width - canv.width * scale) / 2;

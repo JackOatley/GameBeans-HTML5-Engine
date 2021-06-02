@@ -1,17 +1,19 @@
-import * as draw from "./draw.js";
-import Generator from "./generator.js";
+
+//
+export let array = [];
+export let main = null;
+export let dom = null;
 
 /**
  *
  */
-class Canvas {
+export default class Canvas {
 
 	/**
 	 * @param {Object} [opts={}]
 	 * @param {bumber} [opts.width=300]
 	 * @param {bumber} [opts.height=150]
 	 * @param {bumber} [opts.scale=1]
-	 * @param {boolean} [opts.application=false]
 	 * @param {boolean} [opts.crisp2D=false]
 	 * @param {string} [opts.context="2d"]
 	 */
@@ -34,18 +36,12 @@ class Canvas {
 		}
 
 		//
-		if (c.application) {
-			draw.setTarget(this);
-			Canvas.setMain(this);
-		}
-
-		//
 		c.oncontextmenu = function(e) {
 			e.preventDefault();
 		}
 
 		//
-		Canvas.array.push(this);
+		array.push(this);
 	}
 
 	get width() {
@@ -66,53 +62,22 @@ class Canvas {
 		this.domElement.height = x;
 	}
 
-	/**
-	 * Sets the canvas as the main canvas for the game.
-	 * @return {void}
-	 */
 	setMain() {
-		var c = this.domElement;
-		Canvas.main = this;
-		if (Canvas.dom === null) {
-			Canvas.dom = c;
-			var el = document.body;
-			el.appendChild(c);
-		}
-
+		setMain(this);
 	}
 
-	/**
-	 *
-	 */
 	unsetMain() {
 		this.domElement.remove();
-		Canvas.main = null;
-		Canvas.dom = null;
+		main = null;
+		dom = null;
 	}
 
-	/**
-	 * @param {string} [color="#000"] CSS value as a string.
-	 * @return {void}
-	 */
 	fill(color) {
-		var c = this.domElement;
-		var ctx = this.context;
-		if (ctx instanceof CanvasRenderingContext2D) {
-			ctx.fillStyle = color || "#000";
-			ctx.fillRect(0, 0, c.width / c.scale, c.height / c.scale);
-		}
+		fill(this, color);
 	}
 
-	/**
-	 * Clears the canvas.
-	 * @return {void}
-	 */
 	clear() {
-		var c = this.domElement;
-		var ctx = this.context;
-		if (ctx instanceof CanvasRenderingContext2D) {
-			ctx.clearRect(0, 0, c.width / c.scale, c.height / c.scale);
-		}
+		clear(this);
 	}
 
 	/**
@@ -153,19 +118,37 @@ class Canvas {
 		return this.context.getImageData(0, 0, this.width, this.height).data;
 	}
 
-	/**
-	 * Gets the Canvas that is currently set as the main game canvas.
-	 * @return {Object}
-	 */
-	static getMain() {
-		return Canvas.main;
-	}
-
+	static clear = clear;
+	static fill = fill;
+	static setMain = setMain;
+	static getMain = getMain;
 }
 
-Generator.classStaticMatch(Canvas);
-Canvas.array = [];
-Canvas.main = null;
-Canvas.dom = null;
+export function clear({domElement: c, context: ctx})
+{
+	ctx.clearRect(0, 0, c.width / c.scale, c.height / c.scale);
+}
 
-export default Canvas;
+// Fills the canvas with the given CCS color string.
+export function fill({domElement: c, context: ctx}, color = "black")
+{
+	ctx.fillStyle = color;
+	ctx.fillRect(0, 0, c.width / c.scale, c.height / c.scale);
+}
+
+//
+export function setMain(target)
+{
+	var c = target.domElement;
+	main = target;
+	if (dom === null) {
+		dom = c;
+		document.body.appendChild(c);
+	}
+}
+
+// Gets the Canvas that is currently set as the main game canvas.
+export function getMain()
+{
+	return main;
+}

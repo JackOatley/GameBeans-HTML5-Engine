@@ -1,6 +1,6 @@
 import { DEGTORAD } from "./math.js";
 import sprite from "./sprite.js";
-import canvas from "./Canvas.js";
+import * as canvas from "./Canvas.js";
 import Font from "./font.js";
 import * as Color from "./Color.js";
 import * as DrawShapes from "./drawing/DrawShapes.js";
@@ -281,7 +281,7 @@ export function text(str, x, y, opts = {})
 					let b = line.slice(startN, endN);
 					drawX += context.measureText(a).width;
 					if ( 0 < endN ) {
-						_drawWord(drawX, y, b, lookup, context, useBitmap, bitmap, scale, drawMethod);
+						drawWord(drawX, y, b, lookup, context, useBitmap, bitmap, scale, drawMethod);
 					}
 					lineLength = testLine.length;
 					startN -= lineLength;
@@ -300,7 +300,7 @@ export function text(str, x, y, opts = {})
 			let a = line.slice(0, startN);
 			let b = line.slice(startN, endN);
 			drawX += context.measureText(a).width;
-			_drawWord(drawX, y, b, lookup, context, useBitmap, bitmap, scale, drawMethod);
+			drawWord(drawX, y, b, lookup, context, useBitmap, bitmap, scale, drawMethod);
 			lineLength = line.length;
 
 		} else {
@@ -309,7 +309,7 @@ export function text(str, x, y, opts = {})
 			if (useBitmap && context.textAlign === "center") {
 				drawX -= context.measureText(t).width / 2;
 			}
-			_drawWord(~~drawX, y, t, lookup, context, useBitmap, bitmap, scale, drawMethod);
+			drawWord(~~drawX, y, t, lookup, context, useBitmap, bitmap, scale, drawMethod);
 
 		}
 
@@ -317,45 +317,47 @@ export function text(str, x, y, opts = {})
 		y += lineHeightActual;
 
 	}
-
 }
 
-export const transform = {
+function drawWord(x, y, word, lookup, ctx, useBitmap, bitmap, scale, method)
+{
+	if (useBitmap)
+		drawBitmapWord(x, y, word, lookup, ctx, scale);
+	else
+		ctx[method](word, x, y);
+}
 
-	scale: (x, y) => {
-		context.scale(x, y);
-	},
-
-	rotate: (rot) => {
-		context.rotate(rot * DEGTORAD);
-	},
-
-	translate: (x, y) => {
-		offsetX = x;
-		offsetY = y;
-		context.translate(x, y);
+function drawBitmapWord(x, y, word, lookup, ctx, scale)
+{
+	var dx = ~~x;
+	for (const char of word) {
+		const metrics = lookup[char];
+		if (!metrics) continue;
+		const sx = ~~metrics.left;
+		const sy = ~~metrics.top;
+		const sh = Math.ceil(metrics.bottom) - sy;
+		const sw = Math.ceil(metrics.right) - sx;
+		ctx.drawImage(bitmap, sx, sy, sw, sh, dx, y, sw*scale, sh*scale);
+		dx += (sw + 1) * scale;
 	}
 }
 
 /**
- *
+ * Transformation functions.
  */
-function _drawWord(x, y, word, lookup, ctx, useBitmap, bitmap, scale, mathod)
+export function scale(x, y)
 {
-	if (useBitmap) {
-		var dx = ~~x;
-		var len = word.length;
-		for (var cn=0; cn<len; cn++) {
-			var metrics = lookup[word[cn]];
-			if (!metrics) continue;
-			var sx = ~~metrics.left;
-			var sy = ~~metrics.top;
-			var sh = Math.ceil(metrics.bottom) - sy;
-			var sw = Math.ceil(metrics.right) - sx;
-			ctx.drawImage(bitmap, sx, sy, sw, sh, dx, y, sw*scale, sh*scale);
-			dx += (sw + 1) * scale;
-		}
-	} else {
-		ctx[mathod](word, x, y);
-	}
+	context.scale(x, y);
+}
+
+export function rotate(rot)
+{
+	context.rotate(rot * DEGTORAD);
+}
+
+export function translate(x, y)
+{
+	offsetX = x;
+	offsetY = y;
+	context.translate(x, y);
 }

@@ -76,8 +76,8 @@ export class Camera {
 		this.updateBounds();
 
 		// apply camera
-		draw.transform.scale(room.current.width/this.width, room.current.height/this.height);
-		draw.transform.translate(-this.left, -this.top);
+		draw.scale(room.current.width/this.width, room.current.height/this.height);
+		draw.translate(-this.left, -this.top);
 
 		// Draw for this camera.
 		Camera.currentlyDrawing = this;

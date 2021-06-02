@@ -1,7 +1,6 @@
-import Generator from "./generator.js";
 
 /**
- * @author Jack Oatley
+ *
  */
 export class Sound {
 
@@ -32,79 +31,14 @@ export class Sound {
 		}
 	}
 
-	/**
-	 * @param {Object} [opts={}] object.
-	 */
-	play(opts = {}) {
-		if (!Sound.isEnabled) return null;
-
-		// Find an existing sound instance to play.
-		var playSound;
-		var n = this.instances.length;
-		while (n--) {
-			var instance = this.instances[n];
-			if (instance.paused) {
-				playSound = instance;
-				break;
-			}
-		}
-
-		// If no free instance was found.
-		if (!playSound) return null;
-
-		//
-		playSound.onError = (err) => {
-			console.error(soundName, err);
-		}
-
-		// Play the sound.
-		playSound.volume = this.volume;
-		let promise = playSound.play();
-		if (promise !== undefined) {
-			promise.then(function() {
-
-				// on end event
-				playSound.onended = function() {
-
-					// Internal event stuff.
-					this.currentTime = 0;
-					if (Number(opts.loop || false)) {
-						this.play();
-					} else {
-						this.pause();
-					}
-
-					// Custom event, if defined.
-					if (opts.onEnd) {
-						opts.onEnd();
-					}
-
-				}
-
-			}).catch((err) => {
-				console.warn(err);
-			});
-		}
-
-		//
-		return playSound;
+	play(opts)
+	{
+		play(this, opts);
 	}
 
-	/**
-	 * Stop all instances of the sound from playing.
-	 * @return {void}
-	 */
-	stop() {
-		var a = this.instances;
-		var n = a.length;
-		while (n--) {
-			var i = a[n];
-			if (!i.paused) {
-				i.currentTime = 0;
-				i.pause();
-			}
-		}
-
+	stop()
+	{
+		stop(this);
 	}
 
 	/**
@@ -167,9 +101,85 @@ export class Sound {
 
 	}
 
+	static create = create;
+	static play = play;
+	static stop = stop;
 }
 
-Generator.classStaticMatch(Sound);
+export function create(name, source)
+{
+	return new Sound(name, source);
+}
+
+export function stop(s)
+{
+	var a = s.instances;
+	var n = a.length;
+	while (n--) {
+		var i = a[n];
+		if (!i.paused) {
+			i.currentTime = 0;
+			i.pause();
+		}
+	}
+}
+
+export function play(s, opts = {})
+{
+	if (!Sound.isEnabled) return null;
+
+	// Find an existing sound instance to play.
+	var playSound;
+	var n = s.instances.length;
+	while (n--) {
+		var instance = s.instances[n];
+		if (instance.paused) {
+			playSound = instance;
+			break;
+		}
+	}
+
+	// If no free instance was found.
+	if (!playSound) return null;
+
+	//
+	playSound.onError = (err) => {
+		console.error(soundName, err);
+	}
+
+	// Play the sound.
+	playSound.volume = s.volume;
+	let promise = playSound.play();
+	if (promise !== undefined) {
+		promise.then(function() {
+
+			// on end event
+			playSound.onended = function() {
+
+				// Internal event stuff.
+				s.currentTime = 0;
+				if (Number(opts.loop || false)) {
+					this.play();
+				} else {
+					this.pause();
+				}
+
+				// Custom event, if defined.
+				if (opts.onEnd) {
+					opts.onEnd();
+				}
+
+			}
+
+		}).catch((err) => {
+			console.warn(err);
+		});
+	}
+
+	//
+	return playSound;
+}
+
 Sound.isEnabled = true;
 Sound.names = [];
 Sound.array = [];
