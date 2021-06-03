@@ -1,43 +1,81 @@
 import * as math from "./math.js";
 import * as instance from "./instance.js";
 
+const box = {
+	x: 0,
+	y: 0,
+	width: 0,
+	height: 0,
+	top: 0,
+	bottom: 0,
+	left: 0,
+	right: 0
+}
+
 //
-let basic = JSON.stringify({
-	sprite: null,
-	index: 0,
-	imageSpeed: 0,
-	animationBehavior: undefined,
-	visible: true,
-	solid: false,
-	persistent: false,
-	exists: true,
-	scaleX: 1,
-	scaleY: 1,
-	rotation: 0,
-	terminal: 100,
-	gravity: 0,
-	gravityDirection: 0,
-	speedX: 0,
-	speedY: 0,
-	boxTop: 0,
-	boxBottom: 0,
-	boxLeft: 0,
-	boxRight: 0,
-	behaviours: [],
-	listeners: [],
-	events: {},
-	boxCollision: {
-		x: 0,
-		y: 0,
-		width: 0,
-		height: 0,
-		top: 0,
-		bottom: 0,
-		left: 0,
-		right: 0
+const basic = {
+	init: function() {
+		this.sprite = null;
+		this.index = 0;
+		this.imageSpeed = 0;
+		this.animationBehavior = undefined;
+		this.visible = true;
+		this.solid = false;
+		this.persistent = false;
+		this.exists = true;
+		this.scaleX = 1;
+		this.scaleY = 1;
+		this.rotation = 0;
+		this.terminal = 100;
+		this.gravity = 0;
+		this.gravityDirection = 0;
+		this.speedX = 0;
+		this.speedY = 0;
+		this.boxTop = 0;
+		this.boxBottom = 0;
+		this.boxLeft = 0;
+		this.boxRight = 0;
+		this._depth = 0;
+		this.behaviors = [];
+		this.listeners = [];
+		this.events = {};
+		this.boxCollicion = Object.create(box);
+	}
+}
+
+const funcs = {
+	nearest: function(obj) {
+		return instance.nearest(this.x, this.y, obj);
 	},
-	_depth: 0
-});
+
+	furthest: function(obj) {
+		return instance.furthest(this.x, this.y, obj);
+	},
+
+	moveTowardsPoint: function(x, y, spd) {
+		instance.moveTowardsPoint(this, x, y, spd);
+	},
+
+	stepTowardsPoint: function(x, y, spd) {
+		instance.stepTowardsPoint(this, x, y, spd);
+	},
+
+	distanceToPoint: function(x, y) {
+		return instance.distanceToPoint(this, x, y);
+	},
+
+	distanceToInstance: function(inst) {
+		return instance.distanceToInstance(this, inst);
+	},
+
+	destroy: function() {
+		instance.destroy(this);
+	},
+
+	mouseOn: function() {
+		return instance.mouseOn(this);
+	}
+}
 
 //
 let ObjectVars = {
@@ -46,39 +84,9 @@ let ObjectVars = {
 	 *
 	 */
 	set: function(proto) {
-		Object.assign(proto, JSON.parse(basic));
-
-		proto.nearest = function(obj) {
-			return instance.nearest(this.x, this.y, obj);
-		}
-
-		proto.furthest = function(obj) {
-			return instance.furthest(this.x, this.y, obj);
-		}
-
-		proto.moveTowardsPoint = function(x, y, spd) {
-			instance.moveTowardsPoint(this, x, y, spd);
-		}
-
-		proto.stepTowardsPoint = function(x, y, spd) {
-			instance.stepTowardsPoint(this, x, y, spd);
-		}
-
-		proto.distanceToPoint = function(x, y) {
-			return instance.distanceToPoint(this, x, y);
-		}
-
-		proto.distanceToInstance = function(inst) {
-			return instance.distanceToInstance(this, inst);
-		}
-
-		proto.destroy = function() {
-			instance.destroy(this);
-		}
-
-		proto.mouseOn = function() {
-			return instance.mouseOn(this);
-		}
+		const n = Object.create(basic);
+		n.init();
+		Object.assign(proto, n, funcs);
 
 		Object.defineProperty(proto, "depth", {
 			set: function(x) {

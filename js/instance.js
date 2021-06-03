@@ -1,6 +1,5 @@
 import * as math from "./math.js";
 import { mouse, triggerEvents } from "./inputs/input.js";
-import { GameObject } from "./object.js";
 import sprite from "./sprite.js";
 import * as Draw from "./draw.js";
 import { currentRoom } from "./room.js";
@@ -16,46 +15,29 @@ let currentEvent = "";
 
 export const setDepthSort = x  => doDepthSort = x;
 
-/**
- * Create a new instance of an object.
- * @param {string|Object} obj
- * @param {number} x
- * @param {number} y
- * @return {?Object}
- */
-export function create(obj, x, y, opts = {}) {
-
-	const o = GameObject.get(obj);
-
-	if (o === null) {
-		window._gbide_error("Instance creation failed! No such object as " + obj + ".");
-		return null;
-	}
-
+// Create a new instance of an object.
+export function create(o, x, y, opts = {})
+{
 	if (instanceArray.length >= INSTANCE_HARD_LIMIT) {
 		window._gbide_error("instance number hard limit reached:", INSTANCE_HARD_LIMIT);
 		return null;
 	}
 
 	return new o(x, y, opts);
-
 }
 
-/**
- * @type {function(Object, number, number, number, number):Object}
- */
-export function createMoving(obj, x, y, speed, direction) {
-	return create(obj, x, y, {
-		speed: speed,
-		direction: direction
-	});
+//
+export function createMoving(obj, x, y, speed, direction)
+{
+	return create(obj, x, y, {speed, direction});
 }
 
 /**
  *
  */
-export function setup(inst, o, x, y, opts) {
-
+export function setup(inst, o, x, y, opts)
+{
+	inst.direction = 0;
 	inst.id = uniqueId++;
 	inst.exists = true;
 	inst.speed = 0;
@@ -91,9 +73,9 @@ export function setup(inst, o, x, y, opts) {
 
 /**
  * Finds instance n of the given object.
- * @type {function(Object, number=):Object}
  */
-export function find(obj, n=0) {
+export function find(obj, n=0)
+{
 	if (typeof obj === "function") obj = obj.objectName;
 	const length = instanceArray.length;
 	for (let i = 0, c = 0; i<length; i++) {
@@ -108,7 +90,8 @@ export function find(obj, n=0) {
 /**
  * @type {function(Object!string):Object}
  */
-export function findRandom(obj) {
+export function findRandom(obj)
+{
 	if (typeof obj === "function") obj = obj.objectName;
 	const n = math.randomInt(0, count(obj) - 1);
 	return find(obj, n);
@@ -122,10 +105,10 @@ export function nearest(x, y, obj)
 {
 	const all = [];
 	if (!Array.isArray(obj)) {
-		all.push(...(GameObject.get(obj).instances));
+		all.push(...obj.instances);
 	} else {
 		obj.forEach(o => {
-			all.push(...(GameObject.get(o).instances));
+			all.push(...o.instances);
 		});
 	}
 
@@ -144,10 +127,10 @@ export function nearest(x, y, obj)
 
 /**
  * Find the furthest instance of an object from a point.
- * @type {function(number, number, Object!string):Object}
  */
-export function furthest(x, y, obj) {
-	const all = GameObject.get(obj).instances;
+export function furthest(x, y, obj)
+{
+	const all = obj.instances;
 	if (all.length === 0) return null;
 	if (all.length === 1) return all[0];
 	let frst, dist = 0, newDist;
@@ -163,36 +146,41 @@ export function furthest(x, y, obj) {
 
 /**
  * Returns the number of instances of a given object.
- * @type {function(Object!string):number}
  */
-export function count(obj) {
-	return GameObject.get(obj)?.instances.length ?? 0;
+export function count(obj)
+{
+	return obj?.instances.length ?? 0;
 }
 
 //
-export function setRotation(rotation, relative) {
+export function setRotation(rotation, relative)
+{
 	this.rotation = relative ? this.rotation + rotation : rotation;
 }
 
 //
-export function setDirection(direction, relative) {
+export function setDirection(direction, relative)
+{
 	this.direction = relative ? this.direction + direction : direction;
 }
 
 //
-export function moveFree(speed, direction) {
+export function moveFree(speed, direction)
+{
 	this.speed = speed;
 	this.direction = direction;
 }
 
 // Start moving in the direction of a given point.
-export function moveTowardsPoint(x, y, spd) {
+export function moveTowardsPoint(x, y, spd)
+{
 	this.direction = math.pointDirection(this.x, this.y, x, y);
 	this.speed = spd;
 }
 
 // Step towards the given point.
-export function stepTowardsPoint(x, y, spd) {
+export function stepTowardsPoint(x, y, spd)
+{
 	let dir = math.pointDirection(this.x, this.y, x, y);
 	let vec = math.lengthDir(spd, dir);
 	this.x += vec[0];
@@ -200,41 +188,44 @@ export function stepTowardsPoint(x, y, spd) {
 }
 
 //
-export function distanceToPoint(x, y) {
+export function distanceToPoint(x, y)
+{
 	return math.pointDistance(this.x, this.y, x, y);
 }
 
 //
-export function distanceToInstance(i1, i2) {
+export function distanceToInstance(i1, i2)
+{
 	return math.pointDistance(i1.x, i1.y, i2.x, i2.y);
 }
 
 //
-export function position(x, y, obj) {
-	const all = GameObject.get(obj).instances;
-	for (const inst of all) {
-		if (pointOn(x, y, inst)) {
+export function position(x, y, obj)
+{
+	for (const inst of obj.instances)
+		if (pointOn(x, y, inst))
 			return inst;
-		}
-	}
 	return null;
 }
 
-/** Returns whether the given point is over the given instance. */
-export function pointOn(x, y, inst) {
+// Returns whether the given point is over the given instance.
+export function pointOn(x, y, inst)
+{
 	return !(inst.boxTop > y - Draw.offsetY
 	|| inst.boxBottom < y - Draw.offsetY
 	|| inst.boxLeft > x - Draw.offsetX
 	|| inst.boxRight < x - Draw.offsetX);
 }
 
-/** */
-export function mouseOn(i) {
+//
+export function mouseOn(i)
+{
 	return pointOn(mouse.x, mouse.y, i);
 }
 
 //
-export function stepBegin(i) {
+export function stepBegin(i)
+{
 	executeEvent(i, "stepBegin");
 }
 
@@ -598,7 +589,7 @@ function instanceCollisionInstance(inst, target)
 		if (targ.exists
 		&& inst !== targ
 		&& boxOverlapBox(box1, targ.boxCollision))
-			executeEvent(inst, "collision_" + target, targ);
+			executeEvent(inst, "collision_" + target.objectName, targ);
 	}
 }
 
@@ -616,7 +607,8 @@ export const outsideRoom = i => {
 /**
  *
  */
-export const checkCollision = (i, x, y, obj, not = false) => {
+export function checkCollision(i, x, y, obj, not = false)
+{
 	not = not == true; /** TODO: Remove the need for this conversion */
 	if (!i.exists) return not;
 	const box1 = i.boxCollision;
@@ -634,7 +626,8 @@ export const checkCollision = (i, x, y, obj, not = false) => {
 /**
  *
  */
-export const checkCollisionPoint = (obj, x, y, not = false) => {
+export function checkCollisionPoint(obj, x, y, not = false)
+{
 	not = not == true; /** TODO: Remove the need for this conversion */
 	let arr = [obj];
 	if (obj.assetType !== "instance")
@@ -652,18 +645,19 @@ export const checkCollisionPoint = (obj, x, y, not = false) => {
 /**
  * Returns an array of instances of the given object. If the object provided is
  * is a string constaining "solid", all instances of solid objects are returned.
- * @type {function(Object|string):Array}
  */
-const getInstancesObject = obj => {
+function getInstancesObject(obj)
+{
 	if (obj === "all") return getAll();
 	if (obj === "solid") return getAllSolid();
-	return GameObject.get(obj).instances;
+	return obj.instances;
 }
 
 /**
  * @type {function(Object, Object):boolean}
  */
-const boxOverlapBox = (b1, b2, x1=0, y1=0) => {
+function boxOverlapBox(b1, b2, x1=0, y1=0)
+{
 	if (isNaN(b2.right)) return false;
 	return (!((x1 + b1.left) > b2.right
 	|| (x1 + b1.right) < b2.left
@@ -674,14 +668,16 @@ const boxOverlapBox = (b1, b2, x1=0, y1=0) => {
 /**
  * @type {function(Object, Object):boolean}
  */
-const pointInBox = (x, y, b) => {
+function pointInBox(x, y, b)
+{
 	return (!(x > b.right || x < b.left || y > b.bottom || y < b.top));
 }
 
 /**
  *
  */
-const getInRoomBounds = i => {
+function getInRoomBounds(i)
+{
 	return !(i.boxBottom < 0 ||  i.boxRight < 0
 	||  i.boxTop > currentRoom.height ||  i.boxLeft > currentRoom.width);
 }
