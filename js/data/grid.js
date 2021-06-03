@@ -22,35 +22,35 @@ export default class Grid {
 		myGrid.clear(opts.value || 0);
 		return myGrid;
 	}
-	
+
 	/**
 	 *
 	 */
 	get(x, y) {
-		return this.data[x + y * this.width];
+		return get(this, x, y);
 	}
-	
+
 	/**
 	 *
 	 */
 	set(x, y, value) {
 		this.data[x + y * this.width] = value;
 	}
-	
+
 	/**
 	 *
 	 */
 	add(x, y, value) {
 		this.data[x + y * this.width] += value;
 	}
-	
+
 	/**
 	 *
 	 */
 	multiply(x, y, value) {
 		this.data[x + y * this.width] *= value;
 	}
-	
+
 	/**
 	 * Clears all cells in the grid to the given value.
 	 * @param {*} value Value to clear the grid to.
@@ -58,7 +58,7 @@ export default class Grid {
 	clear(value) {
 		this.data.fill(value);
 	}
-	
+
 	/**
 	 *
 	 */
@@ -66,6 +66,11 @@ export default class Grid {
 		Grid.pool.release(this);
 	}
 
+}
+
+export function get(g, x, y)
+{
+	return g.data[x + y * g.width];
 }
 
 //

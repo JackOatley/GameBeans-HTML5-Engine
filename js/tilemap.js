@@ -1,12 +1,12 @@
-import Generator from "./generator.js";
-import Grid from "./data/grid.js";
-import * as Draw from "./draw.js";
+//import Generator from "./generator.js";
+import Grid, * as grid from "./data/grid.js";
+import { context } from "./draw.js";
 import Sprite from "./sprite.js";
 
 /**
  * @author Jack Oatley
  */
-class Tilemap {
+export default class Tilemap {
 
 	/**
 	 * @param {Object} [opts={}] Options object to define the Tilemap.
@@ -59,45 +59,49 @@ class Tilemap {
 	 * @return {void}
 	 */
 	draw(opts) {
-		const atlas = this.__atlas;
-		const tw = this.tileWidth;
-		const th = this.tileHeight;
-		const tsw = this.tilesWide;
-		const gap = this.__gap;
-		const overlay = this.tileOverlay;
-		const renderWidth = tw + overlay * 2;
-		const renderHeight = th + overlay * 2;
-		const order = opts.order || Object.keys(this.layers);
-		const startX = ~~(Math.max(0, (opts.left || 0) / tw));
-		const startY = ~~(Math.max(0, (opts.top || 0) / th));
-		const endX = Math.ceil(Math.min(this.mapWidth, (opts.right || 0) / tw));
-		const endY = Math.ceil(Math.min(this.mapHeight, (opts.bottom || 0) / th));
-		var x, y, n, layer, tile, iX, iY;
-		for (n=0; n<order.length; n++) {
-			layer = this.layers[order[n]];
-			for (x=startX; x<endX; x++)
-			for (y=startY; y<endY; y++) {
-				tile = layer.get(x, y) - 1;
-				if (tile >= 0) {
-					iX = (tile % tsw) * (tw + gap*2) + gap;;
-					iY = ~~(tile / tsw) * (th + gap*2) + gap;
-					Draw.context.drawImage(
-						atlas,
-						iX - overlay, iY - overlay,
-						renderWidth, renderHeight,
-						x * tw - overlay, // target x
-						y * th - overlay, // target y
-						renderWidth, renderHeight
-					);
-				}
-			}
-		}
+		draw(this, opts);
 	}
 
 }
 
-// Static methods, created via the Generator class
-Generator.classStaticMatch(Tilemap);
-Tilemap.prototype.assetType = "tilemap";
+function draw(tm, opts)
+{
+	//console.time("draw tiles");
+	const atlas = tm.__atlas;
+	const tw = tm.tileWidth;
+	const th = tm.tileHeight;
+	const tsw = tm.tilesWide;
+	const gap = tm.__gap;
+	const overlay = tm.tileOverlay;
+	const renderWidth = tw + overlay * 2;
+	const renderHeight = th + overlay * 2;
+	const order = opts.order ?? Object.keys(tm.layers);
+	const startX = ~~(Math.max(0, (opts.left || 0) / tw));
+	const startY = ~~(Math.max(0, (opts.top || 0) / th));
+	const endX = Math.ceil(Math.min(tm.mapWidth, (opts.right || 0) / tw));
+	const endY = Math.ceil(Math.min(tm.mapHeight, (opts.bottom || 0) / th));
+	var x, y, layer, tile, iX, iY;
+	for (const key of order) {
+		layer = tm.layers[key];
+		for (y = startY; y < endY; y++)
+		for (x = startX; x < endX; x++) {
+			tile = grid.get(layer, x, y) - 1;
+			if (tile < 0) continue;
+			iX = (tile % tsw) * (tw + gap*2) + gap;
+			iY = ~~(tile / tsw) * (th + gap*2) + gap;
+			context.drawImage(
+				atlas,
+				iX - overlay, iY - overlay,
+				renderWidth, renderHeight,
+				x * tw - overlay, // target x
+				y * th - overlay, // target y
+				renderWidth, renderHeight
+			);
+		}
+	}
+	//console.timeEnd("draw tiles");
+}
 
-export default Tilemap;
+// Static methods, created via the Generator class
+//Generator.classStaticMatch(Tilemap);
+Tilemap.prototype.assetType = "tilemap";
