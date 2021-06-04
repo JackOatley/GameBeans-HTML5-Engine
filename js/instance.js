@@ -1,6 +1,5 @@
 import * as math from "./math.js";
 import { mouse, triggerEvents } from "./inputs/input.js";
-import sprite from "./sprite.js";
 import * as Draw from "./draw.js";
 import { currentRoom } from "./room.js";
 
@@ -56,7 +55,7 @@ export function setup(inst, o, x, y, opts)
 	Object.assign(inst, opts);
 
 	//
-	const spr = sprite.get(inst.sprite);
+	const spr = inst.sprite;
 	if (spr) {
 		inst.boxCollision.x = spr.originX;
 		inst.boxCollision.y = spr.originY;
@@ -205,7 +204,7 @@ export function position(x, y, obj)
 	for (const inst of obj.instances)
 		if (pointOn(x, y, inst))
 			return inst;
-	return null;
+	return undefined;
 }
 
 // Returns whether the given point is over the given instance.
@@ -296,8 +295,9 @@ export function draw(inst) {
  * @param {Object} inst Instance to draw.
  * @param {Object} [opts] Options object.
  */
-export function drawSelf(inst, opts) {
-	if (inst.sprite === null) return;
+export function drawSelf(inst, opts)
+{
+	if (!inst.sprite) return;
 	Draw.drawSprite(
 		inst.sprite,
 		inst.index,
@@ -309,7 +309,8 @@ export function drawSelf(inst, opts) {
 }
 
 /** */
-export function drawDebug(inst) {
+export function drawDebug(inst)
+{
 	let box = inst.boxCollision;
 	Draw.shape.rectangle(
 		box.left,
@@ -322,7 +323,8 @@ export function drawDebug(inst) {
 }
 
 /** */
-export function changeSprite(sprite, index = 0, speed = 1) {
+export function changeSprite(sprite, index = 0, speed = 1)
+{
 	this.sprite = sprite;
 	this.index = index;
 	this.imageSpeed = speed;
@@ -416,7 +418,7 @@ function updatePosition(inst)
  */
 function updateBoundingBox(i)
 {
-	const spr = sprite.get(i.sprite);
+	const spr = i.sprite;
 	if (!spr) {
 		i.boxTop = i.y;
 		i.boxLeft = i.x;
@@ -448,7 +450,7 @@ function updateCollisionBox(i)
 function updateAnimation(inst)
 {
 	inst.index += inst.imageSpeed;
-	let spr = sprite.get(inst.sprite);
+	let spr = inst.sprite;
 	if (spr) {
 		let length = spr.images.length;
 		if (inst.index >= length) {
@@ -483,7 +485,8 @@ function updateAnimation(inst)
 /**
  * @type {function(Object):void}
  */
-function addToArray(inst) {
+function addToArray(inst)
+{
 	const length = instanceArray.length;
 	for (var i=0; i<length; i++) {
 		if (inst.depth > instanceArray[i].depth) {
@@ -518,11 +521,10 @@ function clearDestroyed()
 	var l = instanceArray.length;
 	var i, n = l;
 	while (i = instanceArray[--n]) {
-		if (!i.exists) {
-			uninstantiate(i)
-			i.object.pool.release(i);
-			instanceArray[n] = instanceArray[--l];
-		}
+		if (i.exists) continue;
+		uninstantiate(i)
+		i.object.pool.release(i);
+		instanceArray[n] = instanceArray[--l];
 	}
 	instanceArray.length = l;
 }
@@ -544,8 +546,8 @@ function instanceExecuteListeners(inst)
 {
 	for (const l of inst.listeners) {
 		switch (l.type) {
-			case ("outsideroom"): outsideRoom(inst); break;
-			case ("collision"): instanceCollisionInstance(inst, l.target); break;
+		case ("outsideroom"): outsideRoom(inst); break;
+		case ("collision"): instanceCollisionInstance(inst, l.target); break;
 		}
 	}
 }
@@ -561,11 +563,10 @@ function executeEvent(inst, event, otherInst)
 	currentEvent = event;
 
 	//
-	try {
-		if (inst.exists) {
-			const actions = inst.events[event];
-			if (actions) executeActions(inst, actions, otherInst);
-		}
+	breakTo: try {
+		if (!inst.exists) break breakTo;
+		const actions = inst.events[event];
+		if (actions) executeActions(inst, actions, otherInst);
 	}
 	catch (err) {
 		console.error(err);
@@ -588,15 +589,18 @@ function instanceCollisionInstance(inst, target)
 	for (const targ of arr) {
 		if (targ.exists
 		&& inst !== targ
-		&& boxOverlapBox(box1, targ.boxCollision))
-			executeEvent(inst, "collision_" + target.objectName, targ);
+		&& boxOverlapBox(box1, targ.boxCollision)) {
+			const name = target.objectName ?? target;
+			executeEvent(inst, "collision_" + name, targ);
+		}
 	}
 }
 
 /**
  * @type {function(Object):void}
  */
-export const outsideRoom = i => {
+export function outsideRoom(i)
+{
 	if (i.boxBottom < 0
 	||  i.boxRight < 0
 	||  i.boxTop > currentRoom.height
@@ -685,7 +689,8 @@ function getInRoomBounds(i)
 /**
  * @type {function(Object, Array, Object):void}
  */
-function executeActions(inst, actions, otherInst) {
+function executeActions(inst, actions, otherInst)
+{
 	const steps = [];
 	var condition = true;
 	var executeIfElse = [false];
@@ -725,11 +730,10 @@ function executeActions(inst, actions, otherInst) {
 
 		}
 
-		// exit from a single statement after an expression not contained in a block
-		if (steps[scope]++ === 1) {
+		// Exit from a single statement after an expression not
+		// contained in a block.
+		if (steps[scope]++ === 1)
 			condition = true;
-		}
 
 	}
-
 }

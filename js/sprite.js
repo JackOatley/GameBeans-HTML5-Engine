@@ -5,7 +5,7 @@ import Generator from "./generator.js";
 /**
  *
  */
-class Sprite {
+export class Sprite {
 
 	/**
 	 *
@@ -231,26 +231,7 @@ class Sprite {
 		return c.context.getImageData(x, y, 1, 1).data;
 	}
 
-	/**
-	 * @return {boolean}
-	 */
-	static readyAll() {
-
-		var sa = Sprite.array;
-		var n = sa.length;
-		while (n--) {
-			var ia = sa[n].images;
-			var i = ia.length;
-			while (i--) {
-				if (!ia[i].ready) {
-					return false;
-				}
-			}
-		}
-
-		return true;
-
-	}
+	static readyAll = readyAll;
 
 	/**
 	 * Generates a new, unused, sprite name.
@@ -260,40 +241,33 @@ class Sprite {
 		return "sprNewSprite" + Sprite.array.length;
 	}
 
-	/**
-	 * @param {*} name String or Object.
-	 * @return {Object}
-	 */
-	static get(name) {
+	static getByName = getByName;
+}
 
-		if (typeof name === "object") {
-			return name;
-		}
-
-		var n = Sprite.array.length;
-		while (n--) {
-			if (Sprite.array[n].name === name) {
-				return Sprite.array[n];
-			}
-		}
-
-		return null;
-
+export function readyAll()
+{
+	for (const sprite of Sprite.array) {
+		var images = sprite.images;
+		if (!images.some(i => i.ready))
+			return false;
 	}
+	return true;
+}
 
+export function getByName(name)
+{
+	return Sprite.array.find(s => s.name === name);
 }
 
 /**
  * Iterates pixel data and tints (multiplies) it with the given color.
- * @param {Uint8ClampedArray} data
- * @param {Object} rgb
- * @return {void}
  */
-function pixelDataTint(data, rgb) {
-	var r = rgb.r / 255;
-	var g = rgb.g / 255;
-	var b = rgb.b / 255;
-	var i = data.length;
+function pixelDataTint(data, {r, g, b})
+{
+	r /= 255;
+	g /= 255;
+	b /= 255;
+	let i = data.length;
 	while (i -= 4) {
 		data[i] *= r;
 		data[i + 1] *= g;
@@ -303,17 +277,15 @@ function pixelDataTint(data, rgb) {
 
 /**
  * Iterates pixel data and tints (multiplies) it with the given color.
- * @param {Uint8ClampedArray} data
- * @param {Object} rgba
- * @return {void}
  */
-function pixelDataFade(data, rgba) {
-	var a = rgba.a / 255;
-	var r = rgba.r * a;
-	var g = rgba.g * a;
-	var b = rgba.b * a;
-	var o = 1 - a;
-	var i = data.length;
+function pixelDataFade(data, {r, g, b, a})
+{
+	a /= 255;
+	r *= a;
+	g *= a;
+	b *= a;
+	const o = 1 - a;
+	let i = data.length;
 	while (i -= 4) {
 		data[i] = r + data[i] * o;
 		data[i + 1] = g + data[i + 1] * o;
@@ -325,6 +297,3 @@ function pixelDataFade(data, rgba) {
 Generator.classStaticMatch(Sprite);
 Sprite.names = [];
 Sprite.array = [];
-
-//
-export default Sprite;

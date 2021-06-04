@@ -1,5 +1,4 @@
 import * as Draw from "../draw.js";
-import sprite from "../sprite.js";
 import Generator from "../generator.js";
 import { NOOP } from "../constants.js";
 
@@ -47,7 +46,7 @@ class Primitive {
 function drawTextured(opts = {}) {
 
 	let texture = opts.texture;
-	let spr = sprite.get(texture);
+	let spr = texture;
 	if (spr === null) {
 		console.warn("No such texture: " + texture);
 		return;

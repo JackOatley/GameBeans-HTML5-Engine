@@ -2,7 +2,6 @@ import { Camera } from "./camera.js";
 import Generator from "./generator.js";
 import Transition from "./transition.js";
 import * as instance from "./instance.js";
-import Sprite from "./sprite.js";
 import * as draw from "./draw.js";
 
 //
@@ -98,7 +97,7 @@ export class Room {
 
 		var canvas = draw.target.domElement;
 		var ctx = draw.context;
-		var spr = Sprite.get(this.background);
+		var spr = this.background;
 
 		if (spr === null) return;
 

@@ -1,5 +1,4 @@
-import { DEGTORAD } from "./math.js";
-import sprite from "./sprite.js";
+import {DEGTORAD} from "./math.js";
 import * as canvas from "./Canvas.js";
 import Font from "./font.js";
 import * as Color from "./Color.js";
@@ -121,10 +120,15 @@ export function drawSprite(spr, i, x, y, sX, sY, rotation, opts = {})
 		return window._GB_stop();
 	}
 
-	spr = sprite.get(spr);
-	i = Math.floor(i ?? 0) % spr.images.length; // TODO: Check negative numbers?
+	if (spr.images === undefined) {
+		window.addConsoleText("red", `String of "${spr}" found. Provide a sprite instead.`);
+		return window._GB_stop();
+	}
+
+	i = Math.floor(i ?? 0) % spr.images.length;
+	while (i < 0) i+= spr.images.length;
 	const frame = spr.images[i];
-	if (!frame.ready)
+	if (!frame?.ready)
 		return;
 
 	//
@@ -164,7 +168,6 @@ export function lives(spr, x, y, number, order, seperation)
  */
 export function spriteTiled(spr, i, x, y, w, h)
 {
-	spr = sprite.get(spr);
 	const sw = spr.width;
 	const sh = spr.height;
 	for (let rx = 0, dx = x; rx < w; rx++, dx += sw)

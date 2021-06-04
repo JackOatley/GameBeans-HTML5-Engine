@@ -1,7 +1,5 @@
-//import Generator from "./generator.js";
 import Grid, * as grid from "./data/grid.js";
 import { context } from "./draw.js";
-import Sprite from "./sprite.js";
 
 /**
  * @author Jack Oatley
@@ -32,7 +30,7 @@ export default class Tilemap {
 
 		this.__gap = this.tileSpacing + this.tileOverlay;
 		if (this.textureAtlas)
-			this.__atlas = Sprite.get(this.textureAtlas).images[0].img;
+			this.__atlas = this.textureAtlas.images[0].img;
 	}
 
 	/**

@@ -2,6 +2,7 @@ import event from "./event.js";
 import * as instance from "./instance.js";
 import objectVars from "./objectVars.js";
 import Pool from "./utils/pool.js";
+import {behaviourImplementations} from "./behaviors/implementations.js";
 
 /**
  *
@@ -54,7 +55,8 @@ export class GameObject
 	static count = count;
 	static getAllInstances = getAllInstances;
 	static create = create;
-	//static get = get;
+	static getByName = getByName;
+	static addBehavior = addBehavior;
 	static eventAddAction = eventAddAction;
 	static addListener = addListener;
 }
@@ -74,30 +76,34 @@ function find(o, i = 0)
 	return instance.find(o, i);
 }
 
-//function get(obj)
-//{
-	//if (typeof obj !== "string") return obj;
-	//return GameObject.array.find(n => n.objectName === obj);
-//}
+function getByName(obj)
+{
+	return GameObject.array.find(n => n.objectName === obj);
+}
 
-function eventAddAction(obj, event, action, obj2=undefined)
+function addBehavior(obj, behavior, ...args)
+{
+	behaviourImplementations[behavior].apply(obj, args);
+}
+
+function addEvent(obj, event, obj2)
+{
+	obj.prototype.events[event] = [];
+
+	if (event === "outsideroom")
+		addListener(obj, "outsideroom");
+
+	if (event.includes("collision"))
+		addListener(obj, "collision", obj2);
+}
+
+function eventAddAction(obj, event, action, obj2)
 {
 	if (action === undefined)
 		console.warn("tried to add an undefined action to an event!");
 
-	// Create a new event if not yet defined.
-	if (!obj.prototype.events[event]) {
-
-		obj.prototype.events[event] = [];
-
-		if (event === "outsideroom")
-			addListener(obj, "outsideroom");
-
-		// Create collision listeners, if applicable.
-		if (event.includes("collision_"))
-			addListener(obj, "collision", obj2);
-
-	}
+	if (!obj.prototype.events[event])
+		addEvent(obj, event, obj2);
 
 	obj.prototype.events[event].push({
 		flow: getFlow(action),
