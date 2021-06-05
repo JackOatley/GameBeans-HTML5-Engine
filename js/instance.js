@@ -1,7 +1,7 @@
 import * as math from "./math.js";
-import { mouse, triggerEvents } from "./inputs/input.js";
+import {mouse, triggerEvents} from "./inputs/input.js";
 import * as Draw from "./draw.js";
-import { currentRoom } from "./room.js";
+import {currentRoom} from "./room.js";
 
 const INSTANCE_HARD_LIMIT = 10000;
 
@@ -566,7 +566,7 @@ function executeEvent(inst, event, otherInst)
 	breakTo: try {
 		if (!inst.exists) break breakTo;
 		const actions = inst.events[event];
-		if (actions) executeActions(inst, actions, otherInst);
+		if (actions) executeActions(inst, actions);
 	}
 	catch (err) {
 		console.error(err);
@@ -686,54 +686,9 @@ function getInRoomBounds(i)
 	||  i.boxTop > currentRoom.height ||  i.boxLeft > currentRoom.width);
 }
 
-/**
- * @type {function(Object, Array, Object):void}
- */
-function executeActions(inst, actions, otherInst)
+//
+function executeActions(inst, actions)
 {
-	const steps = [];
-	var condition = true;
-	var executeIfElse = [false];
-	var scope = 0;
-	var len = actions.length;
-
-	for (const action of actions) {
-
-		switch (action.flow) {
-
-			// regular action
-			case (""):
-				if (!condition) break;
-				const newCondition = action.cache.call(inst);
-				if (newCondition === true || newCondition === false)  {
-					executeIfElse[scope] = false;
-					condition = newCondition;
-					steps[scope] = 0;
-					if (condition === false) {
-						executeIfElse[scope] = true;
-					}
-				}
-				break;
-
-			// control actions
-			case ("ifElse"):
-				if (executeIfElse[scope]) {
-					steps[scope] = 0;
-					condition = true;
-				} else {
-					condition = false;
-				}
-			break;
-			case ("blockBegin"): scope++; break;
-			case ("blockEnd"): scope--; break;
-			case ("exitEvent"): if (condition) return false;
-
-		}
-
-		// Exit from a single statement after an expression not
-		// contained in a block.
-		if (steps[scope]++ === 1)
-			condition = true;
-
-	}
+	for (const action of actions)
+		action.cache.call(inst);
 }
