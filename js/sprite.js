@@ -1,6 +1,5 @@
 import Canvas from "./Canvas.js";
 import * as Color from "./Color.js";
-import Generator from "./generator.js";
 
 /**
  *
@@ -21,7 +20,7 @@ export class Sprite {
 
 		//
 		this.assetType = "sprite";
-		this.name = opts.name || Sprite.newName();
+		this.name = opts.name;
 		this.originX = opts.originX ?? 0;
 		this.originY = opts.originY ?? 0;
 		this.width = 0;
@@ -221,27 +220,22 @@ export class Sprite {
 	}
 
 	/**
-	 * Returns the RGBA components of a pixel on the Sprite as an ArrayBuffer.
-	 * @param {number} x X position of the pixel, must be an integer.
-	 * @param {number} y Y position of the pixel, must be an integer.
-	 * @returns {ArrayBuffer} An ArrayBuffer with 4 values (for R, G, B, A).
+	 * Returns the RGBA components of a pixel on the Sprite as an
+	 * ArrayBuffer.
 	 */
 	getPixel(index, x, y) {
 		var c = this.toCanvas(index);
 		return c.context.getImageData(x, y, 1, 1).data;
 	}
 
+	static create = create;
 	static readyAll = readyAll;
-
-	/**
-	 * Generates a new, unused, sprite name.
-	 * @return {string}
-	 */
-	static newName() {
-		return "sprNewSprite" + Sprite.array.length;
-	}
-
 	static getByName = getByName;
+}
+
+export function create(opts)
+{
+	return new Sprite(opts);
 }
 
 export function readyAll()
@@ -294,6 +288,5 @@ function pixelDataFade(data, {r, g, b, a})
 }
 
 //
-Generator.classStaticMatch(Sprite);
 Sprite.names = [];
 Sprite.array = [];
