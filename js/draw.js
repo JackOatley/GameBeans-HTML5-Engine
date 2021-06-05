@@ -224,7 +224,7 @@ export function text(str, x, y, opts = {})
 	y = Number(y);
 
 	let drawSize, bitmap, lookup, scale, useBitmap = false;
-	let fontActual = Font.get(font);
+	let fontActual = font;
 	if (fontActual && fontActual.method === "bitmap") {
 
 		drawSize = fontActual.forceSize || fontSize;

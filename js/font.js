@@ -53,27 +53,20 @@ class Font {
 		convertToBitmapFont(this, opts);
 	}
 
-	/**
-	 * @param {*} value The string name of the font to get.
-	 * @return {Object}
-	 */
-	static get(value) {
+	static getByName = getByName;
+}
 
-		if (typeof value === "object" || typeof value === "function")
-			return value;
-
-		let arr = Font.array;
-		let n = arr.length;
-		while (n--) {
-			if (arr[n].name === value) {
-				return arr[n];
-			}
+function getByName(value)
+{
+	let arr = Font.array;
+	let n = arr.length;
+	while (n--) {
+		if (arr[n].name === value) {
+			return arr[n];
 		}
-
-		return null;
-
 	}
 
+	return undefined;
 }
 
 /**

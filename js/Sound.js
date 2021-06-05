@@ -31,13 +31,15 @@ export class Sound {
 		}
 	}
 
-	play(opts)
-	{
+	play(opts) {
 		play(this, opts);
 	}
 
-	stop()
-	{
+	loop(opts) {
+		loop(this, opts)
+	}
+
+	stop() {
 		stop(this);
 	}
 
@@ -76,33 +78,10 @@ export class Sound {
 		Sound.isEnabled = x;
 	}
 
-	/**
-	 * Gets the sound resource from the given string.
-	 * If a sound resource is passed, it's returned immedietly.
-	 * @param {*} name Name as string, or object.
-	 * @return {Object}
-	 */
-	static get(name) {
-
-		if (typeof name === "object") {
-			return name;
-		}
-
-		var a = Sound.array;
-		var n = a.length;
-		while (n--) {
-			if (a[n].name === name) {
-				return a[n];
-			}
-		}
-
-		window.addConsoleText("#F00", "Unknown sound: "+ name);
-		return null;
-
-	}
-
+	static getByName = getByName;
 	static create = create;
 	static play = play;
+	static loop = loop;
 	static stop = stop;
 }
 
@@ -158,11 +137,10 @@ export function play(s, opts = {})
 
 				// Internal event stuff.
 				s.currentTime = 0;
-				if (Number(opts.loop || false)) {
+				if (Number(opts.loop || false))
 					this.play();
-				} else {
+				else
 					this.pause();
-				}
 
 				// Custom event, if defined.
 				if (opts.onEnd) {
@@ -176,8 +154,17 @@ export function play(s, opts = {})
 		});
 	}
 
-	//
 	return playSound;
+}
+
+export function loop(s, opts = {})
+{
+	play(s, {...opts, ...{loop: true}});
+}
+
+export function getByName(name)
+{
+	return Sound.array.find(s => s.name === name);
 }
 
 Sound.isEnabled = true;

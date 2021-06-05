@@ -64,7 +64,9 @@ export class Room {
 		if (opts.transition) {
 			return new Transition({
 				prefab: opts.transition,
-				callback: Room.enter.bind(null, this)
+				callback: () => {
+					Room.enter(this);
+				}
 			});
 		}
 
@@ -174,16 +176,17 @@ export class Room {
 	 * @param {Object|string} obj
 	 * @return {?Object}
 	 */
-	static get(obj) {
-		if (typeof obj === "object") return obj;
-		for (var n=0; n<Room.array.length; n++) {
-			if ( Room.array[n]["name"] === obj ) {
-				return Room.array[n];
-			}
-		}
-		return null;
-	}
+	static getByName = getByName;
+}
 
+function getByName(name)
+{
+	for (var n=0; n<Room.array.length; n++) {
+		if (Room.array[n]["name"] === name) {
+			return Room.array[n];
+		}
+	}
+	return undefined;
 }
 
 Room.prototype.assetType = "room";
