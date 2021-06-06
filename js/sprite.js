@@ -78,6 +78,11 @@ export class Sprite {
 					this.width = image.clip.w;
 					this.height = image.clip.h;
 				}
+
+				image.original = image.img;
+				createImageBitmap(image.img, 0, 0, this.width, this.height)
+					.then(bmp => image.img = bmp);
+
 			}
 			image.img.src = opts.source || "";
 
@@ -107,7 +112,7 @@ export class Sprite {
 	 */
 	restore() {
 		this.images.forEach((frame) => {
-			if (frame.__orig) frame = frame._orig;
+			if (frame.__orig) frame = frame.__orig;
 			if (frame.__origSrc) frame.img.src = frame.__origSrc;
 		});
 	}
@@ -234,14 +239,14 @@ export function readyAll()
 	return true;
 }
 
-export function cache(sprite, opts)
+export function cache(sprite, opts = {})
 {
 	for (const frame of sprite.images) {
 		let canvas = document.createElement("canvas");
 		canvas.width = opts.width || frame.img.width;
 		canvas.height = opts.height || frame.img.height;
 		let ctx = canvas.getContext("2d");
-		ctx.drawImage(frame.img, 0, 0, canvas.width+1, canvas.height+1);
+		ctx.drawImage(frame.original, 0, 0, canvas.width+1, canvas.height+1);
 		frame.__orig = Object.assign({}, frame);
 		frame.clip.x = 0;
 		frame.clip.y = 0;
