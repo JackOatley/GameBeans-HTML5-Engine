@@ -64,7 +64,8 @@ export function jump(x, y, relative) {
 // Instantly sets the instance's x and y values to a random position within
 // the current room.
 export function jumpRandom() {
-	const x1 = 0, y1 = 0, x2 = Room.current.width, y2 = Room.current.height;
+	const x1 = 0, y1 = 0;
+	const x2 = Room.current.width, y2 = Room.current.height;
 	this.x = Math.floor(Math.random() * (x2 - x1)) + x1;
 	this.y = Math.floor(Math.random() * (y2 - y1)) + y1;
 }

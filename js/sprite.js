@@ -262,15 +262,15 @@ export function getByName(name)
 }
 
 /**
- * Iterates pixel data and tints (multiplies) it with the given color.
+ * Tints (multiplies) the sprite with the given color.
  */
 function pixelDataTint(data, {r, g, b})
 {
 	r /= 255;
 	g /= 255;
 	b /= 255;
-	let i = data.length;
-	while (i -= 4) {
+	const l = data.length;
+	for (let i = 0; i < l; i += 4) {
 		data[i] *= r;
 		data[i + 1] *= g;
 		data[i + 2] *= b;
@@ -278,7 +278,7 @@ function pixelDataTint(data, {r, g, b})
 }
 
 /**
- * Iterates pixel data and tints (multiplies) it with the given color.
+ * Fades the given color of the sprite.
  */
 function pixelDataFade(data, {r, g, b, a})
 {
@@ -287,8 +287,8 @@ function pixelDataFade(data, {r, g, b, a})
 	g *= a;
 	b *= a;
 	const o = 1 - a;
-	let i = data.length;
-	while (i -= 4) {
+	const l = data.length;
+	for (let i = 0; i < l; i += 4) {
 		data[i] = r + data[i] * o;
 		data[i + 1] = g + data[i + 1] * o;
 		data[i + 2] = b + data[i + 2] * o;
