@@ -111,7 +111,7 @@ export function setColor(c)
 /**
  * Draws the sprite at the given x, y position.
  */
-export function drawSprite(spr, i, x, y, sX, sY, rotation, opts = {})
+export function drawSprite(spr, i, x, y, sX, sY, r, opts = {})
 {
 	if (!spr) return;
 
@@ -130,10 +130,10 @@ export function drawSprite(spr, i, x, y, sX, sY, rotation, opts = {})
 	const oy = opts.originY ?? spr.originY;
 	const img = frame.img;
 
-	if (rotation === 0 && sX === 1 && sY === 1)
+	if (r === 0 && sX === 1 && sY === 1)
 		drawImage(spr, img, frame, x, y, ox, oy);
 	else
-		drawImageExt(spr, img, frame, x, y, ox, oy, sX, sY, rotation);
+		drawImageExt(spr, img, frame, x, y, ox, oy, sX, sY, r);
 }
 
 function drawImage(spr, img, frame, x, y, ox, oy)
