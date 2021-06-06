@@ -125,11 +125,13 @@ function gameUpdate()
 function gameDraw()
 {
 	draw.reset();
-	room.current.draw();
-	if (allCameras.length)
+	draw.clear(room.current.backgroundColor, room.current.backgroundAlpha);
+	if (allCameras.length) {
 		updateAllCameras();
-	else
+	} else {
+		room.current.draw();
 		Instance.drawAll();
+	}
 	draw.reset();
 	Instance.drawGuiAll();
 	Transition.drawAll();

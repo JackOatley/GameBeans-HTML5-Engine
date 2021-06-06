@@ -80,7 +80,7 @@ export class Room {
 
 export function draw(room)
 {
-	drawing.clear(room.backgroundColor, room.backgroundAlpha);
+	//drawing.clear(room.backgroundColor, room.backgroundAlpha);
 
 	const spr = room.background;
 	if (spr === null) return;
@@ -97,10 +97,8 @@ export function draw(room)
 
 	const canvas = drawing.target.domElement;
 	const ctx = drawing.context;
-	if (room.backgroundMethod === "stretch" ) {
-		ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
-		return;
-	}
+	if (room.backgroundMethod === "stretch")
+		return ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
 
 	// Iso patterns.
 	if (room.backgroundMethod.indexOf("iso-") !== -1) {
@@ -126,12 +124,14 @@ function drawIsometricBackground(room, ctx, spr, index)
 	const camHeight = cam?.height ?? room.height;
 
 	ctx.save();
+
 	ctx.translate(room.backgroundX, room.backgroundY);
 	ctx.fillStyle = ctx.createPattern(image, pattern);
 	ctx.fillRect(xpos, ypos, camWidth, camHeight);
 
 	ctx.translate(spr.width/2, spr.height/2);
 	ctx.fillRect(xpos-spr.width/2, ypos-spr.height/2, camWidth, camHeight);
+
 	ctx.restore();
 }
 

@@ -8,8 +8,8 @@ export const allCameras = [];
 /**
  *
  */
-export class Camera {
-
+export class Camera
+{
 	constructor(opts = {}) {
 		this.x = 0;
 		this.y = 0;
@@ -23,53 +23,31 @@ export class Camera {
 		this.top = 0;
 		this.bottom = 0;
 		Object.assign(this, opts);
-		Camera.array.push(this);
+		allCameras.push(this);
 	}
 
-	/**
-	 * Update the Camera.
-	 * @return {void}
-	 */
 	update() {
 		update(this);
 	}
 
-	/**
-	 *
-	 */
 	updateBounds() {
-		this.left = this.x - this.width / 2;
-		this.right = this.x + this.width / 2;
-		this.top = this.y - this.height / 2;
-		this.bottom = this.y + this.height / 2;
+		updateBounds(this);
 	}
 
-	/**
-	 * @return {void}
-	 */
 	destroy() {
 		destroy(this);
 	}
 
-	/**
-	 *
-	 */
-	static create = opts => new Camera(opts);
+	static create = create;
 	static array = allCameras;
-	static currentlyDrawing = null;
+	static currentlyDrawing = undefined;;
 	static updateAll = updateAllCameras;
 	static destroyAll = destroyAllCameras;
-
 }
 
-//
-export function updateAllCameras() {
-	allCameras.forEach(update);
-}
-
-//
-export function destroyAllCameras() {
-	allCameras.forEach(x => x.destroy());
+export function create(opts = {})
+{
+	return new Camera(opts);
 }
 
 function update(cam)
@@ -113,9 +91,27 @@ function update(cam)
 	Instance.drawAll();
 }
 
-function destroy(cam)
+function updateBounds(c)
 {
-	const index = Camera.array.indexOf(cam);
+	c.left = c.x - c.width / 2;
+	c.right = c.x + c.width / 2;
+	c.top = c.y - c.height / 2;
+	c.bottom = c.y + c.height / 2;
+}
+
+function destroy(c)
+{
+	const index = allCameras.indexOf(c);
 	if (index < 0) return;
-	Camera.array.splice(index, 1);
+	allCameras.splice(index, 1);
+}
+
+export function updateAllCameras()
+{
+	allCameras.forEach(update);
+}
+
+export function destroyAllCameras()
+{
+	allCameras.forEach(destroy);
 }
