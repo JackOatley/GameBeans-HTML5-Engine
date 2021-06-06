@@ -21,6 +21,7 @@ export class GameObject
 
 		obj.eventAddAction = this.eventAddAction;
 		obj.find = this.find;
+		obj.count = this.count;
 
 		objectVars.set(obj.prototype);
 		obj.objectName = name || "object_" + obj.id;

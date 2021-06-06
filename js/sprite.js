@@ -98,23 +98,8 @@ export class Sprite {
 
 	}
 
-	/**
-	 * @return {void}
-	 */
-	cache(opts = {}) {
-		this.images.forEach((frame) => {
-			let canvas = document.createElement("canvas");
-			canvas.width = opts.width || frame.img.width;
-			canvas.height = opts.height || frame.img.height;
-			let ctx = canvas.getContext("2d");
-			ctx.drawImage(frame.img, 0, 0, canvas.width+1, canvas.height+1);
-			frame.__orig = Object.assign({}, frame);
-			frame.clip.x = 0;
-			frame.clip.y = 0;
-			frame.clip.w = canvas.width;
-			frame.clip.h = canvas.height;
-			frame.img = canvas;
-		});
+	cache(opts) {
+		cache(this, opts);
 	}
 
 	/**
@@ -228,6 +213,7 @@ export class Sprite {
 		return c.context.getImageData(x, y, 1, 1).data;
 	}
 
+	static cache = cache;
 	static create = create;
 	static readyAll = readyAll;
 	static getByName = getByName;
@@ -246,6 +232,23 @@ export function readyAll()
 			return false;
 	}
 	return true;
+}
+
+export function cache(sprite, opts)
+{
+	for (const frame of sprite.images) {
+		let canvas = document.createElement("canvas");
+		canvas.width = opts.width || frame.img.width;
+		canvas.height = opts.height || frame.img.height;
+		let ctx = canvas.getContext("2d");
+		ctx.drawImage(frame.img, 0, 0, canvas.width+1, canvas.height+1);
+		frame.__orig = Object.assign({}, frame);
+		frame.clip.x = 0;
+		frame.clip.y = 0;
+		frame.clip.w = canvas.width;
+		frame.clip.h = canvas.height;
+		frame.img = canvas;
+	}
 }
 
 export function getByName(name)

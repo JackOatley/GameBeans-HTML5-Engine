@@ -2,7 +2,7 @@ import { Camera } from "./camera.js";
 import Generator from "./generator.js";
 import Transition from "./transition.js";
 import * as instance from "./instance.js";
-import * as draw from "./draw.js";
+import * as drawing from "./draw.js";
 
 //
 export let currentRoom = null;
@@ -68,67 +68,71 @@ export class Room {
 	 * @return {void}
 	 */
 	draw() {
-
-		console.log(this.backgroundAlpha);
-		draw.clear(this.backgroundColor, this.backgroundAlpha);
-
-		const canvas = draw.target.domElement;
-		const ctx = draw.context;
-		const spr = this.background;
-
-		if (spr === null) return;
-
-		const frame = this.backgroundFrame;
-		const animate = this.backgroundAnimate;
-		let index = frame;
-		if (animate) {
-			this.backgroundFrame += this.backgroundAnimateSpeed;
-			index = ~~(this.backgroundFrame % spr.images.length);
-		}
-
-		const image = spr.images[index].img;
-
-		if (this.backgroundMethod === "stretch" ) {
-			ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
-			return;
-		}
-
-		// Iso patterns.
-		if (this.backgroundMethod.indexOf("iso-") !== -1) {
-
-			let pattern = this.backgroundMethod.replace("iso-", "");
-			let xpos = Camera?.currentlyDrawing?.left ?? 0 - this.backgroundX;
-			let ypos = Camera?.currentlyDrawing?.top ?? 0 - this.backgroundY;
-			let camWidth = Camera?.currentlyDrawing?.width ?? this.width;
-			let camHeight = Camera?.currentlyDrawing?.height ?? this.height;
-
-			// First.
-			ctx.save();
-			ctx.translate(this.backgroundX, this.backgroundY);
-			ctx.fillStyle = ctx.createPattern(image, pattern);
-			ctx.fillRect(xpos, ypos, camWidth, camHeight);
-
-			// Second.
-			ctx.translate(spr.width/2, spr.height/2);
-			ctx.fillRect(xpos-spr.width/2, ypos-spr.height/2, camWidth, camHeight);
-			ctx.restore();
-
-			return;
-		}
-
-		// Regular patterns.
-		ctx.save();
-		ctx.translate(this.backgroundX, this.backgroundY);
-		ctx.fillStyle = ctx.createPattern(image, this.backgroundMethod);
-		ctx.fillRect(-this.backgroundX, -this.backgroundY, canvas.width, canvas.height);
-		ctx.restore();
-
+		draw(this);
 	}
 
+	static draw = draw;
 	static enter = enter;
 	static next = next;
 	static previous = previous;
 	static getByName = getByName;
+}
+
+export function draw(room)
+{
+	drawing.clear(room.backgroundColor, room.backgroundAlpha);
+
+	const spr = room.background;
+	if (spr === null) return;
+
+	const frame = room.backgroundFrame;
+	const animate = room.backgroundAnimate;
+	let index = frame;
+	if (animate) {
+		room.backgroundFrame += room.backgroundAnimateSpeed;
+		index = ~~(room.backgroundFrame % spr.images.length);
+	}
+
+	const image = spr.images[index].img;
+
+	const canvas = drawing.target.domElement;
+	const ctx = drawing.context;
+	if (room.backgroundMethod === "stretch" ) {
+		ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+		return;
+	}
+
+	// Iso patterns.
+	if (room.backgroundMethod.indexOf("iso-") !== -1) {
+		return drawIsometricBackground(room, ctx, spr, index);
+	}
+
+	// Regular patterns.
+	ctx.save();
+	ctx.translate(room.backgroundX, room.backgroundY);
+	ctx.fillStyle = ctx.createPattern(image, room.backgroundMethod);
+	ctx.fillRect(-room.backgroundX, -room.backgroundY, canvas.width, canvas.height);
+	ctx.restore();
+}
+
+function drawIsometricBackground(room, ctx, spr, index)
+{
+	const image = room.background.images[index].img;
+	const pattern = room.backgroundMethod.replace("iso-", "");
+	const cam = Camera.currentlyDrawing;
+	const xpos = cam?.left ?? 0 - room.backgroundX;
+	const ypos = cam?.top ?? 0 - room.backgroundY;
+	const camWidth = cam?.width ?? room.width;
+	const camHeight = cam?.height ?? room.height;
+
+	ctx.save();
+	ctx.translate(room.backgroundX, room.backgroundY);
+	ctx.fillStyle = ctx.createPattern(image, pattern);
+	ctx.fillRect(xpos, ypos, camWidth, camHeight);
+
+	ctx.translate(spr.width/2, spr.height/2);
+	ctx.fillRect(xpos-spr.width/2, ypos-spr.height/2, camWidth, camHeight);
+	ctx.restore();
 }
 
 export function enter(room, opts = {})
