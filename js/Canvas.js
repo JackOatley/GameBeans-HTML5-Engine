@@ -19,7 +19,7 @@ export default class Canvas {
 	 */
 	constructor(opts = {}) {
 		var defaultContext = opts.context || "2d";
-		var c = document.createElement("CANVAS");
+		var c = document.createElement("canvas");
 		var ctx = c.getContext(defaultContext);
 		this.domElement = c;
 		this.context = ctx;
@@ -130,10 +130,14 @@ export function clear({domElement: c, context: ctx})
 }
 
 // Fills the canvas with the given CCS color string.
-export function fill({domElement: c, context: ctx}, color = "black")
+export function fill({domElement: c, context: ctx}, color = "black", alpha = 1)
 {
+	if (alpha <= 0) return;
+	console.log(alpha);
 	ctx.fillStyle = color;
+	ctx.globalAlpha = alpha;
 	ctx.fillRect(0, 0, c.width / c.scale, c.height / c.scale);
+	ctx.globalAlpha = 1;
 }
 
 //

@@ -6,6 +6,7 @@ import * as draw from "./draw.js";
 
 //
 export let currentRoom = null;
+export let transition = false;
 
 /**
  *
@@ -59,35 +60,8 @@ export class Room {
 	 * @param {object} [opts={}]
 	 * @return {void}
 	 */
-	enter(opts = {}) {
-
-		if (opts.transition) {
-			return new Transition({
-				prefab: opts.transition,
-				callback: () => {
-					Room.enter(this);
-				}
-			});
-		}
-
-		// leave room event
-		instance.executeEventAll("roomleave");
-
-		// clear current instances
-		instance.instanceArray.forEach(function(i) {
-			if (!i.persistent) instance.uninstantiate(i);
-		});
-
-		// goto new room and create new instances
-		currentRoom = Room.current = this;
-		this.instances.forEach(function(inst) {
-			instance.create(inst.name, inst.x, inst.y);
-		});
-		instance.setDepthSort(true);
-
-		// enter room event
-		instance.executeEventAll("roomenter");
-
+	enter(opts) {
+		enter(this, opts);
 	}
 
 	/**
@@ -95,19 +69,14 @@ export class Room {
 	 */
 	draw() {
 
-		draw.clear(this.backgroundColor);
+		console.log(this.backgroundAlpha);
+		draw.clear(this.backgroundColor, this.backgroundAlpha);
 
-		var canvas = draw.target.domElement;
-		var ctx = draw.context;
-		var spr = this.background;
+		const canvas = draw.target.domElement;
+		const ctx = draw.context;
+		const spr = this.background;
 
 		if (spr === null) return;
-
-		if (!(ctx instanceof CanvasRenderingContext2D)) {
-			window._gbide_error("Room background images are currently only supported in Canvas 2D!");
-			window._GB_stop();
-			return;
-		}
 
 		const frame = this.backgroundFrame;
 		const animate = this.backgroundAnimate;
@@ -156,37 +125,55 @@ export class Room {
 
 	}
 
-	/**
-	 * @return {void}
-	 */
-	static next() {
-		const index = Room.array.indexOf(currentRoom);
-		Room.enter(Room.array[index+1]);
-	}
-
-	/**
-	 * @return {void}
-	 */
-	static previous() {
-		const index = Room.array.indexOf(currentRoom);
-		Room.enter(Room.array[index-1]);
-	}
-
-	/**
-	 * @param {Object|string} obj
-	 * @return {?Object}
-	 */
+	static enter = enter;
+	static next = next;
+	static previous = previous;
 	static getByName = getByName;
 }
 
-function getByName(name)
+export function enter(room, opts = {})
 {
-	for (var n=0; n<Room.array.length; n++) {
-		if (Room.array[n]["name"] === name) {
-			return Room.array[n];
+	if (opts.transition)
+		return enterTransition(room, opts);
+	instance.executeEventAll("roomleave");
+	for (const i of instance.instanceArray)
+		if (!i.persistent) instance.uninstantiate(i);
+	Room.current = room;
+	currentRoom = room;
+	for (const {name, x, y} of room.instances)
+		instance.create(name, x, y);
+	instance.setDepthSort(true);
+	instance.executeEventAll("roomenter");
+}
+
+function enterTransition(room, opts)
+{
+	if (transition) return transition;
+	transition = new Transition({
+		...opts.transition,
+		callback: () => {
+			enter(room);
+			transition = undefined;
 		}
-	}
-	return undefined;
+	});
+	return transition;
+}
+
+export function next(room = currentRoom)
+{
+	const index = Room.array.indexOf(room);
+	Room.enter(Room.array[index+1]);
+}
+
+export function previous(room = currentRoom)
+{
+	const index = Room.array.indexOf(room);
+	Room.enter(Room.array[index-1]);
+}
+
+export function getByName(name)
+{
+	return Room.array.find(r => r.name === name);
 }
 
 Room.prototype.assetType = "room";

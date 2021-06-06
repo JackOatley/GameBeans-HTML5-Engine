@@ -60,9 +60,10 @@ export function getContext()
 }
 
 //
-export function clear(col)
+export function clear(col, alpha)
 {
-	canvas.fill(target, col);
+	canvas.clear(target);
+	canvas.fill(target, col, alpha);
 }
 
 /** */
@@ -82,8 +83,7 @@ export function reset()
 {
 	context.imageSmoothingEnabled = imageSmoothing;
 	context.globalAlpha = 1;
-	if (context instanceof CanvasRenderingContext2D)
-		context.setTransform.apply(context, defaultTransform);
+	context.setTransform.apply(context, defaultTransform);
 }
 
 //
