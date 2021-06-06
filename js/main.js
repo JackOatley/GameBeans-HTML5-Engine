@@ -97,9 +97,9 @@ function tick(timestamp)
 
 			input.getTriggerEvents();
 			gameUpdate();
-			gameDraw();
 			input.update();
 		}
+		gameDraw();
 		last = timestamp;
 
 	} catch (err) {
