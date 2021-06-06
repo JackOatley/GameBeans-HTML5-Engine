@@ -133,7 +133,6 @@ export function clear({domElement: c, context: ctx})
 export function fill({domElement: c, context: ctx}, color = "black", alpha = 1)
 {
 	if (alpha <= 0) return;
-	console.log(alpha);
 	ctx.fillStyle = color;
 	ctx.globalAlpha = alpha;
 	ctx.fillRect(0, 0, c.width / c.scale, c.height / c.scale);
