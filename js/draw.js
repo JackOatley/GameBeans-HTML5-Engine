@@ -115,40 +115,49 @@ export function drawSprite(spr, i, x, y, sX, sY, rotation, opts = {})
 {
 	if (!spr) return;
 
-	if (!(context instanceof CanvasRenderingContext2D)) {
-		window.addConsoleText("red", "Sprites are currently only supported in Canvas 2D!");
-		return window._GB_stop();
-	}
-
 	if (spr.images === undefined) {
 		window.addConsoleText("red", `String of "${spr}" found. Provide a sprite instead.`);
 		return window._GB_stop();
 	}
 
 	i = Math.floor(i ?? 0) % spr.images.length;
-	while (i < 0) i+= spr.images.length;
+	if (i < 0) i+= spr.images.length;
 	const frame = spr.images[i];
 	if (!frame?.ready)
 		return;
 
-	//
-	context.save();
-	context.translate(x, y);
-	context.rotate(rotation * DEGTORAD);
-	context.scale(sX, sY);
-
-	//
 	const ox = opts.originX ?? spr.originX;
 	const oy = opts.originY ?? spr.originY;
 	const img = frame.img;
+
+	if (rotation === 0 && sX === 1 && sY === 1)
+		drawImage(spr, img, frame, x, y, ox, oy);
+	else
+		drawImageExt(spr, img, frame, x, y, ox, oy, sX, sY, rotation);
+}
+
+function drawImage(spr, img, frame, x, y, ox, oy)
+{
+	context.drawImage(
+		img, frame.clip.x, frame.clip.y,
+		frame.clip.w, frame.clip.h,
+		x-ox, y-oy,
+		spr.width, spr.height
+	);
+}
+
+function drawImageExt(spr, img, frame, x, y, ox, oy, sX, sY, r)
+{
+	context.save();
+	context.translate(x, y);
+	context.rotate(r * DEGTORAD);
+	context.scale(sX, sY);
 	context.drawImage(
 		img, frame.clip.x, frame.clip.y,
 		frame.clip.w, frame.clip.h,
 		-ox, -oy,
 		spr.width, spr.height
 	);
-
-	//
 	context.restore();
 }
 
