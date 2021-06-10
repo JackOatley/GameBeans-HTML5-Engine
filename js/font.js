@@ -52,9 +52,9 @@ class Font {
 	convertToBitmapFont(opts = {}) {
 		convertToBitmapFont(this, opts);
 	}
-
-	static getByName = getByName;
 }
+
+Font.getByName = getByName;
 
 function getByName(value)
 {

@@ -206,7 +206,7 @@ export function setShadow(color, blur, x, y)
 /**
  * @type {function(string, number, string, string):void}
  */
-export function setFont(font, size = 16, align = "left", baseline = alphabetic)
+export function setFont(font, size = 16, align = "left", baseline = "alphabetic")
 {
 	fontName = typeof font === "string" ? font : font.name;
 	fontSize = size;
@@ -334,12 +334,12 @@ export function text(str, x, y, opts = {})
 function drawWord(x, y, word, lookup, ctx, useBitmap, bitmap, scale, method)
 {
 	if (useBitmap)
-		drawBitmapWord(x, y, word, lookup, ctx, scale);
+		drawBitmapWord(bitmap, x, y, word, lookup, ctx, scale);
 	else
 		ctx[method](word, x, y);
 }
 
-function drawBitmapWord(x, y, word, lookup, ctx, scale)
+function drawBitmapWord(bitmap, x, y, word, lookup, ctx, scale)
 {
 	var dx = ~~x;
 	for (const char of word) {

@@ -52,15 +52,15 @@ export class GameObject
 	getAllInstances() {
 		getAllInstances(this);
 	}
-
-	static count = count;
-	static getAllInstances = getAllInstances;
-	static create = create;
-	static getByName = getByName;
-	static addBehavior = addBehavior;
-	static eventAddAction = eventAddAction;
-	static addListener = addListener;
 }
+
+GameObject.count = count;
+GameObject.getAllInstances = getAllInstances;
+GameObject.create = create;
+GameObject.getByName = getByName;
+GameObject.addBehavior = addBehavior;
+GameObject.eventAddAction = eventAddAction;
+GameObject.addListener = addListener;
 
 function create(name, sprite)
 {

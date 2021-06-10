@@ -217,12 +217,12 @@ export class Sprite {
 		var c = this.toCanvas(index);
 		return c.context.getImageData(x, y, 1, 1).data;
 	}
-
-	static cache = cache;
-	static create = create;
-	static readyAll = readyAll;
-	static getByName = getByName;
 }
+
+Sprite.cache = cache;
+Sprite.create = create;
+Sprite.readyAll = readyAll;
+Sprite.getByName = getByName;
 
 export function create(opts)
 {

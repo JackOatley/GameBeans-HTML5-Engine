@@ -37,13 +37,13 @@ export class Camera
 	destroy() {
 		destroy(this);
 	}
-
-	static create = create;
-	static array = allCameras;
-	static currentlyDrawing = undefined;;
-	static updateAll = updateAllCameras;
-	static destroyAll = destroyAllCameras;
 }
+
+Camera.create = create;
+Camera.array = allCameras;
+Camera.currentlyDrawing = undefined;;
+Camera.updateAll = updateAllCameras;
+Camera.destroyAll = destroyAllCameras;
 
 export function create(opts = {})
 {

@@ -70,13 +70,13 @@ export class Room {
 	draw() {
 		draw(this);
 	}
-
-	static draw = draw;
-	static enter = enter;
-	static next = next;
-	static previous = previous;
-	static getByName = getByName;
 }
+
+Room.draw = draw;
+Room.enter = enter;
+Room.next = next;
+Room.previous = previous;
+Room.getByName = getByName;
 
 export function draw(room)
 {

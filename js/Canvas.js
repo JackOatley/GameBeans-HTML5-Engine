@@ -117,12 +117,12 @@ export default class Canvas {
 	getImageData() {
 		return this.context.getImageData(0, 0, this.width, this.height).data;
 	}
-
-	static clear = clear;
-	static fill = fill;
-	static setMain = setMain;
-	static getMain = getMain;
 }
+
+Canvas.clear = clear;
+Canvas.fill = fill;
+Canvas.setMain = setMain;
+Canvas.getMain = getMain;
 
 export function clear({domElement: c, context: ctx})
 {

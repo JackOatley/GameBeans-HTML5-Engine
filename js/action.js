@@ -56,7 +56,7 @@ export function setGravity(value) {
 // Instantly sets the instance's x and y values to a random position within
 // the current room.
 export function jump(x, y, relative) {
-	if (!relative) return [this.x, this.y] [Number(x), Number(y)];
+	if (!relative) return [this.x, this.y];
 	this.x += Number(x);
 	this.y += Number(y);
 }

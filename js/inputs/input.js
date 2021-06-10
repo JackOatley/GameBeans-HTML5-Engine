@@ -2,9 +2,8 @@ import keyValues from "../keyvalues.js";
 import * as keyboard from "./keyboard.js";
 import * as mouse from "./mouse.js";
 import * as touch from "./touch.js";
-export * as keyboard from "./keyboard.js";
-export * as mouse from "./mouse.js";
-export * as touch from "./touch.js";
+
+export {keyboard, mouse, touch};
 
 //
 const MOUSE_MAP = ["Left", "Middle", "Right"];

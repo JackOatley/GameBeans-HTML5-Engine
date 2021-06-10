@@ -4,10 +4,8 @@
  */
 export class Sound {
 
-	assetType = "sound";
-
 	/**
-	 * @type {function(string, string):Sound}
+	 *
 	 */
 	constructor(name, source) {
 		this.name = name;
@@ -77,13 +75,15 @@ export class Sound {
 	static enable(x) {
 		Sound.isEnabled = x;
 	}
-
-	static getByName = getByName;
-	static create = create;
-	static play = play;
-	static loop = loop;
-	static stop = stop;
 }
+
+Sound.getByName = getByName;
+Sound.create = create;
+Sound.play = play;
+Sound.loop = loop;
+Sound.stop = stop;
+
+Sound.prototype.assetType = "sound";
 
 export function create(name, source)
 {
@@ -123,7 +123,7 @@ export function play(s, opts = {})
 
 	//
 	playSound.onError = (err) => {
-		console.error(soundName, err);
+		console.error(s.name, err);
 	}
 
 	// Play the sound.
