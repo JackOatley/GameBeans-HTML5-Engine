@@ -4,9 +4,9 @@ import * as input from "./inputs/input.js";
 import * as Instance from "./instance.js";
 import global from "./global.js";
 import * as draw from "./draw.js";
-import { allCameras, updateAllCameras } from "./camera.js";
+import {allCameras, updateAllCameras} from "./camera.js";
 import Transition from "./transition.js";
-import { NOOP } from "./constants.js";
+import {NOOP} from "./constants.js";
 
 var fpsFrames = 0;
 var fpsTime = 0;
@@ -16,22 +16,15 @@ var last = 0;
 var frameRequest = null;
 
 //
-window.addConsoleText = window.addConsoleText || console.log;
-window._GB_stop = window._GB_stop || NOOP;
+window.addConsoleText = window.addConsoleText ?? console.log;
+window._GB_stop = window._GB_stop ?? NOOP;
 
 /**
  *
  */
 export function start(opts = {})
 {
-	// Basic site-locking
-	if (opts.host !== undefined && opts.host !== "") {
-		let loc = (window.parent) ? window.parent.location : window.location;
-		let host = loc.hostname;
-		let arr = opts.host.split(" ").join("").split(",");
-		if (!opts.host.includes(host))
-			return;
-	}
+	if (siteLocked(opts)) return;
 
 	//
 	const canv = new Canvas({
@@ -53,20 +46,34 @@ export function start(opts = {})
 	stop();
 	room.enter(room.current);
 	requestAnimationFrame(tick);
-
 }
 
 /**
- * @return {void}
+ *
  */
-export const stop = () => {
-	if (frameRequest) window.cancelAnimationFrame(frameRequest);
+function siteLocked({host})
+{
+	if (host === undefined || host === "") return false;
+	const loc = window.parent ? window.parent.location : window.location;
+	const name = loc.hostname;
+	const arr = name.split(" ").join("").split(",");
+	if (!name.includes(host)) return true;
 }
 
 /**
- * @type {function(number):void}
+ *
  */
-export const setGameSpeed = speed => {
+export function stop()
+{
+	if (frameRequest)
+		window.cancelAnimationFrame(frameRequest);
+}
+
+/**
+ *
+ */
+export function setGameSpeed(speed)
+{
 	tickLength = 1000 / speed;
 }
 
@@ -120,7 +127,7 @@ function gameUpdate()
 }
 
 /**
- * @return {void}
+ *
  */
 function gameDraw()
 {
@@ -138,7 +145,7 @@ function gameDraw()
 }
 
 /**
- * @return {void}
+ *
  */
 function handleResizeEvent()
 {
