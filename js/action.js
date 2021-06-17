@@ -49,14 +49,20 @@ export function test(varName, op, value, global) {
 }
 
 // Sets the instance's gravity to the given value.
-export function setGravity(value) {
-	this.gravity = value;
+export function setGravity(speed, direction = 90)
+{
+	this.gravity = speed;
+	this.gravityDirection = direction;
 }
 
 // Instantly sets the instance's x and y values to a random position within
 // the current room.
 export function jump(x, y, relative) {
-	if (!relative) return [this.x, this.y];
+	if (!relative) {
+		this.x = x;
+		this.y = y;
+		return;
+	}
 	this.x += Number(x);
 	this.y += Number(y);
 }
@@ -138,17 +144,10 @@ export const GAME = {
 	Camera,
 	Canvas,
 	Color,
-	main: {
-		start: main.start,
-		setGameSpeed: main.setGameSpeed
-	},
-	instance: instance,
+	main,
+	instance,
 	draw: {
-		shape: {
-			rectangle: draw.shape.rectangle,
-			ellipse: draw.shape.ellipse,
-			healthBar: draw.shape.healthBar
-		},
+		shape: draw.shape,
 		setTarget: draw.setTarget,
 		resetTarget: draw.resetTarget,
 		getTarget: draw.getTarget,
@@ -171,23 +170,19 @@ export const GAME = {
 		self: instance.drawSelf,
 		debug: instance.drawDebug
 	},
-	Room: Room,
+	Room,
 	sprite: Sprite,
-	Sound: Sound,
-	input: {
-		keyboard: input.keyboard,
-		mouse: input.mouse,
-		touch: input.touch
-	},
+	Sound,
+	input,
 	math,
-	Font: Font,
-	Grid: Grid,
-	Tilemap: Tilemap,
-	tween: tween,
-	Transition: Transition,
+	Font,
+	Grid,
+	Tilemap,
+	tween,
+	Transition,
 	Object: GameObject,
-	Primitive: Primitive,
-	Vector2: Vector2
+	Primitive,
+	Vector2
 }
 
 // Control actions.
@@ -206,14 +201,26 @@ export const setCursor = App.setCursor;
 // Debug actions.
 export const message = args => console.log(args);
 export const alert = m => window.alert(m);
-export const confirm = m => window.confirm(m);
+
+export function confirm(m)
+{
+	return window.confirm(m);
+}
+
+export function prompt(varName, global, message, def)
+{
+	const target = global ? window.global : this;
+	target[varName] = window.prompt(message, def);
+}
 
 // Instance actions.
 export const instanceCreate = instance.create;
 export const instanceCreateMoving = instance.createMoving;
-export const moveFree = instance.moveFree;
 export const instanceDestroy = instance.destroy;
 export const changeSprite = instance.changeSprite;
+
+// Movement actions.
+export const moveFree = instance.moveFree;
 export const instanceSetRotation = instance.setRotation;
 export const instanceSetDirection = instance.setDirection;
 export const instanceCheckCollision = instance.checkCollision;
