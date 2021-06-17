@@ -1,4 +1,4 @@
-import { Camera } from "./camera.js";
+import {Camera} from "./camera.js";
 import Generator from "./generator.js";
 import Transition from "./transition.js";
 import * as instance from "./instance.js";
@@ -46,10 +46,7 @@ export class Room {
 	}
 
 	/**
-	 * @param {string} inst Name of the instance to add.
-	 * @param {number} x
-	 * @param {number} y
-	 * @return {void}
+	 *
 	 */
 	addInstance(inst, x, y) {
 		if (typeof inst === "object") inst = inst.objectName;
@@ -57,15 +54,14 @@ export class Room {
 	}
 
 	/**
-	 * @param {object} [opts={}]
-	 * @return {void}
+	 *
 	 */
-	enter(opts) {
-		enter(this, opts);
+	enter(type, color, time) {
+		enter(this, type, color, time);
 	}
 
 	/**
-	 * @return {void}
+	 *
 	 */
 	draw() {
 		draw(this);
@@ -135,10 +131,11 @@ function drawIsometricBackground(room, ctx, spr, index)
 	ctx.restore();
 }
 
-export function enter(room, opts = {})
+export function enter(room, type, color, time)
 {
-	if (opts.transition)
-		return enterTransition(room, opts);
+	if (type && color && time)
+		return enterTransition(room, type, color, time);
+
 	instance.executeEventAll("roomleave");
 	for (const i of instance.instanceArray)
 		if (!i.persistent) instance.uninstantiate(i);
@@ -150,29 +147,34 @@ export function enter(room, opts = {})
 	instance.executeEventAll("roomenter");
 }
 
-function enterTransition(room, opts)
+/**
+ *
+ */
+function enterTransition(room, type, color, time)
 {
-	if (transition) return transition;
+	if (transition) {
+		return console.warn("attempting to transistion to another room while already transitioning!");
+	}
+
 	transition = new Transition({
-		...opts.transition,
+		type, color, time,
 		callback: () => {
 			enter(room);
 			transition = undefined;
 		}
 	});
-	return transition;
 }
 
-export function next(room = currentRoom)
+export function next(type, color, time)
 {
-	const index = Room.array.indexOf(room);
-	Room.enter(Room.array[index+1]);
+	const index = Room.array.indexOf(currentRoom);
+	enter(Room.array[index+1], type, color, time);
 }
 
-export function previous(room = currentRoom)
+export function previous(type, color, time)
 {
-	const index = Room.array.indexOf(room);
-	Room.enter(Room.array[index-1]);
+	const index = Room.array.indexOf(currentRoom);
+	enter(Room.array[index-1], type, color, time);
 }
 
 export function getByName(name)
