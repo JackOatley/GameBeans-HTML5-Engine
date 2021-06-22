@@ -136,6 +136,10 @@ export function drawSprite(spr, i, x, y, sX, sY, r, opts = {})
 		drawImageExt(spr, img, frame, x, y, ox, oy, sX, sY, r);
 }
 
+/*
+ * The simplest sprite drawing method. Is faster when there's no transformation
+ * going on.
+ */
 function drawImage(spr, img, frame, x, y, ox, oy)
 {
 	context.drawImage(
@@ -146,6 +150,9 @@ function drawImage(spr, img, frame, x, y, ox, oy)
 	);
 }
 
+/*
+ * Sprite drawing with transformation. Slower.
+ */
 function drawImageExt(spr, img, frame, x, y, ox, oy, sX, sY, r)
 {
 	context.save();
@@ -161,8 +168,8 @@ function drawImageExt(spr, img, frame, x, y, ox, oy, sX, sY, r)
 	context.restore();
 }
 
-/**
- * @type {function(Object, number, number, number, number, number):void}
+/*
+ *
  */
 export function lives(spr, x, y, number, order, seperation)
 {
@@ -171,7 +178,7 @@ export function lives(spr, x, y, number, order, seperation)
 		drawSprite(spr, 0, x + xd * n, y + yd * n, 1, 1, 0);
 }
 
-/**
+/*
  * Draws the sprite at the given x, y position, and tiles it to fill a given
  * width and height.
  */
@@ -184,7 +191,7 @@ export function spriteTiled(spr, i, x, y, w, h)
 		drawSprite(spr, i, dx, dy, 1, 1, 0);
 }
 
-/**
+/*
  * Draws a canvas at the given position.
  */
 export function drawCanvas(canv, x, y)
@@ -192,8 +199,8 @@ export function drawCanvas(canv, x, y)
 	context.drawImage(canv.domElement, x, y);
 }
 
-/**
- *
+/*
+ * To disable shadows, provide a color with 0 alpha.
  */
 export function setShadow(color, blur, x, y)
 {
@@ -203,8 +210,8 @@ export function setShadow(color, blur, x, y)
 	context.shadowOffsetY = y;
 }
 
-/**
- * @type {function(string, number, string, string):void}
+/*
+ *
  */
 export function setFont(font, size = 16, align = "left", baseline = "alphabetic")
 {
@@ -215,7 +222,7 @@ export function setFont(font, size = 16, align = "left", baseline = "alphabetic"
 	context.textBaseline = textBaseline = baseline;
 }
 
-/**
+/*
  *
  */
 export function setFontSize(size = 16)
@@ -224,8 +231,8 @@ export function setFontSize(size = 16)
 	context.font = `${fontSize}px ${fontName}`;
 }
 
-/**
- * @type {function(string, number, number, Object=):void}
+/*
+ *
  */
 export function text(str, x, y, opts = {})
 {
@@ -354,7 +361,7 @@ function drawBitmapWord(bitmap, x, y, word, lookup, ctx, scale)
 	}
 }
 
-/**
+/*
  * Transformation functions.
  */
 export function scale(x, y)
