@@ -1,6 +1,6 @@
 import {Camera} from "./camera.js";
 import Generator from "./generator.js";
-import Transition from "./transition.js";
+import {Transition} from "./transitions/transition.js";
 import * as instance from "./instance.js";
 import * as drawing from "./draw.js";
 
@@ -8,15 +8,13 @@ import * as drawing from "./draw.js";
 export let currentRoom = null;
 export let transition = false;
 
-/**
+/*
  *
  */
 export class Room {
 
-	/**
-	 * @param {string} name
-	 * @param {number} width
-	 * @param {number} height
+	/*
+	 *
 	 */
 	constructor(name, width, height) {
 		this.name = name;

@@ -1,9 +1,9 @@
 import Canvas from "./Canvas.js";
-import { start } from "./main.js";
-import { drawTotalReset } from "./draw.js";
-import { instanceArray } from "./instance.js";
+import {start} from "./main.js";
+import {drawTotalReset} from "./draw.js";
+import {instanceArray} from "./instance.js";
 import * as Input from "./inputs/input.js";
-import { Camera } from "./camera.js";
+import {Camera} from "./camera.js";
 
 /**
  * Sets the cursor to use when the mouse is in the game window.

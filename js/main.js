@@ -5,7 +5,7 @@ import * as Instance from "./instance.js";
 import global from "./global.js";
 import * as draw from "./draw.js";
 import {allCameras, updateAllCameras} from "./camera.js";
-import Transition from "./transition.js";
+import {Transition} from "./transitions/transition.js";
 import {NOOP} from "./constants.js";
 
 var fpsFrames = 0;

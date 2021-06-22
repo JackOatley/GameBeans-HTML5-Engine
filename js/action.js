@@ -13,7 +13,7 @@ import {Camera} from "./camera.js";
 import Grid from "./data/grid.js";
 import Tilemap from "./tilemap.js";
 import tween from "./tween.js";
-import Transition from "./transition.js";
+import {Transition} from "./transitions/transition.js";
 import Font from "./font.js";
 import {GameObject} from "./object.js";
 import Primitive from "./drawing/primitive.js";
