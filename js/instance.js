@@ -37,6 +37,9 @@ export function createMoving(obj, x, y, speed, direction)
 export function setup(inst, o, x, y, opts)
 {
 	inst.direction = 0;
+	inst.rotation = 0;
+	inst.scaleX = 1;
+	inst.scaleY = 1;
 	inst.id = uniqueId++;
 	inst.exists = true;
 	inst.speed = 0;
@@ -87,7 +90,7 @@ export function find(obj, n=0)
 }
 
 /**
- * @type {function(Object!string):Object}
+ * Find and return a random instance of the given object.
  */
 export function findRandom(obj)
 {
@@ -98,7 +101,6 @@ export function findRandom(obj)
 
 /**
  * Find the nearest instance of an object to a point.
- * @type {function(number, number, Object!string):Object}
  */
 export function nearest(x, y, obj)
 {
@@ -111,11 +113,11 @@ export function nearest(x, y, obj)
 		});
 	}
 
-	if (all.length === 0) { return null; }
-	if (all.length === 1) { return all[0]; }
-	let nrst, dist = 1e9, newDist;
+	if (all.length === 0) return undefined;
+	if (all.length === 1) return all[0];
+	let nrst, dist = 1e9;
 	for (const inst of all) {
-		newDist = math.pointDistance(x, y, inst.x, inst.y);
+		const newDist = math.pointDistance(x, y, inst.x, inst.y);
 		if (newDist < dist) {
 			nrst = inst;
 			dist = newDist;
@@ -130,11 +132,11 @@ export function nearest(x, y, obj)
 export function furthest(x, y, obj)
 {
 	const all = obj.instances;
-	if (all.length === 0) return null;
+	if (all.length === 0) return undefined;
 	if (all.length === 1) return all[0];
-	let frst, dist = 0, newDist;
+	let frst, dist = -1;
 	for (const inst of all) {
-		newDist = math.pointDistance(x, y, inst.x, inst.y);
+		const newDist = math.pointDistance(x, y, inst.x, inst.y);
 		if (newDist > dist) {
 			frst = inst;
 			dist = newDist;
@@ -230,7 +232,6 @@ export function stepBegin(i)
 
 /**
  * Execute step event.
- * @type {function(Object):void}
  */
 export function step(inst)
 {
@@ -248,11 +249,9 @@ export function step(inst)
 	if (!inst.inRoomBounds && inst.events["outsideroom"])
 		executeEvent(inst, "outsideroom");
 
-	if (!inst.inRoomBounds && inst.wasInRoomBounds) {
+	if (!inst.inRoomBounds && inst.wasInRoomBounds)
 		executeEvent(inst, "leaveroombounds");
-	}
 
-	// Event listeners.
 	instanceExecuteListeners(inst);
 
 	// Input events.
@@ -262,21 +261,26 @@ export function step(inst)
 }
 
 //
-export function stepEnd(i) {
+export function stepEnd(i)
+{
 	executeEvent(i, "stepEnd");
 }
 
 //
-export function destroy(inst) {
+export function destroy(inst)
+{
 	executeEvent(inst, "destroy");
 	inst.exists = false;
 }
 
-//
-export function uninstantiate(inst) {
+/*
+ * Remove the instance without triggering the destroy event.
+ */
+export function uninstantiate(inst)
+{
 	inst.exists = false;
-	let arr = inst.object.instances;
-	let index = arr.indexOf(inst);
+	const arr = inst.object.instances;
+	const index = arr.indexOf(inst);
 	if (index >= 0) {
 		arr[index] = arr[arr.length-1];
 		arr.length -= 1;
@@ -284,16 +288,15 @@ export function uninstantiate(inst) {
 }
 
 /** */
-export function draw(inst) {
+export function draw(inst)
+{
 	if (!inst.visible) return;
-	(inst.events["draw"])
-		? executeEvent(inst, "draw")
-		: drawSelf(inst);
+	if (!inst.events["draw"]) return drawSelf(inst);
+	executeEvent(inst, "draw");
 }
 
-/**
- * @param {Object} inst Instance to draw.
- * @param {Object} [opts] Options object.
+/*
+ * Draw the given instance with it's own settings.
  */
 export function drawSelf(inst, opts)
 {
@@ -308,26 +311,45 @@ export function drawSelf(inst, opts)
 	);
 }
 
-/** */
+/*
+ * Draw collision information for the given instance.
+ */
 export function drawDebug(inst)
 {
-	let box = inst.boxCollision;
-	Draw.shape.rectangle(
-		box.left,
-		box.top,
-		box.right - box.left,
-		box.bottom - box.top, {
-			color: "rgba(255,0,0,0.5)"
-		}
-	);
+	const {left, top, right, bottom} = inst.boxCollision;
+	const width = right - left;
+	const height = bottom - top;
+	const color = "rgba(255,0,0,0.5)";
+	Draw.shape.rectangle(left, top, width, height, {color});
 }
 
-/** */
+/*
+ *
+ */
+export function gridAlign(w, h)
+{
+	this.x = Math.round(this.x / w) * w;
+	this.y = Math.round(this.y / h) * h;
+}
+
+/*
+ *
+ */
 export function changeSprite(sprite, index = 0, speed = 1)
 {
 	this.sprite = sprite;
 	this.index = index;
 	this.imageSpeed = speed;
+}
+
+/*
+ *
+ */
+export function transformSprite(scaleX = 1, scaleY = 1, rotation = 0)
+{
+	this.scaleX = scaleX;
+	this.scaleY = scaleY;
+	this.rotation = rotation;
 }
 
 /**

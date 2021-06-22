@@ -18,22 +18,26 @@ import Font from "./font.js";
 import {GameObject} from "./object.js";
 import Primitive from "./drawing/primitive.js";
 import Vector2 from "./Vector2.js";
+import * as debugActions from "./debugActions.js";
 
 // Set the variable with the given name.
-export function set(varName, value, relative, global) {
+export function set(varName, value, relative, global)
+{
 	const target = global ? window.global : this;
 	if (relative) return target[varName] += value;
 	target[varName] = value;
 }
 
 // Set the variable with the given name.
-export function setProperty(object, property, value, relative) {
+export function setProperty(object, property, value, relative)
+{
 	if (relative) return object[property] += value;
 	object[property] = value;
 }
 
 // Intended to be equivalent to an if statement.
-export function test(varName, op, value, global) {
+export function test(varName, op, value, global)
+{
 	const target = global ? window.global : this;
 	switch (op) {
 		case("!=="): return target[varName] !== value;
@@ -190,6 +194,7 @@ export const blockBegin = "blockBegin";
 export const blockEnd = "blockEnd";
 export const exitEvent = "exitEvent";
 export const ifElse = "ifElse";
+export const repeat = "repeat";
 export const chance = math.chance;
 export const roomEnter = Room.enter;
 export const roomNext = Room.next;
@@ -198,26 +203,12 @@ export const setGameSpeed = main.setGameSpeed;
 export const restart = App.restart;
 export const setCursor = App.setCursor;
 
-// Debug actions.
-export const message = args => console.log(args);
-export const alert = m => window.alert(m);
-
-export function confirm(m)
-{
-	return window.confirm(m);
-}
-
-export function prompt(varName, global, message, def)
-{
-	const target = global ? window.global : this;
-	target[varName] = window.prompt(message, def);
-}
-
 // Instance actions.
 export const instanceCreate = instance.create;
 export const instanceCreateMoving = instance.createMoving;
 export const instanceDestroy = instance.destroy;
 export const changeSprite = instance.changeSprite;
+export const transformSprite = instance.transformSprite;
 
 // Movement actions.
 export const moveFree = instance.moveFree;
@@ -226,8 +217,7 @@ export const instanceSetDirection = instance.setDirection;
 export const instanceCheckCollision = instance.checkCollision;
 export const instanceCheckCollisionPoint = instance.checkCollisionPoint;
 export const directionToPoint = instance.directionToPoint;
-export const drawSelf = instance.drawSelf;
-export const drawDebug = instance.drawDebug;
+export const gridAlign = instance.gridAlign;
 
 // Drawing actions.
 export const drawSetColor = draw.setColor;
@@ -240,7 +230,15 @@ export const drawEllipse = draw.shape.ellipse;
 export const drawSprite = draw.drawSprite;
 export const drawSetShadow = draw.setShadow;
 export const drawLives = draw.lives;
+export const drawSelf = instance.drawSelf;
+export const drawDebug = instance.drawDebug;
 
 // Sound actions.
 export const soundPlay = (snd, loop) => Sound.play(snd, {loop: loop});
 export const soundStop = Sound.stop;
+
+// Debug actions.
+export const message = debugActions.message;
+export const alert = debugActions.alert;
+export const confirm = debugActions.confirm;
+export const prompt = debugActions.prompt;
