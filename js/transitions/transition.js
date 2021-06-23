@@ -1,12 +1,18 @@
 import * as draw from ".././draw.js";
 
 import {fade} from "./types/fade.js";
+import {swipeDown} from "./types/swipeDown.js";
 import {swipeLeft} from "./types/swipeLeft.js";
+import {swipeRight} from "./types/swipeRight.js";
+import {swipeUp} from "./types/swipeUp.js";
 
 const allInstances = [];
 const prefabs = {
 	"fade": fade,
-	"swipeLeft": swipeLeft
+	"swipeDown": swipeDown,
+	"swipeLeft": swipeLeft,
+	"swipeRight": swipeRight,
+	"swipeUp": swipeUp
 }
 
 export class Transition {
