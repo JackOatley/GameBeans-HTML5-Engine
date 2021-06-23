@@ -59,21 +59,27 @@ export function setGravity(speed, direction = 90)
 	this.gravityDirection = direction;
 }
 
-// Instantly sets the instance's x and y values to a random position within
-// the current room.
-export function jump(x, y, relative) {
+/*
+ * Instantly sets the instance's x and y values to a random position within
+ * the current room.
+ */
+export function jump(x, y, relative)
+{
 	if (!relative) {
 		this.x = x;
 		this.y = y;
-		return;
+	} else {
+		this.x += Number(x);
+		this.y += Number(y);
 	}
-	this.x += Number(x);
-	this.y += Number(y);
 }
 
-// Instantly sets the instance's x and y values to a random position within
-// the current room.
-export function jumpRandom() {
+/*
+ * Instantly sets the instance's x and y values to a random position within
+ * the current room.
+ */
+export function jumpRandom()
+{
 	const x1 = 0, y1 = 0;
 	const x2 = Room.current.width, y2 = Room.current.height;
 	this.x = Math.floor(Math.random() * (x2 - x1)) + x1;
@@ -81,27 +87,34 @@ export function jumpRandom() {
 }
 
 //
-export function moveSpeedX(speed) {
+export function moveSpeedX(speed)
+{
 	this.speedX = Number(speed);
 }
 
 //
-export function moveSpeedY(speed) {
+export function moveSpeedY(speed)
+{
 	this.speedY = Number(speed);
 }
 
 //
-export function moveReverseX() {
+export function moveReverseX()
+{
 	this.speedX = -this.speedX;
 }
 
 //
-export function moveReverseY() {
+export function moveReverseY()
+{
 	this.speedY = -this.speedY;
 }
 
-// Wraps the instance back into the room when it leaves.
-export function wrap() {
+/*
+ * Wraps the instance back into the room when it leaves.
+ */
+export function wrap()
+{
 	const w = this.boxRight - this.boxLeft;
 	const h = this.boxBottom - this.boxTop;
 	const rw = Room.current.width;
@@ -112,8 +125,11 @@ export function wrap() {
 	if (this.boxTop > rh) this.y -= rh + h;
 }
 
-// Wraps the instance back into the room when it leaves.
-export function confine() {
+/*
+ * Wraps the instance back into the room when it leaves.
+ */
+export function confine()
+{
 	const w = this.boxRight - this.boxLeft;
 	const h = this.boxBottom - this.boxTop;
 	const rw = Room.current.width;
@@ -125,7 +141,8 @@ export function confine() {
 }
 
 // Executes the given function with variable arguments on the instance.
-export function func(f, ...args) {
+export function func(f, ...args)
+{
 	f.apply(this, args);
 }
 
@@ -138,7 +155,8 @@ export function script(s, args)
 }
 
 // Shows the value of the given variable of the instance, in the console.
-export function get(...args) {
+export function get(...args)
+{
 	console.log(this[args].toFixed(2));
 }
 
@@ -206,6 +224,7 @@ export const setCursor = App.setCursor;
 // Instance actions.
 export const instanceCreate = instance.create;
 export const instanceCreateMoving = instance.createMoving;
+export const instanceCreateRandom = instance.createRandom;
 export const instanceDestroy = instance.destroy;
 export const changeSprite = instance.changeSprite;
 export const transformSprite = instance.transformSprite;

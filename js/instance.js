@@ -14,24 +14,44 @@ let currentEvent = "";
 
 export const setDepthSort = x  => doDepthSort = x;
 
-// Create a new instance of an object.
+/*
+ * Create a new instance of an object.
+ */
 export function create(o, x, y, opts = {})
 {
 	if (instanceArray.length >= INSTANCE_HARD_LIMIT) {
 		window._gbide_error("instance number hard limit reached:", INSTANCE_HARD_LIMIT);
-		return null;
+		return undefined;
 	}
 
 	return new o(x, y, opts);
 }
 
-//
+/*
+ *
+ */
 export function createMoving(obj, x, y, speed, direction)
 {
 	return create(obj, x, y, {speed, direction});
 }
 
-/**
+/*
+ *
+ */
+export function createRandom(o1, o2, o3, o4, x, y)
+{
+	if (!o1 && !o2 && !o3 && !o4) {
+		window._gbide_error("Create Random action needs at least one possible object to create.");
+		return undefined;
+	}
+
+	let o;
+	while (!o)
+		o = math.choose(o1, o2, o3, o4);
+	return create(o, x, y);
+}
+
+/*
  *
  */
 export function setup(inst, o, x, y, opts)
