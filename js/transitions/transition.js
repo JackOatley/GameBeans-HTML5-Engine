@@ -48,7 +48,6 @@ export class Transition {
 	destroy() {
 		let x = allInstances.indexOf(this);
 		allInstances.splice(x, 1);
-		console.log(allInstances);
 	}
 
 	static create(opts) {
