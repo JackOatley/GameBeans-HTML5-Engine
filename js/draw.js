@@ -92,7 +92,7 @@ export function setImageSmoothing(enable)
 	imageSmoothing = enable;
 }
 
-/**
+/*
  * Can be a number, a hex-value or an object containing R, G, B and optionally A
  * properties or H, S, L and optionally A properties.
  */
@@ -108,7 +108,7 @@ export function setColor(c)
 		return color = Color.hslaToCSS(c.h, c.s, c.l, c.a);
 }
 
-/**
+/*
  * Draws the sprite at the given x, y position.
  */
 export function drawSprite(spr, i, x, y, sX, sY, r, opts = {})

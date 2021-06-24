@@ -243,6 +243,7 @@ export const drawSetColor = draw.setColor;
 export const drawSetFont = draw.setFont;
 export const drawSetFontSize = draw.setFontSize;
 export const drawText = draw.text;
+export const drawLine = draw.shape.line;
 export const drawRectangle = draw.shape.rectangle;
 export const drawHealthBar = draw.shape.healthBar;
 export const drawEllipse = draw.shape.ellipse;

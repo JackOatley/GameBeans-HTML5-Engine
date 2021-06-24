@@ -1,23 +1,27 @@
 import * as Draw from "../draw.js";
 
-/**
- * @type {function(number, number, number, number, Object):void}
+/*
+ *
  */
-export function line(x1, y1, x2, y2, opts = {}) {
+export function line(x1, y1, x2, y2, {color = "red"} = {})
+{
 	var ctx = Draw.context;
-	ctx.strokeStyle = opts.color || Draw.color;
+	ctx.strokeStyle = color;
 	ctx.beginPath();
 	ctx.moveTo(x1, y1);
 	ctx.lineTo(x2, y2);
 	ctx.stroke();
 }
 
-/**
- * @type {function(number, number, number, number, Object):void}
+/*
+ *
  */
-export function ellipse(x, y, xr, yr, opts = {}) {
-
-	//
+export function ellipse(x, y, xr, yr, {
+	color = Draw.color,
+	fill = true,
+	lineWidth = 1
+} = {})
+{
 	var ctx = Draw.context;
 	ctx.save();
 	ctx.beginPath();
@@ -26,55 +30,45 @@ export function ellipse(x, y, xr, yr, opts = {}) {
 	ctx.arc(1, 1, 1, 0, 2 * Math.PI, false);
 	ctx.restore();
 
-	//
-	let style = opts.color || Draw.color;
-
-	//
-	if (opts.fill || (!opts.fill && !opts.stroke)) {
-		ctx.fillStyle = style;
+	if (fill) {
+		ctx.fillStyle = color;
 		ctx.fill();
-	}
-
-	if (opts.stroke) {
-		ctx.strokeStyle = style
-		ctx.lineWidth = opts.lineWidth || 1;
+	} else {
+		ctx.strokeStyle = color
+		ctx.lineWidth = lineWidth;
 		ctx.stroke();
 	}
-
 }
 
-/**
- * @type {function(number, number, number, number, Object):void}
+/*
+ *
  */
-export function rectangle(x, y, w, h, opts = {}) {
-
-	//
+export function rectangle(x, y, w, h, {
+	color = Draw.color,
+	fill = true,
+	lineWidth = 1
+} = {})
+{
 	const ctx = Draw.context;
 	ctx.beginPath();
 	ctx.rect(x, y, w, h);
 
-	//
-	const style = opts.color || Draw.color;
-
-	//
-	if (opts.fill || (!opts.fill && !opts.stroke)) {
+	if (fill) {
 		ctx.fillStyle = style;
 		ctx.fill();
-	}
-
-	if (opts.stroke) {
+	} else {
 		ctx.strokeStyle = style;
-		ctx.lineWidth = opts.lineWidth || 1;
+		ctx.lineWidth = lineWidth;
 		ctx.stroke();
 	}
-
 }
 
-/**
- * @type {function(number, number, number, number, number, number, number):void}
+/*
+ *
  */
-export function healthBar(x, y, w, h, amount, c1, c2) {
+export function healthBar(x, y, w, h, amount, c1 = "red", c2 = "green")
+{
 	const size = w * amount / 100;
-	rectangle(x, y, w, h, { color: c2 });
-	rectangle(x, y, size, h, { color: c1 });
+	rectangle(x, y, w, h, {color: c2});
+	rectangle(x, y, size, h, {color: c1});
 }
