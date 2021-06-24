@@ -93,7 +93,7 @@ export function setup(inst, o, x, y, opts)
 	executeEvent(inst, "create");
 }
 
-/**
+/*
  * Finds instance n of the given object.
  */
 export function find(obj, n=0)
@@ -109,7 +109,7 @@ export function find(obj, n=0)
 	return null;
 }
 
-/**
+/*
  * Find and return a random instance of the given object.
  */
 export function findRandom(obj)
@@ -119,7 +119,7 @@ export function findRandom(obj)
 	return find(obj, n);
 }
 
-/**
+/*
  * Find the nearest instance of an object to a point.
  */
 export function nearest(x, y, obj)
@@ -146,7 +146,7 @@ export function nearest(x, y, obj)
 	return nrst;
 }
 
-/**
+/*
  * Find the furthest instance of an object from a point.
  */
 export function furthest(x, y, obj)
@@ -165,7 +165,7 @@ export function furthest(x, y, obj)
 	return frst;
 }
 
-/**
+/*
  * Returns the number of instances of a given object.
  */
 export function count(obj)
@@ -250,7 +250,7 @@ export function stepBegin(i)
 	executeEvent(i, "stepBegin");
 }
 
-/**
+/*
  * Execute step event.
  */
 export function step(inst)
@@ -307,7 +307,11 @@ export function uninstantiate(inst)
 	}
 }
 
-/** */
+/*
+ * Draw the given instance if it's visible. If the draw eveny is defined then
+ * that is used, otherwise the instance is drawn using it's own settings (see
+ * drawSelf).
+ */
 export function draw(inst)
 {
 	if (!inst.visible) return;
@@ -344,12 +348,23 @@ export function drawDebug(inst)
 }
 
 /*
- *
+ * Align the instance to a grid with the given cell width and height.
  */
 export function gridAlign(w, h)
 {
 	this.x = Math.round(this.x / w) * w;
 	this.y = Math.round(this.y / h) * h;
+}
+
+/*
+ * Check if the instance is aligned to a grid with the given cell width and
+ * height.
+ */
+export function checkGridAlign(w, h)
+{
+	const xa = this.x === Math.round(this.x / w) * w;
+	const ya = this.y === Math.round(this.y / h) * h;
+	return xa && ya;
 }
 
 /*
@@ -372,7 +387,7 @@ export function transformSprite(scaleX = 1, scaleY = 1, rotation = 0)
 	this.rotation = rotation;
 }
 
-/**
+/*
  * Execute a particular event for all current instances.
  */
 export function executeEventAll(e, other)
@@ -381,7 +396,7 @@ export function executeEventAll(e, other)
 		executeEvent(i, e, other);
 }
 
-/**
+/*
  * A new array is created so that if any instances are created during any of the
  * step events then they are not included in the next event until a fresh tick.
  */
@@ -395,7 +410,9 @@ export function stepAll()
 	clearDestroyed();
 }
 
-/** */
+/*
+ *
+ */
 export function drawAll()
 {
 	if (doDepthSort)
@@ -403,14 +420,16 @@ export function drawAll()
 	instanceArray.forEach(draw);
 }
 
-/** */
+/*
+ *
+ */
 export function drawGuiAll()
 {
 	for (const i of instanceArray)
 		executeEvent(i, "drawGUI");
 }
 
-/**
+/*
  *
  */
 export function directionToPoint(x, y, s)
@@ -421,7 +440,9 @@ export function directionToPoint(x, y, s)
 	this.direction += max * Math.sign(diff);
 }
 
-/** Resets some instance variables/states. */
+/*
+ * Resets some instance variables/states.
+ */
 function newStep(i)
 {
 	for (const i of instanceArray) {
@@ -431,7 +452,7 @@ function newStep(i)
 	}
 }
 
-/**
+/*
  *
  */
 function updatePosition(inst)
@@ -455,7 +476,7 @@ function updatePosition(inst)
 	inst.y += inst.speedY;
 }
 
-/**
+/*
  * Update the instance's bounding box.
  */
 function updateBoundingBox(i)
@@ -474,7 +495,7 @@ function updateBoundingBox(i)
 	}
 }
 
-/**
+/*
  * Update the instance's collision box.
  */
 function updateCollisionBox(i)
@@ -486,7 +507,7 @@ function updateCollisionBox(i)
 	box.right = box.left + box.width * i.scaleX;
 }
 
-/**
+/*
  * Update the instance's animation.
  */
 function updateAnimation(inst)
@@ -524,8 +545,8 @@ function updateAnimation(inst)
 
 }
 
-/**
- * @type {function(Object):void}
+/*
+ *
  */
 function addToArray(inst)
 {
@@ -539,7 +560,7 @@ function addToArray(inst)
 	instanceArray.push(inst);
 }
 
-/**
+/*
  * Returns all instances.
  */
 function getAll()
@@ -547,7 +568,7 @@ function getAll()
 	return instanceArray.filter(i => true);
 }
 
-/**
+/*
  * Returns all instances set as "solid".
  */
 function getAllSolid()
@@ -555,7 +576,7 @@ function getAllSolid()
 	return instanceArray.filter(i => i.solid);
 }
 
-/**
+/*
  * Remove isntances that have been requested to be destroyed.
  */
 function clearDestroyed()
@@ -571,7 +592,7 @@ function clearDestroyed()
 	instanceArray.length = l;
 }
 
-/**
+/*
  * The function used for instance depth ordering. Sorts by ID if depth same.
  * Returns a number of 0, -1 or 1.
  */
@@ -580,9 +601,8 @@ function sortFunction(a, b)
 	return (a.depth === b.depth) ? a.id - b.id : a.depth - b.depth;
 }
 
-/**
- * @param {Object} inst Instance.
- * @return {void}
+/*
+ *
  */
 function instanceExecuteListeners(inst)
 {
@@ -594,12 +614,11 @@ function instanceExecuteListeners(inst)
 	}
 }
 
-/**
+/*
  * Execute an event for the given instance only.
  */
 function executeEvent(inst, event, otherInst)
 {
-	// Set the current "other" instance.
 	otherStack.push(window.other);
 	window.other = otherInst;
 	currentEvent = event;
@@ -620,8 +639,8 @@ function executeEvent(inst, event, otherInst)
 	window.other = otherStack.pop();
 }
 
-/**
- * @type {function(Object, Object|string):void}
+/*
+ *
  */
 function instanceCollisionInstance(inst, target)
 {
@@ -638,8 +657,8 @@ function instanceCollisionInstance(inst, target)
 	}
 }
 
-/**
- * @type {function(Object):void}
+/*
+ *
  */
 export function outsideRoom(i)
 {
@@ -650,7 +669,7 @@ export function outsideRoom(i)
 		executeEvent(i, "outsideroom");
 }
 
-/**
+/*
  *
  */
 export function checkCollision(i, x, y, obj, not = false)
@@ -669,7 +688,7 @@ export function checkCollision(i, x, y, obj, not = false)
 	return not;
 }
 
-/**
+/*
  *
  */
 export function checkCollisionPoint(obj, x, y, not = false)
@@ -688,7 +707,7 @@ export function checkCollisionPoint(obj, x, y, not = false)
 	return not;
 }
 
-/**
+/*
  * Returns an array of instances of the given object. If the object provided is
  * is a string constaining "solid", all instances of solid objects are returned.
  */
@@ -699,8 +718,8 @@ function getInstancesObject(obj)
 	return obj.instances;
 }
 
-/**
- * @type {function(Object, Object):boolean}
+/*
+ *
  */
 function boxOverlapBox(b1, b2, x1=0, y1=0)
 {
@@ -711,15 +730,15 @@ function boxOverlapBox(b1, b2, x1=0, y1=0)
 	|| (y1 + b1.bottom) < b2.top));
 }
 
-/**
- * @type {function(Object, Object):boolean}
+/*
+ *
  */
 function pointInBox(x, y, b)
 {
 	return (!(x > b.right || x < b.left || y > b.bottom || y < b.top));
 }
 
-/**
+/*
  *
  */
 function getInRoomBounds(i)

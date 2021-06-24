@@ -52,6 +52,13 @@ export function test(varName, op, value, global)
 	}
 }
 
+//
+export function toggle(varName, global)
+{
+	const target = global ? window.global : this;
+	target[varName] ^= true;
+}
+
 // Sets the instance's gravity to the given value.
 export function setGravity(speed, direction = 90)
 {
@@ -237,6 +244,7 @@ export const instanceCheckCollision = instance.checkCollision;
 export const instanceCheckCollisionPoint = instance.checkCollisionPoint;
 export const directionToPoint = instance.directionToPoint;
 export const gridAlign = instance.gridAlign;
+export const checkGridAlign = instance.checkGridAlign;
 
 // Drawing actions.
 export const drawSetColor = draw.setColor;

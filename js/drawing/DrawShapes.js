@@ -54,10 +54,10 @@ export function rectangle(x, y, w, h, {
 	ctx.rect(x, y, w, h);
 
 	if (fill) {
-		ctx.fillStyle = style;
+		ctx.fillStyle = color;
 		ctx.fill();
 	} else {
-		ctx.strokeStyle = style;
+		ctx.strokeStyle = color;
 		ctx.lineWidth = lineWidth;
 		ctx.stroke();
 	}
