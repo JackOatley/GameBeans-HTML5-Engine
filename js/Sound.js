@@ -1,32 +1,21 @@
 
-/**
+const names = [];
+const array = [];
+let enabled = true;
+
+/*
  *
  */
-export class Sound {
-
-	/**
-	 *
-	 */
+export class Sound
+{
 	constructor(name, source) {
 		this.name = name;
 		this.instances = [new Audio(source)];
 		this.ready = false;
 		this.volume = 1;
-		Sound.names.push(name);
-		Sound.array.push(this);
-		this.__test();
-	}
-
-	/**
-	 * @param {number} number
-	 * @return {void}
-	 */
-	preload(number) {
-		var a = this.instances;
-		var n = number - a.length;
-		while (n-- > 0) {
-			a.push(a[0].cloneNode());
-		}
+		names.push(name);
+		array.push(this);
+		readyTest(this);
 	}
 
 	play(opts) {
@@ -40,47 +29,15 @@ export class Sound {
 	stop() {
 		stop(this);
 	}
-
-	/**
-	 * Tests whether the Sound resource has an instance that is ready to play.
-	 * Generates a callback function that sets the resource's "ready" property.
-	 * @return {void}
-	 */
-	__test() {
-		const a = this.instances[0];
-		a.oncanplaythrough = () => {
-			this.ready = true;
-			a.oncanplaythrough = null;
-		}
-	}
-
-	/**
-	 * @return {boolean}
-	 */
-	static readyAll() {
-		var a = Sound.array;
-		var n = a.length;
-		while (n--) {
-			if (!a[n].ready) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	/**
-	 * @param {boolean} x
-	 * @return {void}
-	 */
-	static enable(x) {
-		Sound.isEnabled = x;
-	}
 }
 
+Sound.enable = enable;
 Sound.getByName = getByName;
 Sound.create = create;
 Sound.play = play;
+Sound.preload = preload;
 Sound.loop = loop;
+Sound.readyAll = readyAll;
 Sound.stop = stop;
 
 Sound.prototype.assetType = "sound";
@@ -105,7 +62,7 @@ export function stop(s)
 
 export function play(s, opts = {})
 {
-	if (!Sound.isEnabled) return null;
+	if (!enabled) return undefined;
 
 	// Find an existing sound instance to play.
 	var playSound;
@@ -119,7 +76,7 @@ export function play(s, opts = {})
 	}
 
 	// If no free instance was found.
-	if (!playSound) return null;
+	if (!playSound) return undefined;
 
 	//
 	playSound.onError = (err) => {
@@ -137,15 +94,13 @@ export function play(s, opts = {})
 
 				// Internal event stuff.
 				s.currentTime = 0;
-				if (Number(opts.loop || false))
+				if (Number(opts.loop ?? false))
 					this.play();
 				else
 					this.pause();
 
 				// Custom event, if defined.
-				if (opts.onEnd) {
-					opts.onEnd();
-				}
+				opts.onEnd?.();
 
 			}
 
@@ -157,16 +112,56 @@ export function play(s, opts = {})
 	return playSound;
 }
 
+/*
+ * Shorthand for play with looping.
+ */
 export function loop(s, opts = {})
 {
-	play(s, {...opts, ...{loop: true}});
+	play(s, {...opts, loop: true});
 }
 
+/*
+ * Find the sound resource with the given name.
+ */
 export function getByName(name)
 {
-	return Sound.array.find(s => s.name === name);
+	return array.find(s => s.name === name);
 }
 
-Sound.isEnabled = true;
-Sound.names = [];
-Sound.array = [];
+/*
+ * Tests whether the sound resource has an instance that is ready to play.
+ * Generates a callback function that sets the resource's "ready" property.
+ */
+export function readyTest(t)
+{
+	const a = t.instances[0];
+	a.oncanplaythrough = () => {
+		t.ready = true;
+		a.oncanplaythrough = null;
+	}
+}
+
+/*
+ * Preload a given number of sound instances for the given resource.
+ */
+export function preload({instances}, number)
+{
+	for (let n = 1; n < number; n++)
+		instances.push(instances[0].cloneNode());
+}
+
+/*
+ * Enables or disabled audio.
+ */
+export function enable(x)
+{
+	enabled = x;
+}
+
+/*
+ * Returns wether all the sounds are ready.
+ */
+export function readyAll()
+{
+	return array.every(s => s.ready);
+}

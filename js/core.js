@@ -3,7 +3,7 @@ import * as constants from "./constants.js";
 import * as App from "./App.js";
 import * as main from "./main.js";
 import canvas from "./Canvas.js";
-import { Camera } from "./camera.js";
+import {Camera} from "./camera.js";
 import Room from "./room.js";
 import * as input from "./inputs/input.js";
 import Script from "./Script.js";
