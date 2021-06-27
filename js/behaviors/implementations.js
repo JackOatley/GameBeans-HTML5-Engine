@@ -1,13 +1,15 @@
-import { BoundToRoom } from "./BoundToRoom.js";
-import { RoomWrap } from "./RoomWrap.js";
-import { RoomDestroy } from "./RoomDestroy.js";
-import { FourWayMovement } from "./FourWayMovement.js";
-import { EightWayMovement } from "./EightWayMovement.js";
+import {BoundToRoom} from "./BoundToRoom.js";
+import {RoomWrap} from "./RoomWrap.js";
+import {RoomDestroy} from "./RoomDestroy.js";
+import {FourWayMovement} from "./FourWayMovement.js";
+import {EightWayMovement} from "./EightWayMovement.js";
+import {GridMovement} from "./GridMovement.js";
 
 export const behaviourImplementations = {
 	"BoundToRoom": BoundToRoom,
 	"RoomWrap": RoomWrap,
 	"RoomDestroy": RoomDestroy,
 	"FourWayMovement": FourWayMovement,
-	"EightWayMovement": EightWayMovement
+	"EightWayMovement": EightWayMovement,
+	"GridMovement": GridMovement
 }
