@@ -238,6 +238,8 @@ export const transformSprite = instance.transformSprite;
 
 // Movement actions.
 export const moveFree = instance.moveFree;
+export const moveTowardsPoint = instance.moveTowardsPoint;
+export const stepTowardsPoint = instance.stepTowardsPoint;
 export const instanceSetRotation = instance.setRotation;
 export const instanceSetDirection = instance.setDirection;
 export const instanceCheckCollision = instance.checkCollision;

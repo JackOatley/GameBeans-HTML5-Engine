@@ -192,14 +192,18 @@ export function moveFree(speed, direction)
 	this.direction = direction;
 }
 
-// Start moving in the direction of a given point.
-export function moveTowardsPoint(x, y, spd)
+/*
+ * Start moving in the direction of a given point.
+ */
+export function moveTowardsPoint(x, y, speed)
 {
 	this.direction = math.pointDirection(this.x, this.y, x, y);
-	this.speed = spd;
+	this.speed = speed;
 }
 
-// Step towards the given point.
+/*
+ * Step towards the given point.
+ */
 export function stepTowardsPoint(x, y, spd)
 {
 	let dir = math.pointDirection(this.x, this.y, x, y);
