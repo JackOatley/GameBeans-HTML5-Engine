@@ -35,6 +35,7 @@ Sound.enable = enable;
 Sound.getByName = getByName;
 Sound.create = create;
 Sound.play = play;
+Sound.isPlaying = isPlaying;
 Sound.preload = preload;
 Sound.loop = loop;
 Sound.readyAll = readyAll;
@@ -63,19 +64,7 @@ export function stop(s)
 export function play(s, opts = {})
 {
 	if (!enabled) return undefined;
-
-	// Find an existing sound instance to play.
-	var playSound;
-	var n = s.instances.length;
-	while (n--) {
-		var instance = s.instances[n];
-		if (instance.paused) {
-			playSound = instance;
-			break;
-		}
-	}
-
-	// If no free instance was found.
+	const playSound = getFreeAudio(s);
 	if (!playSound) return undefined;
 
 	//
@@ -118,6 +107,29 @@ export function play(s, opts = {})
 export function loop(s, opts = {})
 {
 	play(s, {...opts, loop: true});
+}
+
+/*
+ *
+ */
+export function isPlaying(s, not)
+{
+	for (const inst of s.instances) {
+		if (!inst.paused)
+			return true ^ not;
+	}
+
+	return false ^ not;
+}
+
+/*
+ *
+ */
+function getFreeAudio(s)
+{
+	for (const inst of s.instances)
+		if (inst.paused)
+			return inst;
 }
 
 /*

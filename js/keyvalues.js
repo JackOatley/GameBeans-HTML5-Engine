@@ -1,8 +1,5 @@
-/**
- * @module keyvalues
- */
 
-let values = [
+const values = [
 	"ArrowUp",
 	"ArrowDown",
 	"ArrowLeft",

@@ -266,6 +266,7 @@ export const drawDebug = instance.drawDebug;
 // Sound actions.
 export const soundPlay = (snd, loop) => Sound.play(snd, {loop: loop});
 export const soundStop = Sound.stop;
+export const soundIsPlaying = Sound.isPlaying;
 
 // Debug actions.
 export const message = debugActions.message;
