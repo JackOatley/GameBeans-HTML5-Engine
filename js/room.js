@@ -1,5 +1,4 @@
 import {Camera} from "./camera.js";
-import Generator from "./generator.js";
 import {Transition} from "./transitions/transition.js";
 import * as instance from "./instance.js";
 import * as drawing from "./draw.js";
@@ -27,7 +26,7 @@ export class Room {
 		this.backgroundAnimate = false;
 		this.backgroundAnimateSpeed = 1;
 		this.backgroundMethod = "no-repeat";
-		this.backgroundColor = "#FF0000";
+		this.backgroundColor = "black";
 		this.instances = [];
 		Room.names.push(name);
 		Room.array.push(this);
@@ -35,32 +34,18 @@ export class Room {
 			currentRoom = Room.current = this;
 	}
 
-	/**
-	 * @param {string} spr
-	 * @return {void}
-	 */
 	setBackground(spr) {
 		this.background = spr;
 	}
 
-	/**
-	 *
-	 */
 	addInstance(inst, x, y) {
-		if (typeof inst === "object") inst = inst.objectName;
-		this.instances.push({name: inst, x: x, y: y});
+		addInstance(this, inst, x, y)
 	}
 
-	/**
-	 *
-	 */
 	enter(type, color, time) {
 		enter(this, type, color, time);
 	}
 
-	/**
-	 *
-	 */
 	draw() {
 		draw(this);
 	}
@@ -70,12 +55,21 @@ Room.draw = draw;
 Room.enter = enter;
 Room.next = next;
 Room.previous = previous;
+Room.restart = restart;
 Room.getByName = getByName;
+Room.addInstance = addInstance;
+
+/*
+ *
+ */
+export function addInstance(r, inst, x, y)
+{
+ 	if (typeof inst === "object") inst = inst.objectName;
+ 	r.instances.push({name: inst, x, y});
+ }
 
 export function draw(room)
 {
-	//drawing.clear(room.backgroundColor, room.backgroundAlpha);
-
 	const spr = room.background;
 	if (spr === null) return;
 
@@ -175,6 +169,11 @@ export function previous(type, color, time)
 	enter(Room.array[index-1], type, color, time);
 }
 
+export function restart(type, color, time)
+{
+	enter(currentRoom, type, color, time);
+}
+
 export function getByName(name)
 {
 	return Room.array.find(r => r.name === name);
@@ -184,6 +183,3 @@ Room.prototype.assetType = "room";
 Room.names = [];
 Room.array = [];
 Room.current = null;
-Generator.classStaticMatch(Room);
-
-export default Room;

@@ -1,5 +1,5 @@
 import * as App from "./App.js";
-import Room from "./room.js";
+import {Room} from "./room.js";
 import {Sound} from "./Sound.js";
 import * as draw from "./draw.js";
 import * as instance from "./instance.js";
@@ -224,6 +224,7 @@ export const chance = math.chance;
 export const roomEnter = Room.enter;
 export const roomNext = Room.next;
 export const roomPrevious = Room.previous;
+export const roomRestart = Room.restart;
 export const setGameSpeed = main.setGameSpeed;
 export const restart = App.restart;
 export const setCursor = App.setCursor;

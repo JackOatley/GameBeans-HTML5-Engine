@@ -9,13 +9,8 @@ export let dom = null;
  */
 export default class Canvas {
 
-	/**
-	 * @param {Object} [opts={}]
-	 * @param {bumber} [opts.width=300]
-	 * @param {bumber} [opts.height=150]
-	 * @param {bumber} [opts.scale=1]
-	 * @param {boolean} [opts.crisp2D=false]
-	 * @param {string} [opts.context="2d"]
+	/*
+	 * 
 	 */
 	constructor(opts = {}) {
 		var defaultContext = opts.context || "2d";

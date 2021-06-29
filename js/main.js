@@ -1,5 +1,5 @@
 import Canvas, * as canvas from "./Canvas.js";
-import room from "./room.js";
+import * as room from "./room.js";
 import * as input from "./inputs/input.js";
 import * as Instance from "./instance.js";
 import global from "./global.js";
@@ -28,8 +28,8 @@ export function start(opts = {})
 
 	//
 	const canv = new Canvas({
-		width: room.current.width,
-		height: room.current.height,
+		width: room.currentRoom.width,
+		height: room.currentRoom.height,
 		crisp2D: true,
 		context: opts.defaultContext ?? "2d"
 	});
@@ -44,7 +44,7 @@ export function start(opts = {})
 
 	//
 	stop();
-	room.enter(room.current);
+	room.enter(room.currentRoom);
 	requestAnimationFrame(tick);
 }
 
@@ -132,11 +132,11 @@ function gameUpdate()
 function gameDraw()
 {
 	draw.reset();
-	draw.clear(room.current.backgroundColor, room.current.backgroundAlpha);
+	draw.clear(room.currentRoom.backgroundColor, room.currentRoom.backgroundAlpha);
 	if (allCameras.length) {
 		updateAllCameras();
 	} else {
-		room.current.draw();
+		room.currentRoom.draw();
 		Instance.drawAll();
 	}
 	draw.reset();

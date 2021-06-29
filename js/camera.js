@@ -1,4 +1,4 @@
-import room from "./room.js";
+import * as room from "./room.js";
 import * as draw from "./draw.js";
 import * as Instance from "./instance.js";
 
@@ -14,8 +14,8 @@ export class Camera
 		this.x = 0;
 		this.y = 0;
 		this.angle = 0;
-		this.width = room.current.width;
-		this.height = room.current.height;
+		this.width = room.currentRoom.width;
+		this.height = room.currentRoom.height;
 		this.follow = null;
 		this.gridLocked = false;
 		this.left = 0;
@@ -82,12 +82,12 @@ function update(cam)
 	cam.updateBounds();
 
 	// apply camera
-	draw.scale(room.current.width/cam.width, room.current.height/cam.height);
+	draw.scale(room.currentRoom.width/cam.width, room.currentRoom.height/cam.height);
 	draw.translate(-cam.left, -cam.top);
 
 	// Draw for this camera.
 	Camera.currentlyDrawing = cam;
-	room.draw(room.current);
+	room.draw(room.currentRoom);
 	Instance.drawAll();
 }
 
